@@ -1,0 +1,10 @@
+<%@ jet package="egap.templates" class="ProviderMethodTemplate" imports="java.util.* egap.utils.StringUtils" %>
+<% Map<String, String> map = (Map<String, String>) argument; %> 
+
+@SuppressWarnings("unused")
+@Provides
+<%= map.get("annotation") %>  
+private <%= map.get("type") %> provide<%= StringUtils.capitalize(map.get("variablename")) %>(){
+	<%= map.get("type") %> <%= map.get("variablename") %> = new <%= map.get("type") %>();
+	return <%= map.get("variablename") %>;
+} 

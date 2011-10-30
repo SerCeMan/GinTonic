@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.jdt.ui.quickFixProcessors">
+
+      <quickFixProcessor
+            class="egap.quickfix.EgapQuickFixProcessor"
+            id="egap.quickfix.EgapQuickFixProcessor"
+            name="egap.quickfix.EgapQuickFixProcessor">
+      </quickFixProcessor>
+      <enablement>
+      <with variable="projectNatures">
+         <equals value="egap.EgapNature"/>
+      </with>
+   </enablement>
+      
+      
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="egap.preferences.EgapPreferencePage"
+            id="egap.preferences.EgapPreferencePage"
+            name="Egap">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="egap.preferences.PreferenceInitializer">
+      </initializer>
+   </extension>
+   
+   <extension
+			id="egap.EgapBuilder"
+			name="Egap Project Builder"
+			point="org.eclipse.core.resources.builders">
+		<builder hasNature="true">
+			<run class="egap.project_builder.EgapBuilder" />
+		</builder>
+	</extension>
+	
+	<extension
+			id="egap.EgapNature"
+			name="Egap Project Nature"
+			point="org.eclipse.core.resources.natures">
+		<runtime>
+			<run class="egap.nature.EgapNature" />
+		</runtime>
+		<builder id="egap.EgapBuilder" />
+	</extension>
+	
+	<extension point="org.eclipse.ui.popupMenus">
+		<objectContribution
+				adaptable="true"
+				id="egap.popupMenus"
+				nameFilter="*"
+				objectClass="org.eclipse.core.resources.IProject">
+			<action
+         class="egap.nature.EgapToggleNatureAction"
+         enablesFor="+"
+         icon="icons/egap_icon_big.png"
+         id="egap.toggleNatureAction"
+         label="Add/Remove Egap Nature"
+         menubarPath="additions">
+			</action>
+		</objectContribution>
+	</extension>
+	
+	<extension point="org.eclipse.ui.startup"></extension>
+ <extension
+       point="org.eclipse.ui.commands">
+    <command
+          categoryId="org.eclipse.jdt.ui.category.source"
+          id="egap.cycleBindings"
+          name="Cycle Bindings">
+    </command>
+ </extension>
+ <extension
+       point="org.eclipse.ui.handlers">
+    <handler
+          class="egap.command.CycleBindingsHandler"
+          commandId="egap.cycleBindings">
+    </handler>
+ </extension>
+ <extension
+       point="org.eclipse.ui.bindings">
+    <key
+          commandId="egap.cycleBindings"
+          contextId="org.eclipse.ui.contexts.window"
+          schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+          sequence="F6">
+    </key>
+ </extension>
+ 
+
+</plugin>

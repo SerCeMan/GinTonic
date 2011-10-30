@@ -1,0 +1,110 @@
+### Eclipse Workspace Patch 1.0
+#P egap
+Index: src/egap/guice/indexer/InstallModuleStatementAnalyzer.java
+===================================================================
+--- src/egap/guice/indexer/InstallModuleStatementAnalyzer.java	(revision 3041)
++++ src/egap/guice/indexer/InstallModuleStatementAnalyzer.java	(working copy)
+@@ -43,7 +43,9 @@
+ 				installModuleStatement.setInstalledModule(installTargetQualifiedName);
+ 				installModuleStatement.setLength(methodInvocation.getLength());
+ 				installModuleStatement.setStartPosition(methodInvocation.getStartPosition());
+-
++				String statement = methodInvocation.toString();
++				installModuleStatement.setStatement(statement);
++				
+ 				return installModuleStatement;
+ 			}
+ 		}
+Index: src/egap/guice/indexer/MultibinderStatementAnalyzer.java
+===================================================================
+--- src/egap/guice/indexer/MultibinderStatementAnalyzer.java	(revision 3041)
++++ src/egap/guice/indexer/MultibinderStatementAnalyzer.java	(working copy)
+@@ -60,6 +60,9 @@
+ 			ASTNodeUtils.transferStartPositionAndLength(methodInvocation, mapBinderStatement);
+ 			mapBinderStatement.setKeyType(keyType);
+ 			mapBinderStatement.setValueType(valueType);
++			String statement = methodInvocation.toString();
++			mapBinderStatement.setStatement(statement);
++			
+ 			return mapBinderStatement;
+ 		}
+ 		
+Index: src/egap/guice/GuiceStatement.java
+===================================================================
+--- src/egap/guice/GuiceStatement.java	(revision 3041)
++++ src/egap/guice/GuiceStatement.java	(working copy)
+@@ -23,6 +23,19 @@
+ 	 */
+ 	private int length;
+ 	
++	/**
++	 * The statement as String.
++	 */
++	private String statement;
++	
++	public String getStatement() {
++		return statement;
++	}
++
++	public void setStatement(String statement) {
++		this.statement = statement;
++	}
++
+ 	public GuiceModule getGuiceModule() {
+ 		return guiceModuleInfo;
+ 	}
+Index: src/egap/quickfix/navigate/ProposalNavigateToStatement.java
+===================================================================
+--- src/egap/quickfix/navigate/ProposalNavigateToStatement.java	(revision 3041)
++++ src/egap/quickfix/navigate/ProposalNavigateToStatement.java	(working copy)
+@@ -47,7 +47,7 @@
+ 	 * neben der QuickfixProposal-Auswahl auf!
+ 	 */
+ 	public String getAdditionalProposalInfo() {
+-		return getDisplayString();
++		return guiceStatement.getStatement();
+ 	}
+ 
+ 	@Override
+Index: src/egap/guice/indexer/BindingStatementAnalyzer.java
+===================================================================
+--- src/egap/guice/indexer/BindingStatementAnalyzer.java	(revision 3045)
++++ src/egap/guice/indexer/BindingStatementAnalyzer.java	(working copy)
+@@ -163,6 +163,8 @@
+ 			toBinding.setBoundType(boundType);
+ 			toBinding.setValueType(valueType);
+ 			toBinding.setAnnotationType(annotationType);
++			String statement = methodInvocation.toString();
++			toBinding.setStatement(statement);
+ 			return toBinding;
+ 
+ 		}
+@@ -214,6 +216,8 @@
+ 		String modelTypeQN = modelTypeBinding.getQualifiedName();
+ 		factoryStatement.setModelTypeName(modelTypeQN);
+ 		factoryStatement.setBoundType(factoryTypeBinding.getQualifiedName());
++		String statement = methodInvocation.toString();
++		factoryStatement.setStatement(statement);
+ 
+ 		return factoryStatement;
+ 	}
+@@ -261,6 +265,8 @@
+ 			toInstanceBinding.setAnnotationType(annotationType);
+ 			toInstanceBinding.setValueType(valueType);
+ 			toInstanceBinding.setBoundType(boundType);
++			String statement = methodInvocation.toString();
++			toInstanceBinding.setStatement(statement);
+ 			return toInstanceBinding;
+ 		}
+ 
+@@ -283,6 +289,10 @@
+ 					providerBindingStatement);
+ 			String bindingAnnotation = markerAnnotationList.getBindingAnnotation();
+ 			providerBindingStatement.setAnnotationType(bindingAnnotation);
++			
++			String statement = methodDeclaration.toString();
++			providerBindingStatement.setStatement(statement);
++			
+ 			return providerBindingStatement;
+ 		}
+ 		return null;
