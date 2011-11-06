@@ -48,7 +48,8 @@ public class IProjectUtils {
 		final IPackageFragmentRoot[] packageFragmentRoots = javaProject.getPackageFragmentRoots();
 		for (final IPackageFragmentRoot pfr : packageFragmentRoots) {
 			if (pfr.getKind() == IPackageFragmentRoot.K_SOURCE) {
-				srcFolders.add(pfr.getPath());
+				IPath path = pfr.getPath();
+				srcFolders.add(path);
 			}
 		}
 
@@ -130,16 +131,15 @@ public class IProjectUtils {
 		public boolean visit(IResource resource) throws CoreException {
 
 			if (resource instanceof IFolder) {
-
-				/*
-				 * Make sure we only descend into source folders. skipping
-				 * binary folders
-				 */
 				IFolder folder = (IFolder) resource;
 				if (IFolderUtils.isSourceFolder(folder, sourceFolders)) {
 					return true;
 				}
-				return false; /* binary! - lets skip */
+				/* We must always descend into every folder, as otherwise
+				 * folders with more segments (like maven projects with
+				 * a src folder src/main/java) are not correctly 
+				 * scanned for files (Bug in Rev 3). */
+				return true; 
 			} else if (resource instanceof IFile) {
 				files.add((IFile) resource);
 			}
