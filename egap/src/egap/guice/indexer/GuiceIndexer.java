@@ -1,5 +1,6 @@
 package egap.guice.indexer;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
@@ -89,16 +90,16 @@ public class GuiceIndexer {
 		if (indexer.isGuiceModuleType()) {
 			ITypeBinding guiceModuleAsTypeBinding = indexer.getGuiceModuleTypeBinding();
 			IPackageBinding packageBinding = guiceModuleAsTypeBinding.getPackage();
-			String packageFullyQualified = packageBinding.getName();
+			String[] packageFullyQualified = packageBinding.getNameComponents();
 			String guiceModuleName = guiceModuleAsTypeBinding.getName();
 			String projectName = project.getName();
-			String srcFolderName = ICompilationUnitUtils.getSrcFolderName(compilationUnit);
+			List<String> srcFolderPath = ICompilationUnitUtils.getSrcFolderPathComponents(compilationUnit);
 			
 			GuiceModule guiceModule = new GuiceModule();
 			guiceModule.setTypeName(guiceModuleName);
-			guiceModule.setPackageFullyQualified(packageFullyQualified);
+			guiceModule.setPackagePathComponents(Arrays.asList(packageFullyQualified));
 			guiceModule.setProjectName(projectName);
-			guiceModule.setSrcFolderName(srcFolderName);
+			guiceModule.setSrcFolderPathComponents(srcFolderPath);
 			
 			List<BindingStatement> bindingStatements = indexer.getBindingStatements();
 			for (BindingStatement bindingStatement : bindingStatements) {
@@ -122,8 +123,8 @@ public class GuiceIndexer {
 
 	private void copyInfo(GuiceModule guiceModule, GuiceStatement statement) {
 		statement.setProjectName(guiceModule.getProjectName());
-		statement.setPackageFullyQualified(guiceModule.getPackageFullyQualified());
-		statement.setSrcFolderName(guiceModule.getSrcFolderName());
+		statement.setPackagePathComponents(guiceModule.getPackageNameComponents());
+		statement.setSrcFolderPathComponents(guiceModule.getSrcFolderPathComponents());
 		statement.setTypeName(guiceModule.getTypeName());
 	}
 	

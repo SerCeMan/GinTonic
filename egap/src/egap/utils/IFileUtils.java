@@ -1,5 +1,7 @@
 package egap.utils;
 
+import java.util.List;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -14,20 +16,28 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.texteditor.ITextEditor;
 
+import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 
 import egap.EgapPlugin;
 
 public class IFileUtils {
 
-	public static IFile getIFile(String projectName, String srcFolderName,
-			String packageFullyQualified, String filename) {
+	private static final char PATH_SEPARATOR = '/';
+
+	public static IFile getIFile(String projectName,
+			List<String> srcFolderPathComponents,
+			List<String> packagePathComponents, String filename) {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IWorkspaceRoot root = workspace.getRoot();
 		IProject project = root.getProject(projectName);
 		Preconditions.checkState(project.exists());
-		String replace = packageFullyQualified.replace(".", "/");
-		String sourceFolder = srcFolderName + "/" + replace;
+
+		Joiner joiner = Joiner.on('/');
+
+		String sourceFolder = joiner.join(srcFolderPathComponents)
+				+ PATH_SEPARATOR + joiner.join(packagePathComponents);
+
 		IFolder folder = project.getFolder(sourceFolder);
 		Preconditions.checkState(folder.exists(), "The folder '" + sourceFolder
 				+ "' does not exist!");
@@ -50,19 +60,16 @@ public class IFileUtils {
 					activePage,
 					srcFile,
 					true);
-			if(startPosition != null && length != null){
-				editorPart.selectAndReveal(
-						startPosition,
-						length);
-				
+			if (startPosition != null && length != null) {
+				editorPart.selectAndReveal(startPosition, length);
+
 			}
 		} catch (final PartInitException pie) {
 			EgapPlugin.logException(pie);
 		}
 	}
 
-	public static void setCaretAndRevealInEditor(IFile srcFile,
-			int position) {
+	public static void setCaretAndRevealInEditor(IFile srcFile, int position) {
 		selectAndRevealInEditor(srcFile, position, 0);
 	}
 

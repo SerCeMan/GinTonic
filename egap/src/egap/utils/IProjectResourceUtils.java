@@ -1,5 +1,7 @@
 package egap.utils;
 
+import java.util.List;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -8,12 +10,18 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.ITypeBinding;
+import org.eclipse.jdt.core.dom.Name;
 import org.eclipse.jdt.core.dom.PackageDeclaration;
+
+import com.google.common.base.Splitter;
+import com.google.common.collect.Lists;
 
 import egap.guice.ProjectResource;
 
 public class IProjectResourceUtils {
 	
+	private static final Splitter SPLITTER_ON_DOT = Splitter.on('.');
+
 	public static void openEditorWithStatementDeclaration(
 			IProjectResource navigationEndpoint, Integer startPosition) {
 		IFile srcFile = getIFile(navigationEndpoint);
@@ -31,8 +39,8 @@ public class IProjectResourceUtils {
 	public static IFile getIFile(IProjectResource navigationEndpoint) {
 		IFile srcFile = IFileUtils.getIFile(
 				navigationEndpoint.getProjectName(),
-				navigationEndpoint.getSrcFolderName(),
-				navigationEndpoint.getPackageFullyQualified(),
+				navigationEndpoint.getSrcFolderPathComponents(),
+				navigationEndpoint.getPackageNameComponents(),
 				navigationEndpoint.getTypeName());
 		return srcFile;
 	}
@@ -72,12 +80,14 @@ public class IProjectResourceUtils {
 		IProject project = resource.getProject();
 		origin.setProjectName(project.getName());
 	
-		String srcFolderName = ICompilationUnitUtils.getSrcFolderName(icompilationUnit);
-		origin.setSrcFolderName(srcFolderName);
+		List<String> srcFolderPath = ICompilationUnitUtils.getSrcFolderPathComponents(icompilationUnit);
+		origin.setSrcFolderPathComponents(Lists.newArrayList(srcFolderPath));
 		
 		PackageDeclaration packageBinding = astRoot.getPackage();
-		String packageFullyQualified = packageBinding.getName().getFullyQualifiedName();
-		origin.setPackageFullyQualified(packageFullyQualified);
+		Name name = packageBinding.getName();
+		String packageFullyQualified = name.getFullyQualifiedName();
+		Iterable<String> parts = SPLITTER_ON_DOT.split(packageFullyQualified);
+		origin.setPackagePathComponents(Lists.newArrayList(parts));
 	
 		String typeName = ICompilationUnitUtils.getNameWithoutJavaExtension(icompilationUnit);
 		origin.setTypeName(typeName);

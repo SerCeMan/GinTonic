@@ -1,9 +1,12 @@
 package egap.utils;
 
+import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IBuffer;
@@ -18,6 +21,8 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.ui.CodeGeneration;
+
+import com.google.common.collect.Lists;
 
 
 public class ICompilationUnitUtils {
@@ -74,7 +79,7 @@ public class ICompilationUnitUtils {
 		return elementName.replace(JAVA_EXTENSION, "");
 	}
 
-	public static String getSrcFolderName(ICompilationUnit compilationUnit){
+	public static List<String> getSrcFolderPathComponents(ICompilationUnit compilationUnit){
 		IPackageFragmentRoot packageFragmentRoot = (IPackageFragmentRoot) compilationUnit.getAncestor(IJavaElement.PACKAGE_FRAGMENT_ROOT);
 		IResource underlyingResource;
 		try {
@@ -82,9 +87,21 @@ public class ICompilationUnitUtils {
 		} catch (JavaModelException e) {
 			throw new RuntimeException(e);
 		}
-		IFolder folder = (IFolder) underlyingResource;
-		String srcFolderName = folder.getName();
-		return srcFolderName;
+		List<String> folderPathSegments = Lists.newArrayList();
+		IContainer parent = (IFolder) underlyingResource;
+		while(true){
+			if(parent instanceof IProject){
+				break;
+			}
+			IFolder middleFolder = (IFolder) parent;
+			String folderName = middleFolder.getName();
+			folderPathSegments.add(folderName);
+			parent = parent.getParent();
+		}
+		
+		Collections.reverse(folderPathSegments);
+		
+		return folderPathSegments;
 	}
 
 	public static Integer getStartPositionOfTopLevelType(ICompilationUnit compilationUnit) {

@@ -2,6 +2,7 @@ package egap.guice;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -9,7 +10,6 @@ import java.util.Set;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -19,6 +19,7 @@ import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.core.IPackageFragment;
+import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.IPackageBinding;
 import org.eclipse.jdt.core.dom.ITypeBinding;
 
@@ -199,10 +200,7 @@ public class GuiceIndex implements Serializable {
 	 */
 	public List<GuiceModule> getGuiceModulesInPackage(
 			IPackageBinding currentPackageBinding) {
-		return getGuiceModulesInAndBelowPackage(
-				currentPackageBinding,
-				null,
-				1);
+		return getGuiceModulesInAndBelowPackage(currentPackageBinding, null, 1);
 	}
 
 	/**
@@ -217,10 +215,7 @@ public class GuiceIndex implements Serializable {
 	 */
 	public List<GuiceModule> getGuiceModulesInAndBelowPackage(
 			IPackageBinding currentPackageBinding) {
-		return getGuiceModulesInAndBelowPackage(
-				currentPackageBinding,
-				null,
-				2);
+		return getGuiceModulesInAndBelowPackage(currentPackageBinding, null, 2);
 	}
 
 	public List<GuiceModule> getGuiceModulesInAndBelowPackage(
@@ -394,7 +389,6 @@ public class GuiceIndex implements Serializable {
 		return bindings;
 	}
 
-	@SuppressWarnings("unchecked")
 	public void checkForImplicitBindings(GuiceAnnotation guiceAnnotationToFind,
 			ITypeBinding typeBindingOfInterfaceType,
 			List<GuiceStatement> bindings) {
@@ -439,20 +433,18 @@ public class GuiceIndex implements Serializable {
 				implicitBinding.setTypeName(typeName);
 
 				IPackageBinding packageBinding = typeBindingOfInterfaceType.getPackage();
-				String packageName = packageBinding.getName();
-				implicitBinding.setPackageFullyQualified(packageName);
+				String[] packageName = packageBinding.getNameComponents();
+				implicitBinding.setPackagePathComponents(Arrays.asList(packageName));
 
 				IMember member = (IMember) javaElement;
 				if (member.isBinary()) {
 					/* Not supported ! */
 				}
 				else {
-					IPath path = member.getPath();
-					String srcFolderName = path.segment(1);
-					implicitBinding.setSrcFolderName(srcFolderName);
-					bindings.add(implicitBinding);
-
 					ICompilationUnit compilationUnit = member.getCompilationUnit();
+					List<String> srcFolderPathComponents = ICompilationUnitUtils.getSrcFolderPathComponents(compilationUnit);
+					implicitBinding.setSrcFolderPathComponents(srcFolderPathComponents);
+					bindings.add(implicitBinding);
 					Integer startPositionOfTopLevelType = ICompilationUnitUtils.getStartPositionOfTopLevelType(compilationUnit);
 					implicitBinding.setStartPosition(startPositionOfTopLevelType);
 				}

@@ -2,12 +2,18 @@ package egap.guice;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.jdt.core.dom.ASTNode;
+
+import com.google.common.base.Joiner;
 
 import egap.utils.IProjectResource;
 
 public class ProjectResource implements Serializable, IProjectResource {
+
+	private static final Joiner JOINER_ON_DOT = Joiner.on('.');
+	private static final Joiner JOINER_ON_FILE_SEPARATOR = Joiner.on('/');
 
 	private static final long serialVersionUID = 8853803394114472544L;
 
@@ -16,16 +22,13 @@ public class ProjectResource implements Serializable, IProjectResource {
 	 */
 	private String projectName;
 
-	/**
-	 * The name of the src folder.
-	 */
-	private String srcFolderName;
+	private List<String> srcFolderPathComponents;
 
 	/**
 	 * The package name fully qualified (e.g java.lang). Is empty for the
 	 * default package.
 	 */
-	private String packageFullyQualified;
+	private List<String> packageNameComponents;
 
 	/**
 	 * The name of the java type (e.g for {@link Collection} it would be
@@ -44,15 +47,15 @@ public class ProjectResource implements Serializable, IProjectResource {
 	protected Integer length;
 
 	public ProjectResource(String projectName,
-			String srcFolderName,
-			String packageFullyQualified,
+			List<String> srcFolderPathComponents,
+			List<String> packageFullyQualified,
 			String typeName,
 			Integer startPosition,
 			Integer length) {
 		super();
 		this.projectName = projectName;
-		this.srcFolderName = srcFolderName;
-		this.packageFullyQualified = packageFullyQualified;
+		this.srcFolderPathComponents = srcFolderPathComponents;
+		this.packageNameComponents = packageFullyQualified;
 		this.typeName = typeName;
 		this.startPosition = startPosition;
 		this.length = length;
@@ -69,12 +72,16 @@ public class ProjectResource implements Serializable, IProjectResource {
 		this.projectName = projectName;
 	}
 
-	public void setSrcFolderName(String srcFolderName) {
-		this.srcFolderName = srcFolderName;
+	public void setSrcFolderPathComponents(List<String> srcFolderPathComponents) {
+		this.srcFolderPathComponents = srcFolderPathComponents;
 	}
 
-	public void setPackageFullyQualified(String packageFullyQualified) {
-		this.packageFullyQualified = packageFullyQualified;
+	public void setPackagePathComponents(List<String> packageFullyQualified) {
+		if(packageFullyQualified == null){
+			System.out.println();
+		}
+		
+		this.packageNameComponents = packageFullyQualified;
 	}
 	
 	/**
@@ -95,13 +102,24 @@ public class ProjectResource implements Serializable, IProjectResource {
 	}
 
 	@Override
-	public String getSrcFolderName() {
-		return srcFolderName;
+	public String getSrcFolderPath() {
+		return JOINER_ON_FILE_SEPARATOR.join(srcFolderPathComponents);
+	}
+	
+	@Override
+	public List<String> getSrcFolderPathComponents() {
+		return srcFolderPathComponents;
 	}
 
 	@Override
+	public List<String> getPackageNameComponents() {
+		return packageNameComponents;
+	}
+	
+
+	@Override
 	public String getPackageFullyQualified() {
-		return packageFullyQualified;
+		return JOINER_ON_DOT.join(packageNameComponents);
 	}
 
 	@Override
@@ -121,18 +139,7 @@ public class ProjectResource implements Serializable, IProjectResource {
 
 	@Override
 	public String getTypeNameFullyQualified() {
-		return packageFullyQualified + "." + typeName;
+		return packageNameComponents + "." + typeName;
 	}
-
-	@Override
-	public String toString() {
-		return "ProjectResource [projectName=" + projectName
-				+ ", srcFolderName=" + srcFolderName
-				+ ", packageFullyQualified=" + packageFullyQualified
-				+ ", typeName=" + typeName + ", startPosition=" + startPosition
-				+ ", length=" + length + "]";
-	}
-
-	
 
 }

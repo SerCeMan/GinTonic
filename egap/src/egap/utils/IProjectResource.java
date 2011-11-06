@@ -1,11 +1,12 @@
 package egap.utils;
 
 import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.jdt.core.dom.ASTNode;
 
 /**
- * A java resource located inside a src folder of an eclipse project. 
+ * A java resource located inside a src folder of an eclipse project.
  * 
  * @author tmajunke
  */
@@ -17,9 +18,24 @@ public interface IProjectResource {
 	String getProjectName();
 
 	/**
-	 * The name of the src folder if the resource is not a binary type.
+	 * Returns the name components to the src folder.
+	 * 
+	 * @return the name components to the src folder.
 	 */
-	String getSrcFolderName();
+	List<String> getSrcFolderPathComponents();
+
+	/**
+	 * The path of the source folder relative to the project. The path components
+	 * are separated by /. 
+	 */
+	String getSrcFolderPath();
+
+	/**
+	 * Returns the package parts (e.g ["java","lang"]).
+	 * 
+	 * @return the package parts.
+	 */
+	List<String> getPackageNameComponents();
 
 	/**
 	 * The package name fully qualified (e.g java.lang). Is empty for the
