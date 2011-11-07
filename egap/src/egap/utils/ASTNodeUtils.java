@@ -355,7 +355,7 @@ public class ASTNodeUtils {
 			return null;
 		}
 
-		ProjectResource origin = IProjectResourceUtils.createNavigationEndpoint(
+		ProjectResource origin = IProjectResourceUtils.createProjectResource(
 				astNode,
 				astRoot,
 				icompilationUnit);
@@ -381,7 +381,7 @@ public class ASTNodeUtils {
 			return null;
 		}
 
-		ProjectResource origin = IProjectResourceUtils.createNavigationEndpoint(
+		ProjectResource origin = IProjectResourceUtils.createProjectResource(
 				astNode,
 				astRoot,
 				icompilationUnit);

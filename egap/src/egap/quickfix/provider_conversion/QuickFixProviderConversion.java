@@ -26,7 +26,7 @@ public class QuickFixProviderConversion extends AbstractEgapQuickFix {
 	public void addProposals(IInvocationContext context,
 			List<IJavaCompletionProposal> proposals) throws CoreException {
 		
-		ProjectResource origin = IProjectResourceUtils.createNavigationEndpoint(
+		ProjectResource origin = IProjectResourceUtils.createProjectResource(
 				context.getCoveringNode(),
 				context.getASTRoot(),
 				context.getCompilationUnit());

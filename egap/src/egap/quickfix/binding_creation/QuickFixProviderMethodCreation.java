@@ -31,7 +31,7 @@ public class QuickFixProviderMethodCreation extends AbstractEgapQuickFix {
 			List<IJavaCompletionProposal> proposals) throws CoreException {
 		CompilationUnit astRoot = context.getASTRoot();
 		
-		ProjectResource origin = IProjectResourceUtils.createNavigationEndpoint(
+		ProjectResource origin = IProjectResourceUtils.createProjectResource(
 				context.getCoveringNode(),
 				context.getASTRoot(),
 				context.getCompilationUnit());

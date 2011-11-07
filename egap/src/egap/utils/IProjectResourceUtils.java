@@ -68,7 +68,7 @@ public class IProjectResourceUtils {
 		return guiceModulesTypeBinding;
 	}
 
-	public static ProjectResource createNavigationEndpoint(ASTNode astNode,
+	public static ProjectResource createProjectResource(ASTNode astNode,
 			CompilationUnit astRoot, ICompilationUnit icompilationUnit) {
 		ProjectResource origin = new ProjectResource();
 		int length = astNode.getLength();
