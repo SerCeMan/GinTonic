@@ -6,6 +6,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -74,7 +75,7 @@ public class EgapToggleNatureAction implements IObjectActionDelegate {
 	public void setActivePart(final IAction action, final IWorkbenchPart targetPart) {
 	}
 
-	private static IProject getProject(final ISelection selection) {
+	private static IProject getProject(final ISelection selection){
 		if (selection instanceof IStructuredSelection) {
 			for (final Iterator<?> it = ((IStructuredSelection) selection).iterator(); it.hasNext();) {
 				final Object element = it.next();
@@ -91,6 +92,14 @@ public class EgapToggleNatureAction implements IObjectActionDelegate {
 				
 				if(!project.isOpen()){
 					return null;
+				}
+				
+				try {
+					if(!project.hasNature(JavaCore.NATURE_ID)){
+						return null;
+					}
+				} catch (CoreException e) {
+					throw new RuntimeException(e);
 				}
 				
 				return project;
