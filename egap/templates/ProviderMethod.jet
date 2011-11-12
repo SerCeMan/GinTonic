@@ -3,7 +3,7 @@
 
 @SuppressWarnings("unused")
 @Provides
-<%= map.get("annotation") %>  
+<%= map.get("annotation") == null ? "" : map.get("annotation") %>  
 private <%= map.get("type") %> provide<%= StringUtils.capitalize(map.get("variablename")) %>(){
 	<%= map.get("type") %> <%= map.get("variablename") %> = new <%= map.get("type") %>();
 	return <%= map.get("variablename") %>;

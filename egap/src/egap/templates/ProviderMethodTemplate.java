@@ -31,7 +31,7 @@ public class ProviderMethodTemplate
      Map<String, String> map = (Map<String, String>) argument; 
     stringBuffer.append(TEXT_1);
     stringBuffer.append(TEXT_2);
-    stringBuffer.append( map.get("annotation") );
+    stringBuffer.append( map.get("annotation") == null ? "" : map.get("annotation") );
     stringBuffer.append(TEXT_3);
     stringBuffer.append( map.get("type") );
     stringBuffer.append(TEXT_4);

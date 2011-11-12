@@ -12,6 +12,7 @@ import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 
 import egap.guice.GuiceModule;
@@ -37,6 +38,9 @@ public class ProposalProviderMethodCreation implements IJavaCompletionProposal {
 			ITypeBinding typeBindingWithoutProvider,
 			GuiceAnnotation guiceAnnotation,
 			String variableName) {
+		Preconditions.checkNotNull(guiceModule);
+		Preconditions.checkNotNull(typeBindingWithoutProvider);
+		Preconditions.checkNotNull(variableName);
 		this.guiceModule = guiceModule;
 		this.type = typeBindingWithoutProvider;
 		this.guiceAnnotation = guiceAnnotation;
@@ -88,7 +92,10 @@ public class ProposalProviderMethodCreation implements IJavaCompletionProposal {
 
 		refactorator.addImport(StringUtils.GUICE_PROVIDES);
 		refactorator.addImport(type.getQualifiedName());
-		refactorator.addImport(guiceAnnotation.getTypeToImport());
+		
+		if (guiceAnnotation != null) {
+			refactorator.addImport(guiceAnnotation.getTypeToImport());
+		}
 		
 		MethodDeclaration configureMethodDeclaration = MethodDeclarationUtils.getConfigureMethodDeclaration(compilationUnitAstNode);
 		if (configureMethodDeclaration != null) {
@@ -112,7 +119,7 @@ public class ProposalProviderMethodCreation implements IJavaCompletionProposal {
 		Map<String, String> arguments = Maps.newHashMap();
 		arguments.put("type", type.getName());
 		
-		if (guiceAnnotation instanceof GuiceClassAnnotation) {
+		if (guiceAnnotation != null && guiceAnnotation instanceof GuiceClassAnnotation) {
 			GuiceClassAnnotation classAnnotation = (GuiceClassAnnotation) guiceAnnotation;
 			arguments.put("annotation", "@" + classAnnotation.getName());
 		}
