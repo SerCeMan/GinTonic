@@ -84,7 +84,7 @@ public class ProposalCreateBindingForAssistedFactory implements
 	 * Kurz Beschreibung der Aktion,taucht in der QuickfixProposal-Auswahl auf!
 	 */
 	public String getDisplayString() {
-		return "Create binding in module '"
+		return "Create factory binding in module '"
 				+ guiceModule.getTypeName()
 				+ "'";
 	}
@@ -95,7 +95,7 @@ public class ProposalCreateBindingForAssistedFactory implements
 	 * neben der QuickfixProposal-Auswahl auf!
 	 */
 	public String getAdditionalProposalInfo() {
-		return "Create binding for '"
+		return "Create factory binding for '"
 				+ getFactoryTypeName()
 				+ "' in module '"
 				+ guiceModule.getTypeName()
