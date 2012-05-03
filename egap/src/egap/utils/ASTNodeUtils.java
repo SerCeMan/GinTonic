@@ -365,9 +365,7 @@ public class ASTNodeUtils {
 				origin,
 				name,
 				astRoot);
-		if (guiceFieldDeclaration != null) {
-			return guiceFieldDeclaration;
-		}
+		
 		return guiceFieldDeclaration;
 	}
 			
