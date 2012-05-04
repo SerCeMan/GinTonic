@@ -72,4 +72,11 @@ public class GuiceModule extends BindingStatement {
 		}
 	}
 
+	@Override
+	public String toString() {
+		return getTypeNameFullyQualified();
+	}
+	
+	
+
 }
