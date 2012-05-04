@@ -7,7 +7,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.IPackageBinding;
 import org.eclipse.jdt.core.dom.ITypeBinding;
@@ -41,13 +40,12 @@ public class GuiceIndexer {
 		if (!file.exists()) {
 			return null;
 		}
-
-		/* We assume guice modules to end with Module! */
+		
 		String filename = file.getName();
-		if (!filename.endsWith("Module.java")) {
+		if (!filename.endsWith(".java")) {
 			return null;
 		}
-
+		
 		try {
 			ICompilationUnit compilationUnit = (ICompilationUnit) JavaCore.create(file);
 			if (compilationUnit != null) {
@@ -56,14 +54,14 @@ public class GuiceIndexer {
 						project);
 				return guiceModule;
 			}
-		} catch (JavaModelException e) {
+		} catch (RuntimeException e) {
 			EgapPlugin.logException("Error analyzing " + filename, e);
 		}
 		return null;
 	}
 
 	private GuiceModule parseGuiceModule(ICompilationUnit compilationUnit,
-			IProject project) throws JavaModelException {
+			IProject project) {
 
 		CompilationUnit cu = ASTParserUtils.parseCompilationUnitAst3(
 				compilationUnit,
