@@ -91,7 +91,7 @@
           commandId="egap.cycleBindings"
           contextId="org.eclipse.ui.contexts.window"
           schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-          sequence="F6">
+          sequence="M1+G">
     </key>
  </extension>
  
