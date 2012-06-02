@@ -41,7 +41,7 @@ public class EditorUtils {
 		return null;
 	}
 
-	public static IEditorInput getEditorInput() {
+	public static IEditorInput getEditorInputForActiveEditor() {
 		IEditorPart part = getActiveEditor();
 		if (part instanceof ITextEditor) {
 			final ITextEditor editor = (ITextEditor) part;
@@ -52,7 +52,7 @@ public class EditorUtils {
 
 	public static GuiceTypeInfo getGuiceTypeInfoOfSelectedFieldInActiveEditor() {
 
-		IEditorInput editorInput = getEditorInput();
+		IEditorInput editorInput = getEditorInputForActiveEditor();
 		ITypeRoot editorInputTypeRoot = JavaUI.getEditorInputTypeRoot(editorInput);
 
 		if (editorInputTypeRoot instanceof ICompilationUnit) {
