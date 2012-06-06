@@ -30,6 +30,17 @@ public class StringUtils {
 	public static final String GUICE_PROVIDES = GUICE_BASE_PACKAGE + ".Provides";
 	public static final String GUICE_MAP_BINDER = "com.google.inject.multibindings.MapBinder";
 	public static final String GUICE_SET_BINDER = "com.google.inject.multibindings.Multibinder";
+	public static final String GUICE_SCOPED_BINDING_BUILDER = "com.google.inject.binder.ScopedBindingBuilder";
+	public static final String GUICE_LINKED_BINDING_BUILDER = "com.google.inject.binder.LinkedBindingBuilder";
+	public static final String GUICE_ANNOTATED_BINDING_BUILDER = "com.google.inject.binder.AnnotatedBindingBuilder";
+	public static final String GUICE_ABSTRACT_MODULE = "com.google.inject.AbstractModule";
+	public static final String GUICE_CONSTANT_BINDING_BUILDER = "com.google.inject.binder.ConstantBindingBuilder";
+	public static final String GUICE_CONSTANT_ANNOTATED_BINDING_BUILDER = "com.google.inject.binder.AnnotatedConstantBindingBuilder";
+	public static final String GUICE_SCOPE_SINGLETON_NAME = "com.google.inject.Singleton";
+//	public static final String GUICE_SCOPE_NO_SCOPE = "NO_SCOPE";
+	public static final String GUICE_NAMED = "com.google.inject.name.Named";
+	public static final String GUICE_NAMES = "com.google.inject.name.Names";
+	
 	
 	private static final Map<String, String> PRIMITIVES = Maps.newHashMap();
 	public static final String CLASS_TYPE = "java.lang.Class";
@@ -156,18 +167,5 @@ public class StringUtils {
 		String name = Iterables.getLast(parts);
 		return name;
 	}
-
-	public static final String GUICE_SCOPED_BINDING_BUILDER = "com.google.inject.binder.ScopedBindingBuilder";
-	public static final String GUICE_LINKED_BINDING_BUILDER = "com.google.inject.binder.LinkedBindingBuilder";
-	public static final String GUICE_ANNOTATED_BINDING_BUILDER = "com.google.inject.binder.AnnotatedBindingBuilder";
-	public static final String GUICE_ABSTRACT_MODULE = "com.google.inject.AbstractModule";
-	public static final String GUICE_CONSTANT_BINDING_BUILDER = "com.google.inject.binder.ConstantBindingBuilder";
-	public static final String GUICE_CONSTANT_ANNOTATED_BINDING_BUILDER = "com.google.inject.binder.AnnotatedConstantBindingBuilder";
-	public static final String GUICE_SCOPE_SINGLETON_NAME = "com.google.inject.Singleton";
-//	public static final String GUICE_SCOPE_NO_SCOPE = "NO_SCOPE";
-	public static final String GUICE_NAMED = "com.google.inject.name.Named";
-	public static final String GUICE_NAMES = "com.google.inject.name.Names";
-
-	
 
 }
