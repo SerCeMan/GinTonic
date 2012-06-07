@@ -9,7 +9,6 @@ import org.eclipse.jdt.ui.text.java.IJavaCompletionProposal;
 
 import egap.guice.GuiceIndex;
 import egap.guice.annotations.GuiceAnnotation;
-import egap.guice.statements.BindingStatement;
 import egap.guice.statements.GuiceStatement;
 import egap.quickfix.AbstractEgapQuickFix;
 import egap.utils.ASTNodeUtils;

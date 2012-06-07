@@ -1,7 +1,5 @@
 package egap.quickfix.module_creation;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.ui.text.java.IJavaCompletionProposal;
@@ -12,9 +10,7 @@ import org.eclipse.swt.graphics.Point;
 
 import egap.icons.Icons;
 import egap.templates.GuiceModuleTemplate;
-import egap.utils.EditorUtils;
 import egap.utils.ICompilationUnitUtils;
-import egap.utils.IFileUtils;
 
 public class ProposalCreateGuiceModule implements IJavaCompletionProposal {
 
