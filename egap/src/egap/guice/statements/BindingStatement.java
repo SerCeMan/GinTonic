@@ -1,6 +1,5 @@
 package egap.guice.statements;
 
-import egap.guice.GuiceModule;
 import egap.guice.annotations.GuiceAnnotation;
 import egap.utils.StringUtils;
 

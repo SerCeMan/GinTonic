@@ -3,10 +3,8 @@ package egap.guice;
 import java.util.List;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
 
 import egap.guice.statements.BindingStatement;
-import egap.guice.statements.GuiceStatement;
 import egap.guice.statements.InstallModuleStatement;
 
 /**

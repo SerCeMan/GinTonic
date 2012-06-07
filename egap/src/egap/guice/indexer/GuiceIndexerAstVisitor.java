@@ -22,11 +22,9 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import egap.EgapPlugin;
-import egap.guice.GuiceModule;
 import egap.guice.annotations.GuiceAnnotation;
 import egap.guice.statements.BindingStatement;
 import egap.guice.statements.ConstantBindingStatement;
-import egap.guice.statements.ImplicitBindingStatement;
 import egap.guice.statements.InstallModuleStatement;
 import egap.guice.statements.InstanceBindingStatement;
 import egap.guice.statements.LinkedBindingStatement;

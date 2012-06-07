@@ -1,7 +1,5 @@
 package egap.guice.statements;
 
-import egap.guice.GuiceModule;
-import egap.guice.annotations.GuiceAnnotation;
 
 /**
  * <h5>Example:</h5>

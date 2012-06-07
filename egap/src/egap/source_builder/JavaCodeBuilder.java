@@ -12,8 +12,6 @@ import org.eclipse.jdt.core.dom.Type;
 
 import com.google.common.collect.Sets;
 
-import egap.utils.TypeUtils;
-
 /**
  * @author tmajunke
  * 
