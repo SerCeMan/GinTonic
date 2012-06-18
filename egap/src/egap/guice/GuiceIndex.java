@@ -236,7 +236,7 @@ public class GuiceIndex implements Serializable {
 	 * no modules were found.
 	 */
 	public List<GuiceModule> getGuiceModulesInPackage(
-			List<IPackageFragment> packages, String ignoreModule) {
+			List<IPackageFragment> packages, String moduleToIgnore) {
 		List<GuiceModule> guiceModulesInGivenPackages = Lists.newArrayList();
 		for (IPackageFragment packageFragment : packages) {
 			if (packageFragment == null) {
@@ -246,9 +246,14 @@ public class GuiceIndex implements Serializable {
 
 			for (GuiceModule guiceModule : guiceModules) {
 				String packageFullyQualified = guiceModule.getPackageFullyQualified();
-				boolean equals = guiceModule.getTypeNameFullyQualified().equals(
-						ignoreModule);
-				if (packageFullyQualified.equals(packagePath) && (!equals)) {
+				boolean ignoreModule = guiceModule.getTypeNameFullyQualified().equals(
+						moduleToIgnore);
+				
+				if(ignoreModule){
+					continue;
+				}
+				
+				if (packageFullyQualified.equals(packagePath)) {
 					guiceModulesInGivenPackages.add(guiceModule);
 				}
 			}
