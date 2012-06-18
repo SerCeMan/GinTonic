@@ -388,7 +388,7 @@ public class GuiceIndex implements Serializable {
 		return bindings;
 	}
 
-	public void checkForImplicitBindings(GuiceAnnotation guiceAnnotationToFind,
+	private void checkForImplicitBindings(GuiceAnnotation guiceAnnotationToFind,
 			ITypeBinding typeBindingOfInterfaceType,
 			List<GuiceStatement> bindings) {
 		if (bindings.isEmpty() && guiceAnnotationToFind == null) {
