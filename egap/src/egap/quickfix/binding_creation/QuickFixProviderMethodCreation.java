@@ -46,7 +46,7 @@ public class QuickFixProviderMethodCreation extends AbstractEgapQuickFix {
 
 			GuiceIndex guiceIndex = GuiceIndex.get();
 
-			IPackageBinding currentPackageBinding = context.getASTRoot().getPackage().resolveBinding();
+			IPackageBinding currentPackageBinding = astRoot.getPackage().resolveBinding();
 			String packageToLookForGuiceModules = currentPackageBinding.getName();
 			
 			List<GuiceStatement> bindingStatements = guiceIndex.getBindingsByTypeAndAnnotationLimitToPackage(
