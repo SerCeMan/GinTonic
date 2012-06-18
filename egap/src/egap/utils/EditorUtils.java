@@ -57,6 +57,13 @@ public class EditorUtils {
 
 		if (editorInputTypeRoot instanceof ICompilationUnit) {
 			ICompilationUnit icompilationUnit = (ICompilationUnit) editorInputTypeRoot;
+			
+			/* 
+			 * TODO: Parsing on each access takes too long here. Maybe we can get the Ast
+			 * from the SharedASTProvider:  
+			 * 
+			 * SharedASTProvider.getAST(editorInputTypeRoot, SharedASTProvider.WAIT_YES, null);
+			 */
 			CompilationUnit compilationUnit = ASTParserUtils.parseCompilationUnitAst3(icompilationUnit);
 
 			ITextSelection currentSelection = getCurrentSelection();
@@ -73,7 +80,7 @@ public class EditorUtils {
 
 			ASTNode coveredNode = selectionAnalyzer.getLastCoveringNode();
 
-			GuiceTypeInfo guiceTypeInfo = ASTNodeUtils.getGuiceTypeInfoIfFieldDeclaration(
+			GuiceTypeInfo guiceTypeInfo = ASTNodeUtils.getGuiceTypeInfoIfFieldDeclarationTypeDeclarationOrProviderMethod(
 					coveredNode,
 					compilationUnit,
 					icompilationUnit);
