@@ -33,7 +33,7 @@ public class EgapBuilder extends IncrementalProjectBuilder {
 
 	public static String ID = "egap.EgapBuilder";
 
-	public static GuiceIndexer guiceModuleParser = new GuiceIndexer();
+	public static GuiceIndexer guiceIndexer = new GuiceIndexer();
 
 	public EgapBuilder() {
 		super();
@@ -102,7 +102,7 @@ public class EgapBuilder extends IncrementalProjectBuilder {
 				EgapPlugin.logWarning("Indexing Guice modules canceled by user request leaving the index in an incomplete state.");
 				break;
 			}
-			GuiceModule guiceModule = guiceModuleParser.index(project, iFile);
+			GuiceModule guiceModule = guiceIndexer.index(project, iFile);
 			if (guiceModule != null) {
 				GuiceIndex.get().addGuiceModuleDontLog(guiceModule);
 			}
@@ -174,7 +174,7 @@ public class EgapBuilder extends IncrementalProjectBuilder {
 
 				switch (kind) {
 				case IResourceDelta.ADDED:
-					guiceModule = guiceModuleParser.index(
+					guiceModule = guiceIndexer.index(
 							project,
 							(IFile) resource);
 					if (guiceModule != null) {
@@ -193,7 +193,7 @@ public class EgapBuilder extends IncrementalProjectBuilder {
 					 * significant changes (e.g removed an install(Module)
 					 * statement).
 					 */
-					guiceModule = guiceModuleParser.index(
+					guiceModule = guiceIndexer.index(
 							project,
 							(IFile) resource);
 					if (guiceModule != null) {
