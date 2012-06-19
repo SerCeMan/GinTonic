@@ -1,5 +1,6 @@
 package egap.guice;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -40,7 +41,8 @@ public class GuiceIndexSerializer {
 			}
 			
 			fileInputStream = new FileInputStream(guiceIndexSerialized);
-			deserializer = new ObjectInputStream(fileInputStream);
+			BufferedInputStream bufferedInputStream = new BufferedInputStream(fileInputStream);
+			deserializer = new ObjectInputStream(bufferedInputStream);
 			GuiceIndex guiceIndex = (GuiceIndex) deserializer.readObject();
 			EgapPlugin.logInfo("Succesfully read Guice index from file '"
 					+ guiceIndexSerialized.getAbsolutePath() + "'.");
@@ -49,9 +51,6 @@ public class GuiceIndexSerializer {
 		} finally {
 			if (deserializer != null) {
 				deserializer.close();
-			}
-			if (fileInputStream != null) {
-				fileInputStream.close();
 			}
 		}
 	}
