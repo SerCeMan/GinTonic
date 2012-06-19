@@ -88,7 +88,11 @@ public class EgapQuickFixProcessor implements IQuickFixProcessor {
 
 		String message = "Egap QuickFix took " + diff + " ms, "
 				+ nrOfEnabledQuickFixes + " fixes enabled.";
-		EgapPlugin.logInfo(message);
+		if(diff > 50){
+			EgapPlugin.logWarning(message);
+		}else{
+			EgapPlugin.logInfo(message);
+		}
 
 		if (proposals.isEmpty()) {
 			return null;
