@@ -14,7 +14,6 @@ import org.eclipse.jdt.ui.text.java.IJavaCompletionProposal;
 
 import egap.quickfix.AbstractEgapQuickFix;
 import egap.utils.ITypeBindingUtils;
-import egap.utils.StringUtils;
 
 /**
  * Enables the user to create a new guice module derived from a java class
@@ -57,8 +56,7 @@ import egap.utils.StringUtils;
  * @author tmajunke
  */
 public class QuickFixCreateGuiceModule extends AbstractEgapQuickFix {
-	
-	
+
 	@Override
 	public void addProposals(IInvocationContext context,
 			List<IJavaCompletionProposal> proposals) throws CoreException {
@@ -70,15 +68,13 @@ public class QuickFixCreateGuiceModule extends AbstractEgapQuickFix {
 		}
 		TypeDeclaration typeDecl = (TypeDeclaration) parentNode;
 		ITypeBinding typeDeclBinding = typeDecl.resolveBinding();
-		
+
 		/* Make sure the source class is not a guice module! */
-		boolean kindOf = ITypeBindingUtils.isKindOf(
-				typeDeclBinding,
-				StringUtils.GUICE_MODULE);
-		if(kindOf){
-			return; 
+		boolean isGuiceModule = ITypeBindingUtils.isGuiceModuleType(typeDeclBinding);
+		if (isGuiceModule) {
+			return;
 		}
-		
+
 		ICompilationUnit compilationUnit = context.getCompilationUnit();
 
 		/*
@@ -100,7 +96,8 @@ public class QuickFixCreateGuiceModule extends AbstractEgapQuickFix {
 
 		/*
 		 * Falls wir kein existierendes Module mit gleichem Namen finden, dann
-		 * zeigen wir einen QuickFix an, mit der eben dieses erzeugt werden kann.
+		 * zeigen wir einen QuickFix an, mit der eben dieses erzeugt werden
+		 * kann.
 		 */
 		if (!guiceModuleCompilationUnit.exists()) {
 			ProposalCreateGuiceModule createGuiceModule = new ProposalCreateGuiceModule(
@@ -109,7 +106,7 @@ public class QuickFixCreateGuiceModule extends AbstractEgapQuickFix {
 			proposals.add(createGuiceModule);
 		}
 	}
-	
+
 	@Override
 	public String getPreferencesDisplayName() {
 		return "Create Guice Module";
