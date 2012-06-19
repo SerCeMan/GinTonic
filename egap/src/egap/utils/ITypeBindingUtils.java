@@ -69,7 +69,7 @@ public class ITypeBindingUtils {
 				StringUtils.GUICE_MODULE);
 	}
 	
-	public static boolean isProviderType(ITypeBinding typeBinding) {
+	public static boolean isGuiceProviderType(ITypeBinding typeBinding) {
 		return isKindOf(
 				typeBinding,
 				StringUtils.GUICE_PROVIDER);

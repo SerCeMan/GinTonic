@@ -43,7 +43,7 @@ public class QuickFixProviderConversion extends AbstractEgapQuickFix {
 		ITypeBinding typeBinding = guiceFieldDeclaration.getTargetTypeBinding();
 		
 		/* Check if the declaration is already a provider declaration. */
-		boolean isProviderType =  ITypeBindingUtils.isProviderType(typeBinding);
+		boolean isProviderType =  ITypeBindingUtils.isGuiceProviderType(typeBinding);
 
 		FieldDeclaration fieldDeclaration = guiceFieldDeclaration.getFieldDeclaration();
 		if (isProviderType) {
