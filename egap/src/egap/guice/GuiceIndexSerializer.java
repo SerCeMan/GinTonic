@@ -41,13 +41,19 @@ public class GuiceIndexSerializer {
 				return null;
 			}
 
+			long now = System.currentTimeMillis();
+
 			fileInputStream = new FileInputStream(guiceIndexSerialized);
 			BufferedInputStream bufferedInputStream = new BufferedInputStream(
 					fileInputStream);
 			deserializer = new ObjectInputStream(bufferedInputStream);
 			GuiceIndex guiceIndex = (GuiceIndex) deserializer.readObject();
+
+			long then = System.currentTimeMillis();
+			long elapsed = then - now;
 			EgapPlugin.logInfo("Succesfully read Guice index from file '"
-					+ guiceIndexSerialized.getAbsolutePath() + "'.");
+					+ guiceIndexSerialized.getAbsolutePath() + "' ("
+					+ elapsed + " ms).");
 			EgapPlugin.logInfo(guiceIndex.getIndexInfoDetailed());
 			return guiceIndex;
 		} finally {
@@ -69,7 +75,8 @@ public class GuiceIndexSerializer {
 		try {
 			File guiceIndexSerialized = getPathToGuiceIndexAsSerializedFile();
 			fileOutputStream = new FileOutputStream(guiceIndexSerialized);
-			BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(fileOutputStream);
+			BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(
+					fileOutputStream);
 			serializer = new ObjectOutputStream(bufferedOutputStream);
 			serializer.writeObject(guiceIndex);
 			EgapPlugin.logInfo("Succesfully written Guice index ("
