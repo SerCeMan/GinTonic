@@ -95,12 +95,6 @@ public class GuiceIndex implements Serializable {
 		this.buildState = buildState;
 	}
 
-	/**
-	 * Here we request a build on startup, as we require the {@link GuiceIndex}
-	 * to be available.
-	 * 
-	 * @return
-	 */
 	private static Job build() {
 		final List<IProject> projectsWithEgapNature = IProjectUtils.getOpenProjectsWithNature(EgapNature.ID);
 
