@@ -30,10 +30,6 @@ public class GuiceIndexSerializer {
 	 */
 	public static GuiceIndex read() throws IOException, ClassNotFoundException {
 		
-		if(EgapPlugin.isDebugMode()){
-			return null;
-		}
-		
 		ObjectInputStream deserializer = null;
 		FileInputStream fileInputStream = null;
 		try {
