@@ -42,9 +42,8 @@ public class GuiceIndexer {
 		}
 		
 		String filename = file.getName();
-		if (!filename.endsWith(".java")) {
-			return null;
-		}
+		/* No need to check the filename for .java. This is done in JavaCore.create(). */
+		
 		
 		try {
 			ICompilationUnit compilationUnit = (ICompilationUnit) JavaCore.create(file);
