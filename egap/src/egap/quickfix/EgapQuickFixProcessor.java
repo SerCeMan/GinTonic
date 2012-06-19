@@ -82,11 +82,9 @@ public class EgapQuickFixProcessor implements IQuickFixProcessor {
 		long then = System.currentTimeMillis();
 		long diff = then - now;
 
-		if (diff > 50) {
-			String message = "Egap QuickFix took " + diff + " ms, "
-					+ nrOfEnabledQuickFixes + " fixes enabled.";
-			EgapPlugin.logWarning(message);
-		}
+		String message = "Egap QuickFix took " + diff + " ms, "
+		+ nrOfEnabledQuickFixes + " fixes enabled.";
+		EgapPlugin.logWarning(message);
 
 		if (proposals.isEmpty()) {
 			return null;
