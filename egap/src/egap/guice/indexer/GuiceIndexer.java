@@ -34,9 +34,11 @@ public class GuiceIndexer {
 
 		String filename = file.getName();
 		/*
-		 * No need to check the filename for .java. This is done in
-		 * JavaCore.create().
+		 * We have to reject non java files (like binary .class files). 
 		 */
+		if (!filename.endsWith(".java")) {
+			return null;
+		}
 
 		try {
 			ICompilationUnit compilationUnit = (ICompilationUnit) JavaCore.create(file);
