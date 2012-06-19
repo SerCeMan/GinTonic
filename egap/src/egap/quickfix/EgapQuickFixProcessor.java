@@ -49,6 +49,10 @@ public class EgapQuickFixProcessor implements IQuickFixProcessor {
 		IProject project = javaProject.getProject();
 
 		if (!project.hasNature(EgapNature.ID)) {
+			EgapPlugin.logInfo("The egap quickfixes are disabled as the project '"
+					+ project.getName()
+					+ "' does not have the egap nature. To enable the egap quickfixes "
+					+ "click the 'Add Egap Nature' button in the projects context menu.");
 			return null;
 		}
 
@@ -83,8 +87,8 @@ public class EgapQuickFixProcessor implements IQuickFixProcessor {
 		long diff = then - now;
 
 		String message = "Egap QuickFix took " + diff + " ms, "
-		+ nrOfEnabledQuickFixes + " fixes enabled.";
-		EgapPlugin.logWarning(message);
+				+ nrOfEnabledQuickFixes + " fixes enabled.";
+		EgapPlugin.logInfo(message);
 
 		if (proposals.isEmpty()) {
 			return null;
