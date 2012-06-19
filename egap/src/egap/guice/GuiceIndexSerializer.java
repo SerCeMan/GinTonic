@@ -1,6 +1,7 @@
 package egap.guice;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -30,7 +31,7 @@ public class GuiceIndexSerializer {
 	 * read.
 	 */
 	public static GuiceIndex read() throws IOException, ClassNotFoundException {
-		
+
 		ObjectInputStream deserializer = null;
 		FileInputStream fileInputStream = null;
 		try {
@@ -39,9 +40,10 @@ public class GuiceIndexSerializer {
 			if (!guiceIndexSerialized.exists()) {
 				return null;
 			}
-			
+
 			fileInputStream = new FileInputStream(guiceIndexSerialized);
-			BufferedInputStream bufferedInputStream = new BufferedInputStream(fileInputStream);
+			BufferedInputStream bufferedInputStream = new BufferedInputStream(
+					fileInputStream);
 			deserializer = new ObjectInputStream(bufferedInputStream);
 			GuiceIndex guiceIndex = (GuiceIndex) deserializer.readObject();
 			EgapPlugin.logInfo("Succesfully read Guice index from file '"
@@ -65,22 +67,17 @@ public class GuiceIndexSerializer {
 		ObjectOutputStream serializer = null;
 		FileOutputStream fileOutputStream = null;
 		try {
-			if (!EgapPlugin.isDebugMode()) {
-				File guiceIndexSerialized = getPathToGuiceIndexAsSerializedFile();
-				fileOutputStream = new FileOutputStream(guiceIndexSerialized);
-				serializer = new ObjectOutputStream(fileOutputStream);
-				serializer.writeObject(guiceIndex);
-				EgapPlugin.logInfo("Succesfully written Guice index ("
-						+ guiceIndex.getNrOfGuiceModules()
-						+ " modules) to file '"
-						+ guiceIndexSerialized.getAbsolutePath() + "')");
-			}
+			File guiceIndexSerialized = getPathToGuiceIndexAsSerializedFile();
+			fileOutputStream = new FileOutputStream(guiceIndexSerialized);
+			BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(fileOutputStream);
+			serializer = new ObjectOutputStream(bufferedOutputStream);
+			serializer.writeObject(guiceIndex);
+			EgapPlugin.logInfo("Succesfully written Guice index ("
+					+ guiceIndex.getNrOfGuiceModules() + " modules) to file '"
+					+ guiceIndexSerialized.getAbsolutePath() + "')");
 		} finally {
 			if (serializer != null) {
 				serializer.close();
-			}
-			if (fileOutputStream != null) {
-				fileOutputStream.close();
 			}
 		}
 	}
