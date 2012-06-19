@@ -22,6 +22,38 @@ public class ITypeBindingUtils {
 		return kindOf != null;
 	}
 
+	public static boolean isGuiceModuleType(ITypeBinding typeBinding) {
+		return isKindOf(
+				typeBinding,
+				StringUtils.GUICE_MODULE);
+	}
+	
+	public static boolean isGuiceProviderType(ITypeBinding typeBinding) {
+		return isKindOf(
+				typeBinding,
+				StringUtils.GUICE_PROVIDER);
+	}
+	
+	public static boolean isGuiceNamedType(ITypeBinding typeBinding) {
+		return isKindOf(typeBinding, StringUtils.GUICE_NAMED);
+	}
+	
+	public static boolean isConcreteType(ITypeBinding typeBinding) {
+		if(typeBinding.isInterface()){
+			return false;
+		}
+		
+		int declaredModifiers = typeBinding.getDeclaredModifiers();
+		boolean isAbstract = Modifier.isAbstract(declaredModifiers);
+		if(isAbstract){
+			return false;
+		}
+		
+		boolean isClass = typeBinding.isClass();
+		
+		return isClass;
+	}
+	
 	/**
 	 * Examines the given type binding if it is an instance of the type and if
 	 * it is then the {@link ITypeBinding} is returned. Processes the super classes and
@@ -63,34 +95,6 @@ public class ITypeBindingUtils {
 		return superclassTypeBinding;
 	}
 
-	public static boolean isGuiceModuleType(ITypeBinding typeBinding) {
-		return isKindOf(
-				typeBinding,
-				StringUtils.GUICE_MODULE);
-	}
-	
-	public static boolean isGuiceProviderType(ITypeBinding typeBinding) {
-		return isKindOf(
-				typeBinding,
-				StringUtils.GUICE_PROVIDER);
-	}
-
-	public static boolean isConcreteType(ITypeBinding typeBinding) {
-		if(typeBinding.isInterface()){
-			return false;
-		}
-		
-		int declaredModifiers = typeBinding.getDeclaredModifiers();
-		boolean isAbstract = Modifier.isAbstract(declaredModifiers);
-		if(isAbstract){
-			return false;
-		}
-		
-		boolean isClass = typeBinding.isClass();
-		
-		return isClass;
-	}
-
 	public static ITypeBinding removeSurroundingType(ITypeBinding typeBinding, String surroundingType) {
 		
 		ITypeBinding typeBindingToUnwrap = typeBinding;
@@ -129,6 +133,5 @@ public class ITypeBindingUtils {
 		return removeSurroundingType(typeBinding, StringUtils.GUICE_PROVIDER);
 	}
 
-	
 
 }

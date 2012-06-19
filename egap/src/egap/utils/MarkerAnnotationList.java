@@ -70,7 +70,7 @@ public class MarkerAnnotationList {
 		for (SingleMemberAnnotation singleMemberAnnotation : singleMemberAnnotations) {
 			IAnnotationBinding annotationBinding = singleMemberAnnotation.resolveAnnotationBinding();
 			ITypeBinding typeBinding = singleMemberAnnotation.resolveTypeBinding();
-			if(ITypeBindingUtils.isKindOf(typeBinding, StringUtils.GUICE_NAMED)){
+			if(ITypeBindingUtils.isGuiceNamedType(typeBinding)){
 				IMemberValuePairBinding[] declaredMemberValuePairs = annotationBinding.getDeclaredMemberValuePairs();
 				IMemberValuePairBinding pairBinding = declaredMemberValuePairs[0];
 				String value = (String) pairBinding.getValue();
