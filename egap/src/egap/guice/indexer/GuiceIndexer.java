@@ -22,29 +22,22 @@ import egap.utils.ICompilationUnitUtils;
 public class GuiceIndexer {
 
 	/**
-	 * Analyzes the given file. We only analyze it if the file satisfies all of
-	 * the following conditions:
+	 * Analyzes the given file it is a Guice Module (see {@link ITypeBindingUtils#isGuiceModuleType(ITypeBinding)).
 	 * 
-	 * <ol>
-	 * 
-	 * <li>it ends with "Module" (e.g ServiceModule, ChainModule,...)</li>
-	 * <li>it is a Guice Module.</li>
-	 * </ol>
-	 * 
-	 * 
-	 * @return the {@link GuiceModule} or null if any condition was not
-	 *         satisfied.
+	 * @return the {@link GuiceModule} or null if it is not a guice module.
 	 */
 	public GuiceModule index(IProject project, IFile file) {
 
 		if (!file.exists()) {
 			return null;
 		}
-		
+
 		String filename = file.getName();
-		/* No need to check the filename for .java. This is done in JavaCore.create(). */
-		
-		
+		/*
+		 * No need to check the filename for .java. This is done in
+		 * JavaCore.create().
+		 */
+
 		try {
 			ICompilationUnit compilationUnit = (ICompilationUnit) JavaCore.create(file);
 			if (compilationUnit != null) {
@@ -91,13 +84,13 @@ public class GuiceIndexer {
 			String guiceModuleName = guiceModuleAsTypeBinding.getName();
 			String projectName = project.getName();
 			List<String> srcFolderPath = ICompilationUnitUtils.getSrcFolderPathComponents(compilationUnit);
-			
+
 			GuiceModule guiceModule = new GuiceModule();
 			guiceModule.setTypeName(guiceModuleName);
 			guiceModule.setPackagePathComponents(Arrays.asList(packageFullyQualified));
 			guiceModule.setProjectName(projectName);
 			guiceModule.setSrcFolderPathComponents(srcFolderPath);
-			
+
 			List<BindingStatement> bindingStatements = indexer.getBindingStatements();
 			for (BindingStatement bindingStatement : bindingStatements) {
 				copyInfo(guiceModule, bindingStatement);
@@ -106,12 +99,12 @@ public class GuiceIndexer {
 			for (InstallModuleStatement installModuleStatement : installModuleStatements) {
 				copyInfo(guiceModule, installModuleStatement);
 			}
-			
+
 			guiceModule.setBindingStatements(bindingStatements);
 			guiceModule.setInstalledModules(installModuleStatements);
-			
+
 			guiceModule.validate();
-			
+
 			return guiceModule;
 		}
 
@@ -124,5 +117,5 @@ public class GuiceIndexer {
 		statement.setSrcFolderPathComponents(guiceModule.getSrcFolderPathComponents());
 		statement.setTypeName(guiceModule.getTypeName());
 	}
-	
+
 }
