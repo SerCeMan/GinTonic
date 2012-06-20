@@ -25,8 +25,8 @@ public class CycleBindingsHandler extends AbstractHandler {
 	
 	private void gotoCurrentBindingStatement(){
 		if(iterator.hasNext()){
-			IProjectResource navigationEndpoint = iterator.next();
-			IProjectResourceUtils.openEditorWithStatementDeclaration(navigationEndpoint);
+			IProjectResource projectResource = iterator.next();
+			IProjectResourceUtils.openEditorWithStatementDeclaration(projectResource);
 		}
 	}
 	
