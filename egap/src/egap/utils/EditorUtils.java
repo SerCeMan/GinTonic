@@ -1,12 +1,5 @@
 package egap.utils;
 
-import org.eclipse.jdt.core.ICompilationUnit;
-import org.eclipse.jdt.core.ITypeRoot;
-import org.eclipse.jdt.core.dom.ASTNode;
-import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.jdt.internal.corext.dom.Selection;
-import org.eclipse.jdt.internal.corext.dom.SelectionAnalyzer;
-import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.viewers.ISelection;
@@ -47,46 +40,6 @@ public class EditorUtils {
 			final ITextEditor editor = (ITextEditor) part;
 			return editor.getEditorInput();
 		}
-		return null;
-	}
-
-	public static GuiceTypeInfo getGuiceTypeInfoOfSelectedFieldInActiveEditor() {
-
-		IEditorInput editorInput = getEditorInputForActiveEditor();
-		ITypeRoot editorInputTypeRoot = JavaUI.getEditorInputTypeRoot(editorInput);
-
-		if (editorInputTypeRoot instanceof ICompilationUnit) {
-			ICompilationUnit icompilationUnit = (ICompilationUnit) editorInputTypeRoot;
-			
-			/* 
-			 * TODO: Parsing on each access takes too long here. Maybe we can get the Ast
-			 * from the SharedASTProvider:  
-			 * 
-			 * SharedASTProvider.getAST(editorInputTypeRoot, SharedASTProvider.WAIT_YES, null);
-			 */
-			CompilationUnit compilationUnit = ASTParserUtils.parseCompilationUnitAst3(icompilationUnit);
-
-			ITextSelection currentSelection = getCurrentSelection();
-
-			int offset = currentSelection.getOffset();
-			int length = currentSelection.getLength();
-			Selection selection = Selection.createFromStartLength(
-					offset,
-					length);
-			SelectionAnalyzer selectionAnalyzer = new SelectionAnalyzer(
-					selection,
-					false);
-			compilationUnit.accept(selectionAnalyzer);
-
-			ASTNode coveredNode = selectionAnalyzer.getLastCoveringNode();
-
-			GuiceTypeInfo guiceTypeInfo = ASTNodeUtils.getGuiceTypeInfoIfFieldDeclarationTypeDeclarationOrProviderMethod(
-					coveredNode,
-					compilationUnit,
-					icompilationUnit);
-			return guiceTypeInfo;
-		}
-
 		return null;
 	}
 
