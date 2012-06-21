@@ -21,6 +21,8 @@ import egap.nature.EgapNature;
 
 public class EgapQuickFixProcessor implements IQuickFixProcessor {
 
+	private boolean loggedWarningAboutProjectWithoutEgapNature;
+
 	@Override
 	public boolean hasCorrections(ICompilationUnit unit, int problemId) {
 		return false;
@@ -49,10 +51,16 @@ public class EgapQuickFixProcessor implements IQuickFixProcessor {
 		IProject project = javaProject.getProject();
 
 		if (!project.hasNature(EgapNature.ID)) {
-			EgapPlugin.logInfo("The egap quickfixes are disabled as the project '"
-					+ project.getName()
-					+ "' does not have the egap nature. To enable the egap quickfixes "
-					+ "click the 'Add Egap Nature' button in the projects context menu.");
+
+			if (!loggedWarningAboutProjectWithoutEgapNature) {
+				/* One log message is sufficient! */
+				EgapPlugin.logInfo("The egap quickfixes are disabled as the project '"
+						+ project.getName()
+						+ "' does not have the egap nature. To enable the egap quickfixes "
+						+ "click the 'Add Egap Nature' button in the projects context menu.");
+				loggedWarningAboutProjectWithoutEgapNature = true;
+			}
+
 			return null;
 		}
 
@@ -88,9 +96,10 @@ public class EgapQuickFixProcessor implements IQuickFixProcessor {
 
 		String message = "Egap QuickFix took " + diff + " ms, "
 				+ nrOfEnabledQuickFixes + " fixes enabled.";
-		if(diff > 50){
+		if (diff > 50) {
 			EgapPlugin.logWarning(message);
-		}else{
+		}
+		else {
 			EgapPlugin.logInfo(message);
 		}
 
