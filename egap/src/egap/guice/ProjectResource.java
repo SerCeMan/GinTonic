@@ -46,21 +46,6 @@ public class ProjectResource implements Serializable, IProjectResource {
 	 */
 	protected Integer length;
 
-	public ProjectResource(String projectName,
-			List<String> srcFolderPathComponents,
-			List<String> packageFullyQualified,
-			String typeName,
-			Integer startPosition,
-			Integer length) {
-		super();
-		this.projectName = projectName;
-		this.srcFolderPathComponents = srcFolderPathComponents;
-		this.packageNameComponents = packageFullyQualified;
-		this.typeName = typeName;
-		this.startPosition = startPosition;
-		this.length = length;
-	}
-
 	public ProjectResource() {
 	}
 
