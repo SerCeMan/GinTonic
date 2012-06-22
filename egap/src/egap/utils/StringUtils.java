@@ -62,20 +62,6 @@ public class StringUtils {
 		return pathValidClasspath;
 	}
 
-	public static String javaClasspathToPackagePath(String jClasspath) {
-		String[] parts = jClasspath.split("\\.");
-		StringBuilder sb = new StringBuilder();
-		for (int i = 0; i < (parts.length - 1); i++) {
-			String part = parts[i];
-			if (i > 0) {
-				sb.append('.');
-			}
-			sb.append(part);
-		}
-
-		return sb.toString();
-	}
-
 	public static String qualifiedNameToSimpleName(
 			String targetTypeNameFullyQualified) {
 		String[] parts = targetTypeNameFullyQualified.split("\\.");
@@ -96,53 +82,6 @@ public class StringUtils {
 		result.append(name.substring(1));
 		return result.toString();
 	}
-
-	/**
-	 * Returns the setter method name for the given property name.
-	 * 
-	 * @param name the name of the property
-	 * @return the setter method name
-	 */
-	public static String toSetterMethodname(String name) {
-		return "set" + capitalize(name);
-	}
-
-	/**
-	 * Returns the getter method name for the given property name.
-	 * 
-	 * @param name the name of the property
-	 * @return the getter method name
-	 */
-	public static String toGetterMethodname(String name) {
-		return "get" + capitalize(name);
-	}
-
-	/**
-	 * If the given type is a Provider type then the provided value type is
-	 * returned. If it is not a Provider type the argument is simply returned.
-	 * 
-	 * <h5>Example:</h5>
-	 * 
-	 * <pre>
-	 * removeProviderWrapping("com.google.inject.Provider<java.lang.Integer>")
-	 * "java.lang.Integer"
-	 * </pre>
-	 */
-	public static String removeProviderWrapping(String boundType) {
-		String boundTypeReturned = boundType;
-		if (boundTypeReturned.startsWith(StringUtils.GUICE_PROVIDER)) {
-			boundTypeReturned = boundTypeReturned.replace(
-					StringUtils.GUICE_PROVIDER + "<",
-					"");
-			boundTypeReturned = boundTypeReturned.substring(
-					0,
-					boundTypeReturned.length() - 1);
-			return boundTypeReturned;
-		}
-
-		return boundTypeReturned;
-	}
-	
 
 	/**
 	 * Translates primitives like int, double, etc to the fully qualified
