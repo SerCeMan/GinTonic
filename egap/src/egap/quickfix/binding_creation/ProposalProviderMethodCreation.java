@@ -12,8 +12,6 @@ import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Maps;
 
 import egap.guice.GuiceModule;
 import egap.guice.annotations.GuiceAnnotation;
@@ -24,7 +22,9 @@ import egap.refactor.TrackedMethodDeclaration;
 import egap.templates.ProviderMethodTemplate;
 import egap.utils.ASTParserUtils;
 import egap.utils.IProjectResourceUtils;
+import egap.utils.MapUtils;
 import egap.utils.MethodDeclarationUtils;
+import egap.utils.Preconditions;
 import egap.utils.StringUtils;
 
 public class ProposalProviderMethodCreation implements IJavaCompletionProposal {
@@ -116,7 +116,7 @@ public class ProposalProviderMethodCreation implements IJavaCompletionProposal {
 	 */
 	private String getMethodCode() {
 		ProviderMethodTemplate template = new ProviderMethodTemplate();
-		Map<String, String> arguments = Maps.newHashMap();
+		Map<String, String> arguments = MapUtils.newHashMap();
 		arguments.put("type", type.getName());
 		
 		if (guiceAnnotation != null && guiceAnnotation instanceof GuiceClassAnnotation) {

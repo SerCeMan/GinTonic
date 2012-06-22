@@ -2,10 +2,10 @@ package egap.guice;
 
 import java.util.List;
 
-import com.google.common.base.Preconditions;
 
 import egap.guice.statements.BindingStatement;
 import egap.guice.statements.InstallModuleStatement;
+import egap.utils.Preconditions;
 
 /**
  * A TypeReference to a guice module.

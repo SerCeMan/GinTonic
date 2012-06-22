@@ -10,7 +10,7 @@ import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.Type;
 
-import com.google.common.collect.Sets;
+import egap.utils.SetUtils;
 
 /**
  * @author tmajunke
@@ -153,7 +153,7 @@ public class JavaCodeBuilder {
 
 		List<ITypeBinding> importBindings = importStatemenentCalculator.calculate();
 		
-		Set<String> importStatementSet = Sets.newHashSet();
+		Set<String> importStatementSet = SetUtils.newHashSet();
 		
 		for (ITypeBinding importBinding : importBindings) {
 			/* Wir müssen die Type Declaration verwenden! */

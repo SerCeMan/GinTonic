@@ -29,9 +29,9 @@ import org.eclipse.jface.text.Document;
 import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.text.edits.TextEdit;
 
-import com.google.common.base.Preconditions;
 
 import egap.utils.ASTParserUtils;
+import egap.utils.Preconditions;
 import egap.utils.StringUtils;
 
 public class Refactorator {

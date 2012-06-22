@@ -1,10 +1,9 @@
 package egap.utils;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
-import com.google.common.base.Splitter;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Maps;
 
 
 public class StringUtils {
@@ -41,7 +40,7 @@ public class StringUtils {
 	
 	
 	
-	private static final Map<String, String> PRIMITIVES = Maps.newHashMap();
+	private static final Map<String, String> PRIMITIVES = MapUtils.newHashMap();
 	public static final String CLASS_TYPE = "java.lang.Class";
 	static {
 		PRIMITIVES.put("int", "java.lang.Integer");
@@ -101,9 +100,34 @@ public class StringUtils {
 		if(typeFullyQualified == null){
 			return null;
 		}
-		Iterable<String> parts = Splitter.on('.').split(typeFullyQualified);
-		String name = Iterables.getLast(parts);
-		return name;
+		String[] parts = typeFullyQualified.split("\\.");
+		
+		return parts[parts.length - 1];
 	}
+
+	public static String join(char c, List<String> elements) {
+		return join(c, elements, 10);
+	}
+
+	public static String join(char c, List<String> elements, int expectedSizeOfElement) {
+		int capacity = elements.size() * expectedSizeOfElement + elements.size();
+		StringBuilder stringBuilder = new StringBuilder(capacity);
+		int i = 0;
+		for (String element : elements) {
+			if(i++ > 0){
+				stringBuilder.append(c);
+			}
+			stringBuilder.append(element);
+		}
+		
+		return stringBuilder.toString();
+	}
+
+	public static List<String> split(char c, String stringToSplit) {
+		String[] splitString = stringToSplit.split("\\" + c);
+		return Arrays.asList(splitString);
+	}
+
+	
 
 }

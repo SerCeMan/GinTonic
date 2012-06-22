@@ -22,9 +22,6 @@ import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.dom.IPackageBinding;
 import org.eclipse.jdt.core.dom.ITypeBinding;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 import egap.EgapPlugin;
 import egap.guice.annotations.GuiceAnnotation;
@@ -39,6 +36,9 @@ import egap.utils.ICompilationUnitUtils;
 import egap.utils.IPackageFragmentUtils;
 import egap.utils.IProjectUtils;
 import egap.utils.ITypeBindingUtils;
+import egap.utils.ListUtils;
+import egap.utils.Preconditions;
+import egap.utils.SetUtils;
 import egap.utils.StringUtils;
 
 /**
@@ -61,7 +61,7 @@ public class GuiceIndex implements Serializable {
 	/**
 	 * The indexed Guice modules.
 	 */
-	private ArrayList<GuiceModule> guiceModules = Lists.newArrayList();
+	private ArrayList<GuiceModule> guiceModules = ListUtils.newArrayList();
 
 	private GuiceIndex() {
 		super();
@@ -223,7 +223,7 @@ public class GuiceIndex implements Serializable {
 	 */
 	public List<GuiceModule> getGuiceModulesInPackage(
 			List<IPackageFragment> packages, String moduleToIgnore) {
-		List<GuiceModule> guiceModulesInGivenPackages = Lists.newArrayList();
+		List<GuiceModule> guiceModulesInGivenPackages = ListUtils.newArrayList();
 		for (IPackageFragment packageFragment : packages) {
 			if (packageFragment == null) {
 				continue;
@@ -253,7 +253,7 @@ public class GuiceIndex implements Serializable {
 	 */
 	public void removeGuiceModulesByProjectName(String projectName) {
 		Preconditions.checkNotNull(projectName);
-		List<GuiceModule> guiceModuleInfosToRemove = Lists.newArrayListWithCapacity(guiceModules.size());
+		List<GuiceModule> guiceModuleInfosToRemove = ListUtils.newArrayListWithCapacity(guiceModules.size());
 		for (GuiceModule guiceModule : guiceModules) {
 			String guiceModuleProjectName = guiceModule.getProjectName();
 			if (guiceModuleProjectName.equals(projectName)) {
@@ -275,7 +275,7 @@ public class GuiceIndex implements Serializable {
 		 */
 		typeToFindQualifiedName = StringUtils.translatePrimitiveToWrapper(typeToFindQualifiedName);
 
-		List<GuiceStatement> bindings = Lists.newArrayList();
+		List<GuiceStatement> bindings = ListUtils.newArrayList();
 		for (GuiceModule guiceModule : guiceModules) {
 
 			List<BindingStatement> bindingStatements = guiceModule.getBindingStatements();
@@ -332,7 +332,7 @@ public class GuiceIndex implements Serializable {
 		 */
 		typeToFindQualifiedName = StringUtils.translatePrimitiveToWrapper(typeToFindQualifiedName);
 
-		List<GuiceStatement> bindings = Lists.newArrayList();
+		List<GuiceStatement> bindings = ListUtils.newArrayList();
 		for (GuiceModule guiceModule : guiceModules) {
 
 			if (packageToLimit != null) {
@@ -486,7 +486,7 @@ public class GuiceIndex implements Serializable {
 		GuiceIndexStatistic statistic = new GuiceIndexStatistic();
 
 		statistic.nrOfGuiceModules = guiceModules.size();
-		Set<String> projectNames = Sets.newHashSet();
+		Set<String> projectNames = SetUtils.newHashSet();
 		for (GuiceModule guiceModule : guiceModules) {
 			List<BindingStatement> bindingStatements = guiceModule.getBindingStatements();
 			if (bindingStatements == null) {

@@ -6,13 +6,10 @@ import java.util.List;
 
 import org.eclipse.jdt.core.dom.ASTNode;
 
-import com.google.common.base.Joiner;
-
 import egap.utils.IProjectResource;
+import egap.utils.StringUtils;
 
 public class ProjectResource implements Serializable, IProjectResource {
-
-	private static final Joiner JOINER_ON_DOT = Joiner.on('.');
 
 	private static final long serialVersionUID = 8853803394114472544L;
 
@@ -98,7 +95,7 @@ public class ProjectResource implements Serializable, IProjectResource {
 
 	@Override
 	public String getPackageFullyQualified() {
-		return JOINER_ON_DOT.join(packageNameComponents);
+		return StringUtils.join('.', packageNameComponents);
 	}
 
 	@Override

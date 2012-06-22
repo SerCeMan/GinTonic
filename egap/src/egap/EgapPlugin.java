@@ -10,7 +10,6 @@ import org.eclipse.ui.IStartup;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
-import com.google.common.collect.Lists;
 
 import egap.guice.GuiceIndex;
 import egap.guice.GuiceIndexSerializer;
@@ -22,6 +21,7 @@ import egap.quickfix.module_creation.QuickFixCreateGuiceModule;
 import egap.quickfix.module_installation.QuickFixInstallModule;
 import egap.quickfix.navigate.QuickfixNavigateTo;
 import egap.quickfix.provider_conversion.QuickFixProviderConversion;
+import egap.utils.ListUtils;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -33,7 +33,7 @@ public class EgapPlugin extends AbstractUIPlugin implements IStartup {
 
 	private static EgapPlugin egapPlugin;
 
-	private List<EgapQuickFix> quickfixes = Lists.newArrayList();
+	private List<EgapQuickFix> quickfixes = ListUtils.newArrayList();
 
 	public EgapPlugin() {
 		egapPlugin = this;

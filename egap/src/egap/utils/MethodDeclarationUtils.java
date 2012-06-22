@@ -10,7 +10,6 @@ import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 
-import com.google.common.base.Preconditions;
 
 public class MethodDeclarationUtils {
 

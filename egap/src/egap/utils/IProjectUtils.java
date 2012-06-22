@@ -17,7 +17,6 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 
-import com.google.common.collect.Lists;
 
 import egap.EgapPlugin;
 import egap.nature.EgapNature;
@@ -43,7 +42,7 @@ public class IProjectUtils {
 	public static List<IPath> getSourceFolders(final IProject project)
 			throws CoreException {
 		Assert.isNotNull(project);
-		final List<IPath> srcFolders = Lists.newArrayListWithExpectedSize(30);
+		final List<IPath> srcFolders = ListUtils.newArrayListWithCapacity(30);
 		IJavaProject javaProject = (IJavaProject) project.getNature(JavaCore.NATURE_ID);
 		final IPackageFragmentRoot[] packageFragmentRoots = javaProject.getPackageFragmentRoots();
 		for (final IPackageFragmentRoot pfr : packageFragmentRoots) {
@@ -102,7 +101,7 @@ public class IProjectUtils {
 
 	public static List<IProject> getOpenProjectsWithNature(String natureId) {
 		final IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
-		List<IProject> projectsWithNature = Lists.newArrayList();
+		List<IProject> projectsWithNature = ListUtils.newArrayList();
 
 		for (IProject iProject : projects) {
 			try {
@@ -120,7 +119,7 @@ public class IProjectUtils {
 	private static final class CollectFiles implements IResourceVisitor {
 
 		private List<IPath> sourceFolders;
-		private LinkedList<IFile> files = Lists.newLinkedList();
+		private LinkedList<IFile> files = ListUtils.newLinkedList();
 
 		private CollectFiles(List<IPath> sourceFolders) {
 			super();

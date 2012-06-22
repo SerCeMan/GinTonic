@@ -17,9 +17,6 @@ import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 import egap.EgapPlugin;
 import egap.guice.annotations.GuiceAnnotation;
@@ -35,8 +32,11 @@ import egap.guice.statements.SetBinderCreateStatement;
 import egap.utils.ASTNodeUtils;
 import egap.utils.ExpressionUtils;
 import egap.utils.ITypeBindingUtils;
+import egap.utils.ListUtils;
 import egap.utils.MarkerAnnotationList;
 import egap.utils.MethodInvocationUtils;
+import egap.utils.Preconditions;
+import egap.utils.SetUtils;
 import egap.utils.StringUtils;
 import egap.utils.TypeUtils;
 
@@ -50,8 +50,8 @@ final class GuiceIndexerAstVisitor extends ASTVisitor {
 	 * Note: Needed from outside.
 	 */
 	private ITypeBinding guiceModuleTypeBinding;
-	private List<BindingStatement> bindingStatements = Lists.newArrayListWithExpectedSize(300);
-	private List<InstallModuleStatement> installModuleStatements = Lists.newArrayListWithExpectedSize(50);
+	private List<BindingStatement> bindingStatements = ListUtils.newArrayListWithCapacity(300);
+	private List<InstallModuleStatement> installModuleStatements = ListUtils.newArrayListWithCapacity(50);
 
 	/* Internals */
 	private BindingStatement bindingStatement;
@@ -351,7 +351,7 @@ final class GuiceIndexerAstVisitor extends ASTVisitor {
 		}
 	}
 
-	private Set<String> logMessages = Sets.newHashSet();
+	private Set<String> logMessages = SetUtils.newHashSet();
 
 	private void unsupportedMethod(String type, String methodname) {
 		String methodID = type + "#" + methodname;

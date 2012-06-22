@@ -18,7 +18,6 @@ import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 
-import com.google.common.collect.Lists;
 
 import egap.guice.ProjectResource;
 import egap.guice.annotations.GuiceAnnotation;
@@ -79,8 +78,8 @@ public class ASTNodeUtils {
 
 	public static MarkerAnnotationList getMarkerAnnotationList(
 			List<ASTNode> modifiers) {
-		List<MarkerAnnotation> markerAnnotations = Lists.newArrayListWithCapacity(modifiers.size());
-		List<SingleMemberAnnotation> singleMemberAnnotations = Lists.newArrayListWithCapacity(modifiers.size());
+		List<MarkerAnnotation> markerAnnotations = ListUtils.newArrayListWithCapacity(modifiers.size());
+		List<SingleMemberAnnotation> singleMemberAnnotations = ListUtils.newArrayListWithCapacity(modifiers.size());
 
 		for (ASTNode modifier : modifiers) {
 			if (modifier instanceof MarkerAnnotation) {
@@ -98,7 +97,7 @@ public class ASTNodeUtils {
 
 	private static final class FindMethodByName extends ASTVisitor {
 		private final String fieldAsSetter;
-		private List<MethodDeclaration> methodDeclarations = Lists.newArrayList();
+		private List<MethodDeclaration> methodDeclarations = ListUtils.newArrayList();
 
 		private FindMethodByName(String fieldAsSetter) {
 			this.fieldAsSetter = fieldAsSetter;
@@ -116,7 +115,7 @@ public class ASTNodeUtils {
 	}
 
 	private static final class ASTVisitorFindConstructor extends ASTVisitor {
-		public List<MethodDeclaration> constructors = Lists.newArrayList();
+		public List<MethodDeclaration> constructors = ListUtils.newArrayList();
 
 		private ASTVisitorFindConstructor(boolean visitDocTags) {
 			super(visitDocTags);

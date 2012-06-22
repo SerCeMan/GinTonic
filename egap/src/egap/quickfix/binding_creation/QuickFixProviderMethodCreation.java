@@ -9,7 +9,6 @@ import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.ui.text.java.IInvocationContext;
 import org.eclipse.jdt.ui.text.java.IJavaCompletionProposal;
 
-import com.google.common.collect.Sets;
 
 import egap.guice.GuiceIndex;
 import egap.guice.GuiceModule;
@@ -20,6 +19,7 @@ import egap.utils.ASTNodeUtils;
 import egap.utils.GuiceFieldDeclaration;
 import egap.utils.IProjectResourceUtils;
 import egap.utils.ITypeBindingUtils;
+import egap.utils.SetUtils;
 
 /**
  * @author tmajunke
@@ -52,7 +52,7 @@ public class QuickFixProviderMethodCreation extends AbstractEgapQuickFix {
 			List<GuiceStatement> bindingStatements = guiceIndex.getBindingsByTypeAndAnnotationLimitToPackage(
 					typeBindingWithoutProvider,
 					guiceFieldDecl.getGuiceAnnotation(),
-					Sets.newHashSet(packageToLookForGuiceModules));
+					SetUtils.newHashSet(packageToLookForGuiceModules));
 
 
 			/*

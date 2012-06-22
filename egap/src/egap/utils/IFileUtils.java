@@ -16,8 +16,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.texteditor.ITextEditor;
 
-import com.google.common.base.Joiner;
-import com.google.common.base.Preconditions;
 
 import egap.EgapPlugin;
 
@@ -33,10 +31,8 @@ public class IFileUtils {
 		IProject project = root.getProject(projectName);
 		Preconditions.checkState(project.exists());
 
-		Joiner joiner = Joiner.on('/');
-
-		String sourceFolder = joiner.join(srcFolderPathComponents)
-				+ PATH_SEPARATOR + joiner.join(packagePathComponents);
+		String sourceFolder = StringUtils.join(PATH_SEPARATOR, srcFolderPathComponents)
+				+ PATH_SEPARATOR + StringUtils.join(PATH_SEPARATOR,packagePathComponents);
 
 		IFolder folder = project.getFolder(sourceFolder);
 		Preconditions.checkState(folder.exists(), "The folder '" + sourceFolder

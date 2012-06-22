@@ -9,8 +9,9 @@ import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.Type;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
+
+import egap.utils.ListUtils;
+import egap.utils.Preconditions;
 
 public class ImportStatemenentCalculator {
 
@@ -38,7 +39,7 @@ public class ImportStatemenentCalculator {
 	 */
 	public List<ITypeBinding> calculate() {
 
-		List<ITypeBinding> importBindings = Lists.newArrayListWithExpectedSize(variableDecl.size());
+		List<ITypeBinding> importBindings = ListUtils.newArrayListWithCapacity(variableDecl.size());
 
 		for (SingleVariableDeclaration singleVariableDeclaration : variableDecl) {
 			Type type = singleVariableDeclaration.getType();
@@ -112,7 +113,7 @@ public class ImportStatemenentCalculator {
 	}
 
 	protected List<ITypeBinding> applyFilter(List<ITypeBinding> typeBindings) {
-		List<ITypeBinding> filteredTypeBindings = Lists.newArrayListWithCapacity(typeBindings.size());
+		List<ITypeBinding> filteredTypeBindings = ListUtils.newArrayListWithCapacity(typeBindings.size());
 
 		for (ITypeBinding typeBinding : typeBindings) {
 			IPackageFragment packageFragment = targetType.getPackageFragment();

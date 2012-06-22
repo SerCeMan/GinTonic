@@ -22,7 +22,6 @@ import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.ui.CodeGeneration;
 
-import com.google.common.collect.Lists;
 
 
 public class ICompilationUnitUtils {
@@ -87,7 +86,7 @@ public class ICompilationUnitUtils {
 		} catch (JavaModelException e) {
 			throw new RuntimeException(e);
 		}
-		List<String> folderPathSegments = Lists.newArrayList();
+		List<String> folderPathSegments = ListUtils.newArrayList();
 		IContainer parent = (IFolder) underlyingResource;
 		while(true){
 			if(parent instanceof IProject){

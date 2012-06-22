@@ -14,10 +14,10 @@ import org.eclipse.jdt.ui.text.java.IProblemLocation;
 import org.eclipse.jdt.ui.text.java.IQuickFixProcessor;
 import org.eclipse.jface.preference.IPreferenceStore;
 
-import com.google.common.collect.Lists;
 
 import egap.EgapPlugin;
 import egap.nature.EgapNature;
+import egap.utils.ListUtils;
 
 public class EgapQuickFixProcessor implements IQuickFixProcessor {
 
@@ -73,7 +73,7 @@ public class EgapQuickFixProcessor implements IQuickFixProcessor {
 		EgapPlugin egapPlugin = EgapPlugin.getEgapPlugin();
 		List<EgapQuickFix> egapQuickfixes = egapPlugin.getQuickfixes();
 
-		List<IJavaCompletionProposal> proposals = Lists.newLinkedList();
+		List<IJavaCompletionProposal> proposals = ListUtils.newLinkedList();
 
 		int nrOfEnabledQuickFixes = 0;
 		IPreferenceStore store = egapPlugin.getPreferenceStore();

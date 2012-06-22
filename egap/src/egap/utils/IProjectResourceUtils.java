@@ -12,15 +12,10 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.Name;
 import org.eclipse.jdt.core.dom.PackageDeclaration;
 
-import com.google.common.base.Splitter;
-import com.google.common.collect.Lists;
-
 import egap.guice.ProjectResource;
 
 public class IProjectResourceUtils {
 	
-	private static final Splitter SPLITTER_ON_DOT = Splitter.on('.');
-
 	public static void openEditorWithStatementDeclaration(
 			IProjectResource navigationEndpoint, Integer startPosition) {
 		IFile srcFile = getIFile(navigationEndpoint);
@@ -64,13 +59,13 @@ public class IProjectResourceUtils {
 		origin.setProjectName(project.getName());
 	
 		List<String> srcFolderPath = ICompilationUnitUtils.getSrcFolderPathComponents(icompilationUnit);
-		origin.setSrcFolderPathComponents(Lists.newArrayList(srcFolderPath));
+		origin.setSrcFolderPathComponents(srcFolderPath);
 		
 		PackageDeclaration packageBinding = astRoot.getPackage();
 		Name name = packageBinding.getName();
 		String packageFullyQualified = name.getFullyQualifiedName();
-		Iterable<String> parts = SPLITTER_ON_DOT.split(packageFullyQualified);
-		origin.setPackagePathComponents(Lists.newArrayList(parts));
+		List<String> parts = StringUtils.split('.', packageFullyQualified);
+		origin.setPackagePathComponents(parts);
 	
 		String typeName = ICompilationUnitUtils.getNameWithoutJavaExtension(icompilationUnit);
 		origin.setTypeName(typeName);
