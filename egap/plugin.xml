@@ -4,18 +4,12 @@
 
    <extension
          point="org.eclipse.jdt.ui.quickFixProcessors">
-
+	
       <quickFixProcessor
             class="egap.quickfix.EgapQuickFixProcessor"
             id="egap.quickfix.EgapQuickFixProcessor"
             name="egap.quickfix.EgapQuickFixProcessor">
       </quickFixProcessor>
-      <enablement>
-      <with variable="projectNatures">
-         <equals value="egap.EgapNature"/>
-      </with>
-   </enablement>
-      
       
    </extension>
    <extension
