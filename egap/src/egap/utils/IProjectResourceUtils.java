@@ -9,7 +9,6 @@ import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.Name;
 import org.eclipse.jdt.core.dom.PackageDeclaration;
 
@@ -50,22 +49,6 @@ public class IProjectResourceUtils {
 		IFile srcFile = getIFile(navigationEndpoint);
 		ICompilationUnit compilationUnit = JavaCore.createCompilationUnitFrom(srcFile);
 		return compilationUnit;
-	}
-
-	public static CompilationUnit getAstNode(
-			IProjectResource navigationEndpoint) {
-		ICompilationUnit compilationUnit = getICompilationUnit(navigationEndpoint);
-		CompilationUnit cu = ASTParserUtils.parseCompilationUnitAst3(compilationUnit);
-		return cu;
-	}
-
-	public static ITypeBinding getTypeBinding(
-			IProjectResource navigationEndpoint) {
-		CompilationUnit cu = getAstNode(navigationEndpoint);
-		KindOfChecker astVisitor = new KindOfChecker(StringUtils.GUICE_MODULE);
-		cu.accept(astVisitor);
-		ITypeBinding guiceModulesTypeBinding = astVisitor.typeBinding;
-		return guiceModulesTypeBinding;
 	}
 
 	public static ProjectResource createProjectResource(ASTNode astNode,
