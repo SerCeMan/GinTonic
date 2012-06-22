@@ -347,29 +347,6 @@ public class ASTNodeUtils {
 		return null;
 	}
 	
-	public static GuiceTypeInfo getGuiceTypeInfoIfFieldDeclaration(
-			ASTNode astNode, CompilationUnit astRoot,
-			ICompilationUnit icompilationUnit) {
-		if (!(astNode instanceof Name)) {
-			return null;
-		}
-
-		ProjectResource origin = IProjectResourceUtils.createProjectResource(
-				astNode,
-				astRoot,
-				icompilationUnit);
-
-		Name name = (Name) astNode;
-		GuiceFieldDeclaration guiceFieldDeclaration = getGuiceFieldDeclarationIfFieldDeclaration(
-				origin,
-				name,
-				astRoot);
-		
-		return guiceFieldDeclaration;
-	}
-			
-		
-	
 	public static GuiceTypeInfo getGuiceTypeInfoIfFieldDeclarationTypeDeclarationOrProviderMethod(
 			ASTNode astNode, CompilationUnit astRoot,
 			ICompilationUnit icompilationUnit) {
