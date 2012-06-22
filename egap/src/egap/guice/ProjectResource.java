@@ -13,7 +13,6 @@ import egap.utils.IProjectResource;
 public class ProjectResource implements Serializable, IProjectResource {
 
 	private static final Joiner JOINER_ON_DOT = Joiner.on('.');
-	private static final Joiner JOINER_ON_FILE_SEPARATOR = Joiner.on('/');
 
 	private static final long serialVersionUID = 8853803394114472544L;
 
@@ -86,11 +85,6 @@ public class ProjectResource implements Serializable, IProjectResource {
 		return projectName;
 	}
 
-	@Override
-	public String getSrcFolderPath() {
-		return JOINER_ON_FILE_SEPARATOR.join(srcFolderPathComponents);
-	}
-	
 	@Override
 	public List<String> getSrcFolderPathComponents() {
 		return srcFolderPathComponents;

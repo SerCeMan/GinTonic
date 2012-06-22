@@ -25,12 +25,6 @@ public interface IProjectResource {
 	List<String> getSrcFolderPathComponents();
 
 	/**
-	 * The path of the source folder relative to the project. The path components
-	 * are separated by /. 
-	 */
-	String getSrcFolderPath();
-
-	/**
 	 * Returns the package parts (e.g ["java","lang"]).
 	 * 
 	 * @return the package parts.
