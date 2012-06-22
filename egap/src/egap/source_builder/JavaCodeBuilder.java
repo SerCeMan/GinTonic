@@ -53,14 +53,6 @@ public class JavaCodeBuilder {
 		append(STATEMENT_FINISH);
 	}
 
-	public void startClass(String guiceModuleClassName, String extendsDecl) {
-		append("public class ");
-		append(guiceModuleClassName);
-		if (extendsDecl != null) {
-			append(" extends " + extendsDecl);
-		}
-	}
-
 	public void startInterface(String interfaceName) {
 		append("public interface ");
 		append(interfaceName);
