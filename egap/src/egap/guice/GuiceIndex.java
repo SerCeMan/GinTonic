@@ -189,14 +189,6 @@ public class GuiceIndex implements Serializable {
 	}
 
 	/**
-	 * Returns the guice modules of the given package.
-	 */
-	public List<GuiceModule> getGuiceModulesInPackage(
-			IPackageBinding currentPackageBinding) {
-		return getGuiceModulesInAndBelowPackage(currentPackageBinding, null, 1);
-	}
-
-	/**
 	 * Returns the guice modules of the given package and the parent packages as
 	 * indicated by the parameter depth. Returns an empty List if no modules
 	 * were found.
