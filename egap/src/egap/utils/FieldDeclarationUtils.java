@@ -66,18 +66,6 @@ public class FieldDeclarationUtils {
 		return kindOf;
 	}
 
-	public static boolean isAnnotatedWithInject(FieldDeclaration node) {
-		return isAnnotatedWithMarkerAnnotation(
-				node,
-				StringUtils.GUICE_ANNOTATION_INJECT);
-	}
-
-	public static boolean isGuiceProviderType(FieldDeclaration fieldDeclaration) {
-		return isParameterizedTypeOfBaseType(
-				fieldDeclaration,
-				StringUtils.GUICE_PROVIDER);
-	}
-
 	@SuppressWarnings("unchecked")
 	public static GuiceFieldDeclaration getTypeIfAnnotatedWithInject(ProjectResource origin, FieldDeclaration fieldDeclaration,
 			CompilationUnit compilationUnit, String fieldName) {
