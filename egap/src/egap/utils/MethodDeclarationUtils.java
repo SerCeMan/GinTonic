@@ -58,25 +58,6 @@ public class MethodDeclarationUtils {
 		return variableDeclarations;
 	}
 
-	public static List<SingleVariableDeclaration> getVariableDeclarations(
-			MethodDeclaration methodDeclaration) {
-		final List<SingleVariableDeclaration> variableDeclarations = new ArrayList<SingleVariableDeclaration>();
-		methodDeclaration.accept(new ASTVisitor(false) {
-			@Override
-			public boolean visit(final SingleVariableDeclaration declNode) {
-				declNode.accept(new ASTVisitor(false) {
-					@Override
-					public boolean visit(MarkerAnnotation node) {
-						variableDeclarations.add(declNode);
-						return false;
-					}
-				});
-				return false;
-			}
-		});
-		return variableDeclarations;
-	}
-
 	public static SingleVariableDeclaration getVariableDeclarationsByName(
 			MethodDeclaration methodDeclaration, final String fieldNameFQ) {
 		Preconditions.checkNotNull(methodDeclaration);
