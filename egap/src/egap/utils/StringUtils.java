@@ -38,7 +38,7 @@ public class StringUtils {
 	public static final String GUICE_SCOPE_SINGLETON_NAME = "com.google.inject.Singleton";
 //	public static final String GUICE_SCOPE_NO_SCOPE = "NO_SCOPE";
 	public static final String GUICE_NAMED = "com.google.inject.name.Named";
-	public static final String GUICE_NAMES = "com.google.inject.name.Names";
+	
 	
 	
 	private static final Map<String, String> PRIMITIVES = Maps.newHashMap();
