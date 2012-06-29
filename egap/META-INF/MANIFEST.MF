@@ -16,6 +16,5 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.workbench.texteditor;bundle-version="3.5.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
-Bundle-ClassPath: lib/guava-r06.jar,
- .
+Bundle-ClassPath: .
 Bundle-Vendor: Tim Majunke
