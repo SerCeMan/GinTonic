@@ -17,12 +17,10 @@ public class NavigationCycle {
 	 */
 	private int index = 0;
 	
-
-	public NavigationCycle(List<IProjectResource> projectResources) {
-		super();
+	public void setProjectResources(List<IProjectResource> projectResources) {
 		this.projectResources = projectResources;
 	}
-	
+
 	public boolean jumpTo(IProjectResource projectResource) {
 		Integer resourceIndex = getResourceIndexFor(projectResource);
 		if (resourceIndex != null) {

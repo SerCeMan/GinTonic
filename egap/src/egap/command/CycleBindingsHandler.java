@@ -33,7 +33,6 @@ import egap.utils.GuiceTypeWithAnnotation;
 import egap.utils.IProjectResource;
 import egap.utils.IProjectResourceUtils;
 import egap.utils.ITypeBindingUtils;
-import egap.utils.ListUtils;
 
 /**
  * Jumps from a binding to its binding definition(s). 
@@ -42,7 +41,7 @@ import egap.utils.ListUtils;
  */
 public class CycleBindingsHandler extends AbstractHandler {
 
-	private NavigationCycle navigationCycle;
+	private BindingNavigationCycle navigationCycle;
 
 	/* Intermediate fields, which must be reset after execution. */
 	private ITypeRoot editorInputTypeRoot;
@@ -86,10 +85,7 @@ public class CycleBindingsHandler extends AbstractHandler {
 		if (binding != null) {
 			/* We have a binding so we can create a new navigation cycle! */
 			List<GuiceStatement> bindingDefinitions = findBindingDefinitions(binding);
-			List<IProjectResource> projectResources = ListUtils.newArrayListWithCapacity(bindingDefinitions.size() + 1);
-			projectResources.addAll(bindingDefinitions);
-			projectResources.add(currentCodeLocation);
-			navigationCycle = new NavigationCycle(projectResources);
+			navigationCycle = new BindingNavigationCycle(bindingDefinitions, currentCodeLocation);
 			navigationCycle.jumpToNext();
 		}
 
