@@ -424,7 +424,7 @@ public class GuiceIndex implements Serializable {
 
 				IPackageBinding packageBinding = typeBindingOfInterfaceType.getPackage();
 				String[] packageName = packageBinding.getNameComponents();
-				implicitBinding.setPackagePathComponents(Arrays.asList(packageName));
+				implicitBinding.setPackage(Arrays.asList(packageName));
 
 				IMember member = (IMember) javaElement;
 				if (member.isBinary()) {

@@ -33,29 +33,21 @@ import egap.utils.GuiceTypeWithAnnotation;
 import egap.utils.IProjectResource;
 import egap.utils.IProjectResourceUtils;
 import egap.utils.ITypeBindingUtils;
+import egap.utils.ListUtils;
 
 /**
- * Jumps from an binding to the binding definition.
+ * Jumps from a binding to its binding definition(s). 
  * 
  * @author tmajunke
  */
 public class CycleBindingsHandler extends AbstractHandler {
 
-	private IProjectResource currentCodeLocation;
+	private NavigationCycle navigationCycle;
 
-	/**
-	 * The binding from where we started the navigation cycle.
-	 */
-	private IProjectResource binding;
-	/**
-	 * The binding definitions to the binding.
-	 */
-	private List<GuiceStatement> bindingDefinitions;
-
-	/**
-	 * The index so we know where to jump next.
-	 */
-	private int index;
+	/* Intermediate fields, which must be reset after execution. */
+	private ITypeRoot editorInputTypeRoot;
+	private ICompilationUnit icompilationUnit;
+	private ITextSelection currentSelection;
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
@@ -65,84 +57,72 @@ public class CycleBindingsHandler extends AbstractHandler {
 			cycle();
 		} catch (JavaModelException e) {
 			throw new RuntimeException(e);
+		}finally{
+			nullifyFields();
+			long then = System.currentTimeMillis();
+			long elapsed = then - now;
+			EgapPlugin.logInfo("cycle bindings took " + elapsed + " ms");
 		}
-		long then = System.currentTimeMillis();
-		long elapsed = then - now;
-		EgapPlugin.logInfo("cycle bindings took " + elapsed + " ms");
 
 		return null;
 	}
 
 	private void cycle() throws JavaModelException {
-		GuiceTypeInfo newBinding = findBinding();
 
-		if (newBinding != null) {
-			/* New guice type means we start a new navigation cycle! */
-			bindingDefinitions = findBindingDefinitions(newBinding);
-			binding = newBinding.getOrigin();
-			index = 0;
-			jumpToNextBindingDefinition();
-		}
-		else {
+		IProjectResource currentCodeLocation = getCurrentCodeLocation();
+		if (navigationCycle != null) {
 			/*
-			 * Ok, maybe we are in a binding definition of our navigation cycle.
+			 * First we check if the current code location is contained in our
+			 * navigation cycle.
 			 */
-			boolean isCurrentCodeLocationABindingDefinition = isCurrentCodeLocationABindingDefinition();
-			if (isCurrentCodeLocationABindingDefinition) {
-				jumpToNextBindingDefinition();
+			boolean couldJump = navigationCycle.jumpTo(currentCodeLocation);
+			if(couldJump){
+				return;
 			}
-			else {
-				/*
-				 * Not a new binding, not a binding definition. We can do
-				 * nothing!
-				 */
-			}
-
 		}
+
+		GuiceTypeInfo binding = findBinding();
+
+		if (binding != null) {
+			/* We have a binding so we can create a new navigation cycle! */
+			List<GuiceStatement> bindingDefinitions = findBindingDefinitions(binding);
+			List<IProjectResource> projectResources = ListUtils.newArrayListWithCapacity(bindingDefinitions.size() + 1);
+			projectResources.addAll(bindingDefinitions);
+			projectResources.add(currentCodeLocation);
+			navigationCycle = new NavigationCycle(projectResources);
+			navigationCycle.jumpToNext();
+		}
+
 	}
 
-	private boolean isCurrentCodeLocationABindingDefinition() {
-		int j = 0;
-		for (IProjectResource bindingDefinition : bindingDefinitions) {
-			if (bindingDefinition.getStartPosition().equals(
-					currentCodeLocation.getStartPosition())) {
-				if (bindingDefinition.getTypeNameFullyQualified().equals(
-						currentCodeLocation.getTypeNameFullyQualified())) {
-					if (bindingDefinition.getProjectName().equals(
-							currentCodeLocation.getProjectName())) {
-						index = j + 1;
-						return true;
-					}
-				}
-			}
-			j++;
+	private IProjectResource getCurrentCodeLocation() {
+
+		IEditorPart editorPart = EditorUtils.getActiveEditor();
+
+		if (editorPart == null | !(editorPart instanceof ITextEditor)) {
+			return null;
 		}
-		return false;
-	}
+		final ITextEditor textEditor = (ITextEditor) editorPart;
+		IEditorInput editorInput = textEditor.getEditorInput();
 
-	/**
-	 * Jumps to the next binding definition or the binding from where we
-	 * started.
-	 */
-	private void jumpToNextBindingDefinition() {
+		editorInputTypeRoot = JavaUI.getEditorInputTypeRoot(editorInput);
 
-		if (bindingDefinitions.isEmpty()) {
-			return;
+		if (!(editorInputTypeRoot instanceof ICompilationUnit)) {
+			return null;
 		}
 
-		IProjectResource jumpTarget = null;
-		if (index < bindingDefinitions.size()) {
-			jumpTarget = bindingDefinitions.get(index);
-			index++;
-		}
-		else {
-			/* The last target is from where we came. */
-			jumpTarget = binding;
-			index = 0;
-		}
+		icompilationUnit = (ICompilationUnit) editorInputTypeRoot;
 
-		IProjectResourceUtils.openEditorWithStatementDeclaration(jumpTarget);
+		ISelectionProvider selectionProvider = textEditor.getSelectionProvider();
+		ISelection sel = selectionProvider.getSelection();
+		if (!(sel instanceof ITextSelection)) {
+			return null;
+		}
+		currentSelection = (ITextSelection) sel;
 
+		return IProjectResourceUtils.createProjectResource(
+				icompilationUnit,
+				currentSelection);
 	}
 
 	/**
@@ -154,36 +134,13 @@ public class CycleBindingsHandler extends AbstractHandler {
 	 */
 	private GuiceTypeInfo findBinding() throws JavaModelException {
 
-		IEditorPart editorPart = EditorUtils.getActiveEditor();
-
-		if (editorPart == null | !(editorPart instanceof ITextEditor)) {
-			return null;
-		}
-		final ITextEditor textEditor = (ITextEditor) editorPart;
-		IEditorInput editorInput = textEditor.getEditorInput();
-
-		ITypeRoot editorInputTypeRoot = JavaUI.getEditorInputTypeRoot(editorInput);
-
-		if (!(editorInputTypeRoot instanceof ICompilationUnit)) {
-			return null;
-		}
-
-		ICompilationUnit icompilationUnit = (ICompilationUnit) editorInputTypeRoot;
-
-		ISelectionProvider selectionProvider = textEditor.getSelectionProvider();
-		ISelection sel = selectionProvider.getSelection();
-		if (!(sel instanceof ITextSelection)) {
-			return null;
-		}
-		ITextSelection currentSelection = (ITextSelection) sel;
-		int offset = currentSelection.getOffset();
-
-		IJavaElement selectedJavaElement = icompilationUnit.getElementAt(offset);
+		IJavaElement selectedJavaElement = icompilationUnit.getElementAt(currentSelection.getOffset());
 		int elementType = selectedJavaElement.getElementType();
 
 		/**
 		 * Here we can perform a quick check on the IJavaElement if the
-		 * currently selected element is a binding.
+		 * currently selected element is a binding. Trying to avoid the
+		 * parsing.
 		 * 
 		 * <pre>
 		 * IJavaElement.FIELD
@@ -199,12 +156,9 @@ public class CycleBindingsHandler extends AbstractHandler {
 		 * public void setServableDrinks(Set<Drink> servableDrinks) {
 		 *   this.servableDrinks = servableDrinks;
 		 * }
-		 * 
-		 * A binding definition is of type 'IJavaElement.METHOD'
-		 * bind(Date.class).annotatedWith(TimeBarCloses.class).toInstance(
-		 * new Date(0, 0, 0, 11, 0, 0));
-		 * 
 		 * <pre>
+		 * 
+		 * 
 		 */
 		if (!(elementType == IJavaElement.FIELD || elementType == IJavaElement.METHOD)) {
 			return null;
@@ -216,12 +170,8 @@ public class CycleBindingsHandler extends AbstractHandler {
 				null);
 
 		int length = currentSelection.getLength();
+		int offset = currentSelection.getOffset();
 		ASTNode coveredNode = findCoveredNode(compilationUnit, offset, length);
-
-		currentCodeLocation = IProjectResourceUtils.createProjectResource(
-				coveredNode,
-				compilationUnit,
-				icompilationUnit);
 
 		GuiceTypeInfo binding = ASTNodeUtils.getGuiceTypeInfoIfFieldDeclarationTypeDeclarationOrProviderMethod(
 				coveredNode,
@@ -258,6 +208,12 @@ public class CycleBindingsHandler extends AbstractHandler {
 			projectResourcesToVisit = guiceIndex.getBindingsByType(typeBindingWithoutProvider);
 		}
 		return projectResourcesToVisit;
+	}
+	
+	private void nullifyFields() {
+		editorInputTypeRoot = null;
+		icompilationUnit = null;
+		currentSelection = null;
 	}
 
 }

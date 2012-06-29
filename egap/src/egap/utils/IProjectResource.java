@@ -6,7 +6,8 @@ import java.util.List;
 import org.eclipse.jdt.core.dom.ASTNode;
 
 /**
- * A java resource located inside a src folder of an eclipse project.
+ * A project resource is a leightweight reference to a source code location. It is 
+ * currently used to navigate from one source code location to another.
  * 
  * @author tmajunke
  */
@@ -18,18 +19,19 @@ public interface IProjectResource {
 	String getProjectName();
 
 	/**
-	 * Returns the name components to the src folder.
+	 * Returns the path to the src folder. Most likely this is ["src"] but
+	 * maven projects use ["src", "main", "java"].
 	 * 
-	 * @return the name components to the src folder.
+	 * @return the path to the src folder.
 	 */
-	List<String> getSrcFolderPathComponents();
+	List<String> getPathToSrcFolder();
 
 	/**
-	 * Returns the package parts (e.g ["java","lang"]).
+	 * Returns the package as list of strings (e.g ["java","lang"]).
 	 * 
-	 * @return the package parts.
+	 * @return the package as list of strings.
 	 */
-	List<String> getPackageNameComponents();
+	List<String> getPackage();
 
 	/**
 	 * The package name fully qualified (e.g java.lang). Is empty for the
@@ -53,11 +55,11 @@ public interface IProjectResource {
 	 * Returns the start position like in {@link ASTNode#getStartPosition()} or
 	 * null if there is none.
 	 */
-	public Integer getStartPosition();
+	Integer getStartPosition();
 
 	/**
 	 * Returns the selection length like in {@link ASTNode#getLength()} or null
 	 * if there is none.
 	 */
-	public Integer getLength();
+	Integer getLength();
 }

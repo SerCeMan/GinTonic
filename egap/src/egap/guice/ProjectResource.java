@@ -1,10 +1,8 @@
 package egap.guice;
 
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.List;
 
-import org.eclipse.jdt.core.dom.ASTNode;
 
 import egap.utils.IProjectResource;
 import egap.utils.StringUtils;
@@ -13,33 +11,11 @@ public class ProjectResource implements Serializable, IProjectResource {
 
 	private static final long serialVersionUID = 8853803394114472544L;
 
-	/**
-	 * The name of the project the type belongs to.
-	 */
 	private String projectName;
-
 	private List<String> srcFolderPathComponents;
-
-	/**
-	 * The package name fully qualified (e.g java.lang). Is empty for the
-	 * default package.
-	 */
 	private List<String> packageNameComponents;
-
-	/**
-	 * The name of the java type (e.g for {@link Collection} it would be
-	 * Collection).
-	 */
 	private String typeName;
-
-	/**
-	 * @see ASTNode#getStartPosition()
-	 */
 	protected Integer startPosition;
-
-	/**
-	 * @see ASTNode#getLength()
-	 */
 	protected Integer length;
 
 	public ProjectResource() {
@@ -57,18 +33,10 @@ public class ProjectResource implements Serializable, IProjectResource {
 		this.srcFolderPathComponents = srcFolderPathComponents;
 	}
 
-	public void setPackagePathComponents(List<String> packageFullyQualified) {
-		if(packageFullyQualified == null){
-			System.out.println();
-		}
-		
+	public void setPackage(List<String> packageFullyQualified) {
 		this.packageNameComponents = packageFullyQualified;
 	}
 	
-	/**
-	 * The simple name of the java type (e.g for {@link Collection} it would be
-	 * Collection).
-	 */
 	public void setTypeName(String typeName) {
 		this.typeName = typeName;
 	}
@@ -83,12 +51,12 @@ public class ProjectResource implements Serializable, IProjectResource {
 	}
 
 	@Override
-	public List<String> getSrcFolderPathComponents() {
+	public List<String> getPathToSrcFolder() {
 		return srcFolderPathComponents;
 	}
 
 	@Override
-	public List<String> getPackageNameComponents() {
+	public List<String> getPackage() {
 		return packageNameComponents;
 	}
 	

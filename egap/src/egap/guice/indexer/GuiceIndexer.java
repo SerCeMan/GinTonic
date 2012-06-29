@@ -89,7 +89,7 @@ public class GuiceIndexer {
 
 			GuiceModule guiceModule = new GuiceModule();
 			guiceModule.setTypeName(guiceModuleName);
-			guiceModule.setPackagePathComponents(Arrays.asList(packageFullyQualified));
+			guiceModule.setPackage(Arrays.asList(packageFullyQualified));
 			guiceModule.setProjectName(projectName);
 			guiceModule.setSrcFolderPathComponents(srcFolderPath);
 
@@ -115,8 +115,8 @@ public class GuiceIndexer {
 
 	private void copyInfo(GuiceModule guiceModule, GuiceStatement statement) {
 		statement.setProjectName(guiceModule.getProjectName());
-		statement.setPackagePathComponents(guiceModule.getPackageNameComponents());
-		statement.setSrcFolderPathComponents(guiceModule.getSrcFolderPathComponents());
+		statement.setPackage(guiceModule.getPackage());
+		statement.setSrcFolderPathComponents(guiceModule.getPathToSrcFolder());
 		statement.setTypeName(guiceModule.getTypeName());
 	}
 
