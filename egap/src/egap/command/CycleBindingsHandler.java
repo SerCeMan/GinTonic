@@ -35,7 +35,7 @@ import egap.utils.IProjectResourceUtils;
 import egap.utils.ITypeBindingUtils;
 
 /**
- * Jumps from a binding to its binding definition(s). 
+ * Jumps from a binding to its binding definition(s).
  * 
  * @author tmajunke
  */
@@ -56,7 +56,7 @@ public class CycleBindingsHandler extends AbstractHandler {
 			cycle();
 		} catch (JavaModelException e) {
 			throw new RuntimeException(e);
-		}finally{
+		} finally {
 			nullifyFields();
 			long then = System.currentTimeMillis();
 			long elapsed = then - now;
@@ -75,7 +75,7 @@ public class CycleBindingsHandler extends AbstractHandler {
 			 * navigation cycle.
 			 */
 			boolean couldJump = navigationCycle.jumpTo(currentCodeLocation);
-			if(couldJump){
+			if (couldJump) {
 				return;
 			}
 		}
@@ -83,10 +83,21 @@ public class CycleBindingsHandler extends AbstractHandler {
 		GuiceTypeInfo binding = findBinding();
 
 		if (binding != null) {
-			/* We have a binding so we can create a new navigation cycle! */
 			List<GuiceStatement> bindingDefinitions = findBindingDefinitions(binding);
-			navigationCycle = new BindingNavigationCycle(bindingDefinitions, currentCodeLocation);
-			navigationCycle.jumpToNext();
+			if (!bindingDefinitions.isEmpty()) {
+				/*
+				 * We have a binding and binding definitions, now we can create
+				 * a new navigation cycle!
+				 */
+				navigationCycle = new BindingNavigationCycle(
+						bindingDefinitions,
+						currentCodeLocation);
+				navigationCycle.jumpToNext();
+			}
+			else {
+				EgapPlugin.logInfo("No bindings definition found for binding "
+						+ binding.getTargetTypeBinding().getName());
+			}
 		}
 
 	}
@@ -135,8 +146,7 @@ public class CycleBindingsHandler extends AbstractHandler {
 
 		/**
 		 * Here we can perform a quick check on the IJavaElement if the
-		 * currently selected element is a binding. Trying to avoid the
-		 * parsing.
+		 * currently selected element is a binding. Trying to avoid the parsing.
 		 * 
 		 * <pre>
 		 * IJavaElement.FIELD
@@ -152,6 +162,7 @@ public class CycleBindingsHandler extends AbstractHandler {
 		 * public void setServableDrinks(Set<Drink> servableDrinks) {
 		 *   this.servableDrinks = servableDrinks;
 		 * }
+		 * 
 		 * <pre>
 		 * 
 		 * 
@@ -205,7 +216,7 @@ public class CycleBindingsHandler extends AbstractHandler {
 		}
 		return projectResourcesToVisit;
 	}
-	
+
 	private void nullifyFields() {
 		editorInputTypeRoot = null;
 		icompilationUnit = null;
