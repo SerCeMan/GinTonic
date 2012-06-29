@@ -323,8 +323,7 @@ public class GuiceIndex implements Serializable {
 	public List<GuiceStatement> getBindingsByTypeAndAnnotationLimitToPackage(
 			ITypeBinding typeToFind, GuiceAnnotation guiceAnnotationToFind,
 			Set<String> packageToLimit) {
-		ITypeBinding typeBindingOfInterfaceType = typeToFind;
-		String typeToFindQualifiedName = typeBindingOfInterfaceType.getQualifiedName();
+		String typeToFindQualifiedName = typeToFind.getQualifiedName();
 
 		/*
 		 * We only store the wrappers instead of primitives, so maybe we must
@@ -373,7 +372,7 @@ public class GuiceIndex implements Serializable {
 
 		checkForImplicitBindings(
 				guiceAnnotationToFind,
-				typeBindingOfInterfaceType,
+				typeToFind,
 				bindings);
 
 		return bindings;
