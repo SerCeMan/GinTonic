@@ -52,6 +52,9 @@ public class CycleBindingsHandler extends AbstractHandler {
 	 */
 	private List<GuiceStatement> bindingDefinitions;
 
+	/**
+	 * The index so we know where to jump next.
+	 */
 	private int index;
 
 	@Override
