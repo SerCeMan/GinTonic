@@ -95,7 +95,7 @@ public class CycleBindingsHandler extends AbstractHandler {
 				navigationCycle.jumpToNext();
 			}
 			else {
-				EgapPlugin.logInfo("No bindings definition found for binding "
+				EgapPlugin.logInfo("No binding definition found for binding "
 						+ binding.getTargetTypeBinding().getName());
 			}
 		}
