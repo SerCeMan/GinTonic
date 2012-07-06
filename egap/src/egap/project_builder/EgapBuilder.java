@@ -104,7 +104,7 @@ public class EgapBuilder extends IncrementalProjectBuilder {
 			}
 			GuiceModule guiceModule = guiceIndexer.index(project, iFile);
 			if (guiceModule != null) {
-				GuiceIndex.get().addGuiceModuleDontLog(guiceModule);
+				guiceIndex.addGuiceModuleDontLog(guiceModule);
 			}
 		}
 
@@ -118,7 +118,7 @@ public class EgapBuilder extends IncrementalProjectBuilder {
 				- nrOfGuiceModulesBefore;
 		String message = "Indexing " + project.getName() + " finished ("
 				+ elapsed + " ms, +" + nrOfGuiceModulesAdded + " => "
-				+ GuiceIndex.get().getNrOfGuiceModules() + " modules total).";
+				+ guiceIndex.getNrOfGuiceModules() + " modules total).";
 
 		EgapPlugin.logInfo(message);
 
