@@ -58,7 +58,6 @@ public class IFileUtils {
 					true);
 			if (startPosition != null && length != null) {
 				editorPart.selectAndReveal(startPosition, length);
-
 			}
 		} catch (final PartInitException pie) {
 			EgapPlugin.logException(pie);
