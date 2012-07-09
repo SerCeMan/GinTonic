@@ -5,8 +5,14 @@ import java.util.List;
 import egap.utils.IProjectResource;
 import egap.utils.IProjectResourceUtils;
 
+/**
+ * A {@link NavigationCycle} can be used to jump from one project resource to
+ * another. Jump means that the target resource is opened in an eclipse editor.
+ * 
+ * @author tmajunke
+ */
 public class NavigationCycle {
-	
+
 	/**
 	 * The project resources that we can jump to.
 	 */
@@ -16,11 +22,19 @@ public class NavigationCycle {
 	 * The index so we know where to jump next.
 	 */
 	private int index = 0;
-	
+
 	public void setProjectResources(List<IProjectResource> projectResources) {
 		this.projectResources = projectResources;
 	}
 
+	/**
+	 * Jumps to the given project resource if the resource is contained in this
+	 * navigation cycle.
+	 * 
+	 * @param projectResource the projectResource. May not be null.
+	 * @return true, if the resource has been contained in this navigation
+	 *         cycle. Otherwise false.
+	 */
 	public boolean jumpTo(IProjectResource projectResource) {
 		Integer resourceIndex = getResourceIndexFor(projectResource);
 		if (resourceIndex != null) {
@@ -29,19 +43,24 @@ public class NavigationCycle {
 		}
 		return false;
 	}
-	
+
+	/**
+	 * Jumps to the next project resource. If we are already at the last project
+	 * resource, then we jump to the first one (in other words we cycle through
+	 * the project resources).
+	 */
+	public void jumpToNext() {
+		index = checkIndex(index++);
+		jumpTo(index);
+	}
+
 	private void jumpTo(int indexToJumpTo) {
 		int i = checkIndex(indexToJumpTo);
 		IProjectResource jumpTarget = projectResources.get(i);
 		IProjectResourceUtils.openEditorWithStatementDeclaration(jumpTarget);
 	}
-	
-	public void jumpToNext() {
-		index = checkIndex(index++);
-		jumpTo(index);
-	}
-	
-	private int checkIndex(int i){
+
+	private int checkIndex(int i) {
 		int size = projectResources.size();
 		if (i < size) {
 			return i;
@@ -49,7 +68,6 @@ public class NavigationCycle {
 		int n = (i % size);
 		return n;
 	}
-
 
 	/**
 	 * Returns true if the given projectResource is contained in this navigation
@@ -78,7 +96,4 @@ public class NavigationCycle {
 		return null;
 	}
 
-	
-
-	
 }
