@@ -34,7 +34,14 @@ public class GuiceIndexer {
 
 		String filename = file.getName();
 		/*
-		 * We have to reject non java files (like binary .class files). 
+		 * We have to reject non java files (like binary .class files). Note to the developer: 
+		 * If you remove this check the following call to
+		 * 
+		 * <pre>
+		 * ICompilationUnit compilationUnit = (ICompilationUnit) JavaCore.create(file);
+		 * </pre>
+		 * 
+		 * can fail with a ClassCastException. 
 		 */
 		if (!filename.endsWith(".java")) {
 			return null;
