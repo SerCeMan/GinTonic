@@ -86,7 +86,7 @@ public class StringUtils {
 	 * Translates primitives like int, double, etc to the fully qualified
 	 * wrapper class name(eg. for the primitive "int" you get
 	 * "java.lang.Integer"). If the given String is not a primitive type
-	 * then it is returned.
+	 * then itself is returned.
 	 */
 	public static String translatePrimitiveToWrapper(String primitive) {
 		String wrapper = PRIMITIVES.get(primitive);
