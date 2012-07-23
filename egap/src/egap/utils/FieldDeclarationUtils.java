@@ -95,14 +95,19 @@ public class FieldDeclarationUtils {
 				return new GuiceFieldDeclaration(origin, type.resolveBinding(), guiceAnnotation, fieldName, fieldDeclaration);
 			}
 		}
-
+		
+		/*
+		 * Check if a guicified setter method exists. If it does 
+		 */
+		String setterMethodName = "set" + StringUtils.capitalize(fieldName);
+		
 		MethodDeclaration setter = ASTNodeUtils.getMethodByNameExpectSingleMethod(
 				compilationUnit,
-				fieldName);
+				setterMethodName);
 		if (setter != null) {
+			annotationList = ASTNodeUtils.getMarkerAnnotationList(setter.modifiers());
 			if (annotationList.containsInjectType()) {
-				annotationList = ASTNodeUtils.getMarkerAnnotationList(setter.modifiers());
-				Type type = setter.getReturnType2();
+				Type type = fieldDeclaration.getType();
 				GuiceAnnotation guiceAnnotation = annotationList.getGuiceAnnotation();
 				return new GuiceFieldDeclaration(origin, type.resolveBinding(), guiceAnnotation, fieldName, fieldDeclaration);
 			}
