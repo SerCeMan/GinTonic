@@ -304,9 +304,9 @@ public class ASTNodeUtils {
 	}
 
 	public static List<MethodDeclaration> getMethodByName(
-			CompilationUnit astRoot, final String fieldAsSetter) {
+			CompilationUnit astRoot, final String methodName) {
 
-		FindMethodByName methodByName = new FindMethodByName(fieldAsSetter);
+		FindMethodByName methodByName = new FindMethodByName(methodName);
 		astRoot.accept(methodByName);
 		List<MethodDeclaration> methodDeclarations = methodByName.methodDeclarations;
 
@@ -314,10 +314,10 @@ public class ASTNodeUtils {
 	}
 
 	public static MethodDeclaration getMethodByNameExpectSingleMethod(
-			CompilationUnit astRoot, final String fieldAsSetter) {
+			CompilationUnit astRoot, final String methodName) {
 		List<MethodDeclaration> methodByName = getMethodByName(
 				astRoot,
-				fieldAsSetter);
+				methodName);
 		if (methodByName.size() > 0) {
 			MethodDeclaration methodDeclaration = methodByName.get(0);
 			return methodDeclaration;
@@ -377,10 +377,6 @@ public class ASTNodeUtils {
 		GuiceProviderMethodVar guicyProviderMethodVar = getGuiceTypeInfoIfVariableDeclOfProviderMethod(
 				origin,
 				name);
-		if (guicyProviderMethodVar != null) {
-			return guicyProviderMethodVar;
-		}
-
 		return guicyProviderMethodVar;
 	}
 
