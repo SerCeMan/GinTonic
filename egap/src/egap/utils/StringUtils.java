@@ -75,7 +75,7 @@ public class StringUtils {
 	 * @return the name with a capitalized first character.
 	 */
 	public static String capitalize(String name) {
-		StringBuilder result = new StringBuilder();
+		StringBuilder result = new StringBuilder(name.length());
 		char upperCase = Character.toUpperCase(name.charAt(0));
 		result.append(upperCase);
 		result.append(name.substring(1));
