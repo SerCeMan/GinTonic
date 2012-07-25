@@ -55,7 +55,7 @@ public class ProposalCreateAssistedFactory implements IJavaCompletionProposal {
 
 	@Override
 	public Image getImage() {
-		return Icons.egapDefaultIconSmall;
+		return Icons.egapIconCreate;
 	}
 
 	@Override
