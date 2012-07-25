@@ -76,7 +76,7 @@ public class ProposalCreateBindingForAssistedFactory implements
 
 	@Override
 	public Image getImage() {
-		return Icons.egapDefaultIconSmall;
+		return Icons.egapIconCreate;
 	}
 
 	@Override
