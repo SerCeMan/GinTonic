@@ -24,7 +24,7 @@ public interface IProjectResource {
 	 * 
 	 * @return the path to the src folder.
 	 */
-	List<String> getPathToSrcFolder();
+	List<String> getSrcFolderPathComponents();
 
 	/**
 	 * Returns the package as list of strings (e.g ["java","lang"]).

@@ -20,7 +20,7 @@ public class IProjectResourceUtils {
 	
 	public static void openEditorWithStatementDeclaration(
 			IProjectResource navigationEndpoint, Integer startPosition) {
-		IFile srcFile = getIFile(navigationEndpoint);
+		IFile srcFile = getJavaFile(navigationEndpoint);
 		IFileUtils.selectAndRevealInEditor(
 				srcFile,
 				startPosition,
@@ -32,18 +32,24 @@ public class IProjectResourceUtils {
 		openEditorWithStatementDeclaration(navigationEndpoint, navigationEndpoint.getStartPosition());
 	}
 
-	public static IFile getIFile(IProjectResource navigationEndpoint) {
-		IFile srcFile = IFileUtils.getIFile(
-				navigationEndpoint.getProjectName(),
-				navigationEndpoint.getPathToSrcFolder(),
-				navigationEndpoint.getPackage(),
-				navigationEndpoint.getTypeName());
+	/**
+	 * Returns the project resource as {@link IFile}.
+	 * 
+	 * @param projectResource the projectResource
+	 * @return the project resource as {@link IFile}.
+	 */
+	public static IFile getJavaFile(IProjectResource projectResource) {
+		IFile srcFile = IFileUtils.getJavaFile(
+				projectResource.getProjectName(),
+				projectResource.getSrcFolderPathComponents(),
+				projectResource.getPackage(),
+				projectResource.getTypeName());
 		return srcFile;
 	}
 
 	public static ICompilationUnit getICompilationUnit(
 			IProjectResource navigationEndpoint) {
-		IFile srcFile = getIFile(navigationEndpoint);
+		IFile srcFile = getJavaFile(navigationEndpoint);
 		ICompilationUnit compilationUnit = JavaCore.createCompilationUnitFrom(srcFile);
 		return compilationUnit;
 	}
@@ -76,10 +82,7 @@ public class IProjectResourceUtils {
 
 	public static ProjectResource createProjectResource(ICompilationUnit icompilationUnit, ITextSelection textSelection) {
 		ProjectResource projectResource = new ProjectResource();
-		int length = textSelection.getLength();
-		projectResource.setLength(length);
-		int startPosition = textSelection.getOffset();
-		projectResource.setStartPosition(startPosition);
+		
 		
 		IResource resource = icompilationUnit.getResource();
 		IProject project = resource.getProject();
@@ -95,7 +98,19 @@ public class IProjectResourceUtils {
 		
 		String typeName = ICompilationUnitUtils.getNameWithoutJavaExtension(icompilationUnit);
 		projectResource.setTypeName(typeName);
+		
+		if(textSelection != null){
+			int length = textSelection.getLength();
+			projectResource.setLength(length);
+			int startPosition = textSelection.getOffset();
+			projectResource.setStartPosition(startPosition);
+		}
+		
 		return projectResource;
+	}
+
+	public static ProjectResource createProjectResource(ICompilationUnit icompilationUnit) {
+		return createProjectResource(icompilationUnit, null);
 	}
 
 	

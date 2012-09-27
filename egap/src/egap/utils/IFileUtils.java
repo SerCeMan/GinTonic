@@ -23,25 +23,20 @@ public class IFileUtils {
 
 	private static final char PATH_SEPARATOR = '/';
 
-	public static IFile getIFile(String projectName,
+	public static IFile getJavaFile(String projectName,
 			List<String> srcFolderPathComponents,
-			List<String> packagePathComponents, String filename) {
+			List<String> packagePathComponents, String typeName) {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IWorkspaceRoot root = workspace.getRoot();
 		IProject project = root.getProject(projectName);
-		Preconditions.checkState(project.exists());
 
 		String sourceFolder = StringUtils.join(PATH_SEPARATOR, srcFolderPathComponents)
 				+ PATH_SEPARATOR + StringUtils.join(PATH_SEPARATOR,packagePathComponents);
 
 		IFolder folder = project.getFolder(sourceFolder);
-		Preconditions.checkState(folder.exists(), "The folder '" + sourceFolder
-				+ "' does not exist!");
-		String name = filename + ".java";
-		IFile file = folder.getFile(name);
 
-		Preconditions.checkState(file.exists(), "The file '" + name
-				+ "' does not exist!");
+		String filename = typeName + ".java";
+		IFile file = folder.getFile(filename);
 
 		return file;
 	}

@@ -18,12 +18,4 @@ public class ListUtils {
 		return new LinkedList<E>();
 	}
 
-	public static <E> List<E> newArrayList(List<E> elements) {
-		ArrayList<E> arrayList = newArrayListWithCapacity(elements.size());
-		for (E e : elements) {
-			arrayList.add(e);
-		}
-		return arrayList;
-	}
-
 }

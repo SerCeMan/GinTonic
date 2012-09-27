@@ -123,7 +123,7 @@ public class GuiceIndexer {
 	private void copyInfo(GuiceModule guiceModule, GuiceStatement statement) {
 		statement.setProjectName(guiceModule.getProjectName());
 		statement.setPackage(guiceModule.getPackage());
-		statement.setSrcFolderPathComponents(guiceModule.getPathToSrcFolder());
+		statement.setSrcFolderPathComponents(guiceModule.getSrcFolderPathComponents());
 		statement.setTypeName(guiceModule.getTypeName());
 	}
 

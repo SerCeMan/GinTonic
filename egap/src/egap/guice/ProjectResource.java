@@ -51,7 +51,7 @@ public class ProjectResource implements Serializable, IProjectResource {
 	}
 
 	@Override
-	public List<String> getPathToSrcFolder() {
+	public List<String> getSrcFolderPathComponents() {
 		return srcFolderPathComponents;
 	}
 

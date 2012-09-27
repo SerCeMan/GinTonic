@@ -27,7 +27,7 @@ import egap.guice.GuiceIndex;
 import egap.guice.annotations.GuiceAnnotation;
 import egap.guice.statements.GuiceStatement;
 import egap.utils.ASTNodeUtils;
-import egap.utils.EditorUtils;
+import egap.utils.EclipseUtils;
 import egap.utils.GuiceTypeInfo;
 import egap.utils.GuiceTypeWithAnnotation;
 import egap.utils.IProjectResource;
@@ -104,7 +104,7 @@ public class CycleBindingsHandler extends AbstractHandler {
 
 	private IProjectResource getCurrentCodeLocation() {
 
-		IEditorPart editorPart = EditorUtils.getActiveEditor();
+		IEditorPart editorPart = EclipseUtils.getActiveEditor();
 
 		if (editorPart == null | !(editorPart instanceof ITextEditor)) {
 			return null;
