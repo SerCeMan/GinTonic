@@ -43,7 +43,7 @@ public class GuiceIndexer {
 		 * 
 		 * can fail with a ClassCastException. 
 		 */
-		if (!filename.endsWith(".java")) {
+		if (!filename.endsWith(ICompilationUnitUtils.JAVA_EXTENSION)) {
 			return null;
 		}
 

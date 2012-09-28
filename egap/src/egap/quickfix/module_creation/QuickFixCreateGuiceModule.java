@@ -13,6 +13,7 @@ import org.eclipse.jdt.ui.text.java.IInvocationContext;
 import org.eclipse.jdt.ui.text.java.IJavaCompletionProposal;
 
 import egap.quickfix.AbstractEgapQuickFix;
+import egap.utils.ICompilationUnitUtils;
 import egap.utils.ITypeBindingUtils;
 
 /**
@@ -92,7 +93,7 @@ public class QuickFixCreateGuiceModule extends AbstractEgapQuickFix {
 		 */
 		IPackageFragment packageFragment = (IPackageFragment) compilationUnit.getParent();
 		ICompilationUnit guiceModuleCompilationUnit = packageFragment.getCompilationUnit(guiceModuleName
-				+ ".java");
+				+ ICompilationUnitUtils.JAVA_EXTENSION);
 
 		/*
 		 * Falls wir kein existierendes Module mit gleichem Namen finden, dann

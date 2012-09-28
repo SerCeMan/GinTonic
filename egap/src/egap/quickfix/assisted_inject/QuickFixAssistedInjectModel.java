@@ -21,6 +21,7 @@ import egap.guice.statements.BindingStatement;
 import egap.quickfix.AbstractEgapQuickFix;
 import egap.quickfix.navigate.ProposalNavigateToStatement;
 import egap.utils.ASTNodeUtils;
+import egap.utils.ICompilationUnitUtils;
 
 /**
  * @author tmajunke
@@ -64,7 +65,7 @@ public class QuickFixAssistedInjectModel extends AbstractEgapQuickFix {
 		String factoryTypeName = modelTypeName + "Factory";
 		
 		ICompilationUnit factory = modelPackage.getCompilationUnit(factoryTypeName
-				+ ".java");
+				+ ICompilationUnitUtils.JAVA_EXTENSION);
 		
 		if (factory.exists()) {
 			GuiceIndex guiceIndex = GuiceIndex.get();

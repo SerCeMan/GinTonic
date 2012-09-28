@@ -35,7 +35,7 @@ public class IFileUtils {
 
 		IFolder folder = project.getFolder(sourceFolder);
 
-		String filename = typeName + ".java";
+		String filename = typeName + ICompilationUnitUtils.JAVA_EXTENSION;
 		IFile file = folder.getFile(filename);
 
 		return file;
