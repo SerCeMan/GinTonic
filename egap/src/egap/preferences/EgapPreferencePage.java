@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
+import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
@@ -41,31 +42,46 @@ public class EgapPreferencePage extends FieldEditorPreferencePage implements
 	 */
 	@Override
 	public void createFieldEditors() {
-		
+
 		EgapPlugin egapPlugin = EgapPlugin.getEgapPlugin();
-		
+
 		List<EgapQuickFix> quickfixes = egapPlugin.getQuickfixes();
-		
+
 		Composite fieldEditorParent = getFieldEditorParent();
 		for (final EgapQuickFix quickFix : quickfixes) {
 			BooleanFieldEditor booleanFieldEditor = new BooleanFieldEditor(
 					quickFix.getEnabledStateID(),
 					quickFix.getPreferencesDisplayName(),
 					fieldEditorParent);
-			
+
 			addField(booleanFieldEditor);
 		}
-		
+
 		BooleanFieldEditor debugModeField = new BooleanFieldEditor(
 				EgapPlugin.DEBUG_MODE_ID,
 				"Debug mode",
 				fieldEditorParent);
 		addField(debugModeField);
-		
+
+		/* */
+		addField(new StringFieldEditor(
+				EgapPlugin.ID_TEST_SUFFIX,
+				"Testcase suffix",
+				fieldEditorParent));
+		addField(new StringFieldEditor(
+				EgapPlugin.ID_TEST_PACKAGE_PREFIX,
+				"Test package prefix",
+				fieldEditorParent));
+		addField(new StringFieldEditor(
+				EgapPlugin.ID_SRC_FOLDER,
+				"src folder",
+				fieldEditorParent));
+		addField(new StringFieldEditor(
+				EgapPlugin.ID_TEST_SRC_FOLDER,
+				"Test src folder",
+				fieldEditorParent));
 	}
-	
-	
-	
+
 	@Override
 	public boolean performOk() {
 		return super.performOk();

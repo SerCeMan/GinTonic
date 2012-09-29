@@ -29,7 +29,13 @@ import egap.utils.ListUtils;
 public class EgapPlugin extends AbstractUIPlugin implements IStartup {
 
 	public static final String PLUGIN_ID = "com.jaculon.egap";
-	public static final String DEBUG_MODE_ID = "DEBUG_MODE";
+	
+	public static final String DEBUG_MODE_ID = "egap.DEBUG_MODE";
+	public static final String ID_TEST_SRC_FOLDER = "egap.test_src_folder";
+	public static final String ID_TEST_SUFFIX = "egap.test_suffix";
+	public static final String ID_TEST_PACKAGE_PREFIX = "egap.package_prefix";
+	public static final String ID_SRC_FOLDER = "egap.src_folder";
+
 
 	private static EgapPlugin egapPlugin;
 
@@ -147,5 +153,6 @@ public class EgapPlugin extends AbstractUIPlugin implements IStartup {
 		boolean isDebugModeEnabled = store.getBoolean(DEBUG_MODE_ID);
 		return isDebugModeEnabled;
 	}
+
 
 }

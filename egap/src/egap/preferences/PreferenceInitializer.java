@@ -35,6 +35,11 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		store.setDefault(QuickFixBindingCreation.ENABLED_STATE_ID, true);
 		store.setDefault(QuickFixProviderMethodCreation.ENABLED_STATE_ID, true);
 		store.setDefault(EgapPlugin.DEBUG_MODE_ID, false);
+
+		store.setDefault(EgapPlugin.ID_TEST_PACKAGE_PREFIX, "test");
+		store.setDefault(EgapPlugin.ID_SRC_FOLDER, "src");
+		store.setDefault(EgapPlugin.ID_TEST_SRC_FOLDER, "src-test");
+		store.setDefault(EgapPlugin.ID_TEST_SUFFIX, "Test");
 	}
 
 }
