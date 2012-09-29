@@ -6,6 +6,7 @@ import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
+import org.eclipse.jdt.core.dom.Modifier;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.Type;
 
@@ -19,6 +20,7 @@ public class FieldDeclarationUtils {
 			CompilationUnit compilationUnit, String fieldName) {
 
 		List<ASTNode> modifiers = fieldDeclaration.modifiers();
+		
 		MarkerAnnotationList annotationList = ASTNodeUtils.getMarkerAnnotationList(modifiers);
 
 		if (annotationList.containsInjectType()) {
@@ -61,6 +63,22 @@ public class FieldDeclarationUtils {
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * @param modifiers
+	 */
+	public static boolean isStatic(FieldDeclaration fieldDeclaration) {
+		List<ASTNode> modifiers = fieldDeclaration.modifiers();
+		for (ASTNode astNode : modifiers) {
+			if(astNode instanceof Modifier){
+				Modifier modifier = (Modifier) astNode;
+				if(modifier.isStatic()){
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 }

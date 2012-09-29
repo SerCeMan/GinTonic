@@ -106,8 +106,7 @@ public class ProposalCreateAssistedFactory implements IJavaCompletionProposal {
 		codeGenerator.finishStatement();
 		codeGenerator.finishBlock();
 		
-		String code = JavaSourceFormatter.format(sb.toString());
-		String sourceCode = code;
+		String sourceCode = JavaSourceFormatter.format(sb.toString());
 
 		ICompilationUnitUtils.createJavaCompilationUnit(
 				packageFragment,

@@ -81,6 +81,14 @@ public class StringUtils {
 		result.append(name.substring(1));
 		return result.toString();
 	}
+	
+	public static String uncapitalize(String name) {
+		StringBuilder result = new StringBuilder(name.length());
+		char upperCase = Character.toLowerCase(name.charAt(0));
+		result.append(upperCase);
+		result.append(name.substring(1));
+		return result.toString();
+	}
 
 	/**
 	 * Translates primitives like int, double, etc to the fully qualified
@@ -127,6 +135,8 @@ public class StringUtils {
 		String[] splitString = stringToSplit.split("\\" + c);
 		return Arrays.asList(splitString);
 	}
+
+	
 
 	
 

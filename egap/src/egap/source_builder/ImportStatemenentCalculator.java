@@ -29,11 +29,14 @@ public class ImportStatemenentCalculator {
 
 	/**
 	 * Calculates the import statements based on a list of variable
-	 * declarations. It is assumed that the import statements should be included
-	 * in the given target type, which implies that we filter any references in
-	 * the same package as the target class. We do also filter anything from
+	 * declarations. We do also filter anything from
 	 * java.lang as the language spec tells us that we do not have to import
 	 * these.
+	 * 
+	 * It is assumed that the import statements should be included
+	 * in the given target type, which implies that we filter any references in
+	 * the same package as the target class. The target class can also be null,
+	 * which means we do not filter.
 	 * 
 	 * @return a list of type bindings which the target type has to import.
 	 */
@@ -116,8 +119,6 @@ public class ImportStatemenentCalculator {
 		List<ITypeBinding> filteredTypeBindings = ListUtils.newArrayListWithCapacity(typeBindings.size());
 
 		for (ITypeBinding typeBinding : typeBindings) {
-			IPackageFragment packageFragment = targetType.getPackageFragment();
-			String packageOfTargetClass = packageFragment.getElementName();
 
 			IPackageBinding packageBinding = typeBinding.getPackage();
 			Preconditions.checkNotNull(packageBinding);
@@ -127,13 +128,20 @@ public class ImportStatemenentCalculator {
 			/* Ignore anything in java.lang */
 			if (!packageQualifiedName.equals("java.lang")) {
 
-				/*
-				 * and any class which is in the same package as the target
-				 * class
-				 */
-				if (!packageQualifiedName.equals(packageOfTargetClass)) {
+				if(targetType != null){
+					/*
+					 * and any class which is in the same package as the target
+					 * class
+					 */
+					IPackageFragment packageFragment = targetType.getPackageFragment();
+					String packageOfTargetClass = packageFragment.getElementName();
+					if (!packageQualifiedName.equals(packageOfTargetClass)) {
+						filteredTypeBindings.add(typeBinding);
+					}
+				}else{
 					filteredTypeBindings.add(typeBinding);
 				}
+				
 			}
 		}
 		return filteredTypeBindings;

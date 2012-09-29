@@ -33,7 +33,7 @@ public class JavaCodeBuilder {
 		this.appendable = appendable;
 	}
 
-	private void append(CharSequence text) {
+	public void append(CharSequence text) {
 		try {
 			appendable.append(text);
 		} catch (IOException e) {
@@ -56,6 +56,11 @@ public class JavaCodeBuilder {
 	public void startInterface(String interfaceName) {
 		append("public interface ");
 		append(interfaceName);
+	}
+	
+	public void startClass(String typeName) {
+		append("public class ");
+		append(typeName);
 	}
 
 	/**
@@ -141,15 +146,15 @@ public class JavaCodeBuilder {
 	/**
 	 * Creates import statements for the given variable declarations.
 	 * 
-	 * @param targetClassType
-	 * @param variableDeclAnnotatedWithAssisted
+	 * @param targetClassType the class where the 
+	 * @param singleVariableDeclaration
 	 */
 	public void addImports(IType targetClassType,
-			List<SingleVariableDeclaration> variableDeclAnnotatedWithAssisted) {
+			List<SingleVariableDeclaration> singleVariableDeclaration) {
 
 		ImportStatemenentCalculator importStatemenentCalculator = new ImportStatemenentCalculator();
 		importStatemenentCalculator.setTargetType(targetClassType);
-		importStatemenentCalculator.setVariableDecl(variableDeclAnnotatedWithAssisted);
+		importStatemenentCalculator.setVariableDecl(singleVariableDeclaration);
 
 		List<ITypeBinding> importBindings = importStatemenentCalculator.calculate();
 		

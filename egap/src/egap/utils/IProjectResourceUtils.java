@@ -83,7 +83,6 @@ public class IProjectResourceUtils {
 	public static ProjectResource createProjectResource(ICompilationUnit icompilationUnit, ITextSelection textSelection) {
 		ProjectResource projectResource = new ProjectResource();
 		
-		
 		IResource resource = icompilationUnit.getResource();
 		IProject project = resource.getProject();
 		projectResource.setProjectName(project.getName());

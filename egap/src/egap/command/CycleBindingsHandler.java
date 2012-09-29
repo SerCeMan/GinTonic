@@ -179,7 +179,7 @@ public class CycleBindingsHandler extends AbstractHandler {
 		int length = currentSelection.getLength();
 		int offset = currentSelection.getOffset();
 		ASTNode coveredNode = findCoveredNode(compilationUnit, offset, length);
-
+		
 		GuiceTypeInfo binding = ASTNodeUtils.getGuiceTypeInfoIfFieldDeclarationTypeDeclarationOrProviderMethod(
 				coveredNode,
 				compilationUnit,
