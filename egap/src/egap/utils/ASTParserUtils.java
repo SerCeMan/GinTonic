@@ -22,6 +22,9 @@ public class ASTParserUtils {
 		return statement;
 	}
 
+	/**
+	 * synonym for parseCompilationUnitAst3(compilationUnit, true, false);
+	 */
 	public static CompilationUnit parseCompilationUnitAst3(ICompilationUnit compilationUnit) {
 		return parseCompilationUnitAst3(compilationUnit, true, false);
 	}

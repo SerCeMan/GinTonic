@@ -12,8 +12,11 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.Block;
+import org.eclipse.jdt.core.dom.ChildListPropertyDescriptor;
 import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
+import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.ParameterizedType;
 import org.eclipse.jdt.core.dom.SimpleName;
@@ -21,10 +24,13 @@ import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
+import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.jdt.core.dom.rewrite.ITrackedNodePosition;
 import org.eclipse.jdt.core.dom.rewrite.ImportRewrite;
 import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
+import org.eclipse.jdt.internal.core.CreateFieldOperation;
+import org.eclipse.jdt.internal.corext.dom.ASTNodeFactory;
 import org.eclipse.jface.text.Document;
 import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.text.edits.TextEdit;
@@ -63,6 +69,14 @@ public class Refactorator {
 
 	private ASTRewrite getAstRewrite() {
 		return provider.getAstRewrite();
+	}
+	
+	public void addFieldDeclaration(FieldDeclaration fieldDeclaration) {
+		ASTRewrite astRewrite = getAstRewrite();
+		@SuppressWarnings("unchecked")
+		List<TypeDeclaration> types = compilationUnit.types();
+		ListRewrite container = astRewrite.getListRewrite(types.get(0), TypeDeclaration.BODY_DECLARATIONS_PROPERTY);
+		container.insertLast(fieldDeclaration, null);
 	}
 	
 	public TrackedStatement addAsLastStatementInMethod(
@@ -109,13 +123,27 @@ public class Refactorator {
 		return new TrackedMethodDeclaration(methodDeclaration, track);
 	}
 	
-	public void addImport(IType type) {
-		addImport(type.getFullyQualifiedName());
+	/**
+	 * Adds a new import to the rewriter's record and returns a type reference that can be used in the code.
+	 */
+	public String addImport(IType type) {
+		return addImport(type.getFullyQualifiedName());
 	}
-
-	public void addImport(String fullyClassifiedTypeName) {
+	
+	/**
+	 * Adds a new import to the rewriter's record and returns a type reference that can be used in the code.
+	 */
+	public String addImport(ITypeBinding typeBinding) {
 		ImportRewrite importRewrite = getImportRewrite();
-		importRewrite.addImport(fullyClassifiedTypeName);
+		return importRewrite.addImport(typeBinding);
+	}
+	
+	/**
+	 * Adds a new import to the rewriter's record and returns a type reference that can be used in the code.
+	 */
+	public String addImport(String fullyClassifiedTypeName) {
+		ImportRewrite importRewrite = getImportRewrite();
+		return importRewrite.addImport(fullyClassifiedTypeName);
 	}
 
 	public void changeType(Type oldType, Type newType) {
@@ -297,5 +325,7 @@ public class Refactorator {
 		}
 
 	}
+
+	
 
 }
