@@ -62,8 +62,11 @@ public class EgapPreferencePage extends FieldEditorPreferencePage implements
 				"Debug mode",
 				fieldEditorParent);
 		addField(debugModeField);
-
-		/* */
+		
+		
+		
+		/* Preferences for the junit testcase creation command */
+		
 		addField(new StringFieldEditor(
 				EgapPlugin.ID_TEST_SUFFIX,
 				"Testcase suffix",
@@ -74,7 +77,7 @@ public class EgapPreferencePage extends FieldEditorPreferencePage implements
 				fieldEditorParent));
 		addField(new StringFieldEditor(
 				EgapPlugin.ID_SRC_FOLDER,
-				"src folder",
+				"Src folder",
 				fieldEditorParent));
 		addField(new StringFieldEditor(
 				EgapPlugin.ID_TEST_SRC_FOLDER,

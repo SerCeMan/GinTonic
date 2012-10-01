@@ -14,13 +14,22 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.ITypeRoot;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
+import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
+import org.eclipse.jdt.core.dom.IExtendedModifier;
 import org.eclipse.jdt.core.dom.ITypeBinding;
+import org.eclipse.jdt.core.dom.Javadoc;
+import org.eclipse.jdt.core.dom.Modifier;
 import org.eclipse.jdt.core.dom.SimpleName;
+import org.eclipse.jdt.core.dom.TagElement;
+import org.eclipse.jdt.core.dom.TextElement;
+import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
+import org.eclipse.jdt.internal.corext.codemanipulation.CodeGenerationMessages;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jdt.ui.SharedASTProvider;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -32,6 +41,8 @@ import egap.EgapPlugin;
 import egap.guice.ProjectResource;
 import egap.refactor.Refactorator;
 import egap.source_builder.JavaCodeBuilder;
+import egap.source_formatter.JavaSourceFormatter;
+import egap.source_formatter.SourceFormatFailedException;
 import egap.utils.ASTParserUtils;
 import egap.utils.EclipseUtils;
 import egap.utils.FieldDeclarationUtils;
@@ -39,6 +50,7 @@ import egap.utils.GuiceFieldDeclaration;
 import egap.utils.ICompilationUnitUtils;
 import egap.utils.IPackageFragmentUtils;
 import egap.utils.IProjectResourceUtils;
+import egap.utils.StringUtils;
 
 public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 
@@ -63,6 +75,11 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 		if (!(editorInputTypeRoot instanceof ICompilationUnit)) {
 			return null;
 		}
+		ICompilationUnit icompilationUnit = (ICompilationUnit) editorInputTypeRoot;
+		CompilationUnit classUnderTestAsCompilationUnit = SharedASTProvider.getAST(
+				editorInputTypeRoot,
+				SharedASTProvider.WAIT_YES,
+				null);
 
 		IPreferenceStore store = EgapPlugin.getEgapPlugin().getPreferenceStore();
 
@@ -71,7 +88,6 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 		srcFolderForTests = store.getString(EgapPlugin.ID_TEST_SRC_FOLDER);
 		srcFolderForNormalClasses = store.getString(EgapPlugin.ID_SRC_FOLDER);
 
-		ICompilationUnit icompilationUnit = (ICompilationUnit) editorInputTypeRoot;
 		ProjectResource javaClass = IProjectResourceUtils.createProjectResource(icompilationUnit);
 		if (javaClass == null) {
 			return null;
@@ -101,10 +117,12 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 				try {
 					ProjectResource junitTestAsProjectResource = createJUnitClassFor(javaClass);
 					createJUnitTest(
-							junitTest,
+							icompilationUnit.getJavaProject(),
 							junitTestAsProjectResource,
+							junitTest,
 							editorInputTypeRoot,
-							icompilationUnit.getJavaProject());
+							icompilationUnit,
+							classUnderTestAsCompilationUnit);
 				} catch (JavaModelException e) {
 					EgapPlugin.logException(e);
 				}
@@ -114,17 +132,19 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 		return null;
 	}
 
-	private void createJUnitTest(
-			final ProjectResource classUnderTestAsProjectResource,
+	private void createJUnitTest(IJavaProject javaProject,
 			ProjectResource junitTestAsProjectResource,
-			ITypeRoot typeRootOfClassUnderTest, IJavaProject javaProject)
+			final ProjectResource classUnderTestAsProjectResource,
+			ITypeRoot classUnderTestAsTypeRoot,
+			ICompilationUnit classUnderTestAsICompilationUnit,
+			CompilationUnit classUnderTestAsCompilationUnit)
 			throws JavaModelException {
 
 		final List<GuiceFieldDeclaration> injectionPoints = new ArrayList<GuiceFieldDeclaration>(
 				30);
 
 		final CompilationUnit compilationUnit = SharedASTProvider.getAST(
-				typeRootOfClassUnderTest,
+				classUnderTestAsTypeRoot,
 				SharedASTProvider.WAIT_YES,
 				null);
 		compilationUnit.accept(new ASTVisitor(false) {
@@ -168,7 +188,7 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 
 		});
 
-		StringBuffer sb = new StringBuffer(2000);
+		StringBuffer sb = new StringBuffer(300);
 		JavaCodeBuilder codeGenerator = new JavaCodeBuilder(sb);
 
 		String typeName = classUnderTestAsProjectResource.getTypeName();
@@ -177,7 +197,24 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 		codeGenerator.startClass(typeName);
 		codeGenerator.startBlock();
 
+		codeGenerator.startMethod(
+				Arrays.asList("Test"),
+				"public",
+				"test",
+				"void",
+				null,
+				null);
+		codeGenerator.startBlock();
 		codeGenerator.finishBlock();
+
+		codeGenerator.finishBlock();
+
+		String sourceCode = sb.toString();
+		try {
+			sourceCode = JavaSourceFormatter.format(sourceCode);
+		} catch (SourceFormatFailedException e) {
+			EgapPlugin.logException(e);
+		}
 
 		String packageFullyQualified = classUnderTestAsProjectResource.getPackageFullyQualified();
 		IPackageFragment packageFragment = IPackageFragmentUtils.createPackageFragment(
@@ -197,7 +234,7 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 		ICompilationUnit junitTestAsICompilationUnit = ICompilationUnitUtils.createJavaCompilationUnit(
 				packageFragment,
 				typeName,
-				sb.toString());
+				sourceCode);
 		CompilationUnit junitTestAsCompilationUnit = ASTParserUtils.parseCompilationUnitAst3(junitTestAsICompilationUnit);
 
 		Refactorator refactorator = Refactorator.create(
@@ -205,14 +242,46 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 				junitTestAsCompilationUnit,
 				junitTestAsCompilationUnit.getAST());
 
-		// refactorator.addImport("org.junit.Test");
+		refactorator.addImport("org.junit.Test");
 		refactorator.addImport("org.junit.runner.RunWith");
 		refactorator.addImport("org.mockito.runners.MockitoJUnitRunner");
 		refactorator.addImport("org.mockito.Mock");
 
+		addInjectionsAsMocksInTestcase(
+				injectionPoints,
+				junitTestAsCompilationUnit,
+				refactorator);
+
+		addClassUnderTestAsField(
+				classUnderTestAsCompilationUnit,
+				junitTestAsCompilationUnit,
+				refactorator);
+
+		/*
+		 * Create a new @Before method which injects the mocks into the
+		 * class-under-test.
+		 */
+		AST junitTestAst = junitTestAsCompilationUnit.getAST();
+		junitTestAst.newMethodDeclaration();
+
+		refactorator.refactor(null);
+
+		IProjectResourceUtils.openEditorWithStatementDeclaration(junitTestAsProjectResource);
+
+	}
+
+	/**
+	 * Adds the injected dependencies from the class-under-test as fields in the
+	 * testcase.
+	 */
+	private void addInjectionsAsMocksInTestcase(
+			final List<GuiceFieldDeclaration> injectionPoints,
+			CompilationUnit junitTestAsCompilationUnit,
+			Refactorator refactorator) {
 		for (GuiceFieldDeclaration injectionPoint : injectionPoints) {
 			ITypeBinding targetTypeBinding = injectionPoint.getTargetTypeBinding();
 			refactorator.addImport(targetTypeBinding);
+
 			FieldDeclaration fieldDeclaration = injectionPoint.getFieldDeclaration();
 			FieldDeclaration fieldDeclarationUnparented = (FieldDeclaration) ASTNode.copySubtree(
 					junitTestAsCompilationUnit.getAST(),
@@ -225,17 +294,49 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 
 			refactorator.addFieldDeclaration(fieldDeclarationUnparented);
 		}
+	}
 
-		refactorator.refactor(null);
-
-		// try {
-		// sourceCode = JavaSourceFormatter.format(sb.toString());
-		// } catch (SourceFormatFailedException e) {
-		// EgapPlugin.logException(e);
-		// }
-
-		IProjectResourceUtils.openEditorWithStatementDeclaration(junitTestAsProjectResource);
-
+	/**
+	 * Adds the class under test as field in the testcase.
+	 */
+	private void addClassUnderTestAsField(
+			CompilationUnit classUnderTestAsCompilationUnit,
+			CompilationUnit junitTestAsCompilationUnit,
+			Refactorator refactorator) {
+		@SuppressWarnings("unchecked")
+		List<AbstractTypeDeclaration> types = classUnderTestAsCompilationUnit.types();
+		for (AbstractTypeDeclaration abstractTypeDeclaration : types) {
+			if (abstractTypeDeclaration instanceof TypeDeclaration) {
+				TypeDeclaration typeDecl = (TypeDeclaration) abstractTypeDeclaration;
+				AST ast = junitTestAsCompilationUnit.getAST();
+				VariableDeclarationFragment variableDeclarationFragment = ast.newVariableDeclarationFragment();
+				ITypeBinding typeBinding = typeDecl.resolveBinding();
+				String typeName2 = typeBinding.getName();
+				String varName = StringUtils.uncapitalize(typeName2);
+				variableDeclarationFragment.setName(ast.newSimpleName(varName));
+				FieldDeclaration fieldDeclaration = ast.newFieldDeclaration(variableDeclarationFragment);
+				fieldDeclaration.setType(ast.newSimpleType(ast.newName(typeName2)));
+				@SuppressWarnings("unchecked")
+				List<IExtendedModifier> modifiers = fieldDeclaration.modifiers();
+				modifiers.add(ast.newModifier(Modifier.ModifierKeyword.PRIVATE_KEYWORD));
+				
+				Javadoc javadoc= ast.newJavadoc();
+				final TagElement tagComment= ast.newTagElement();
+				TextElement text= ast.newTextElement();
+				text.setText("The class under test");
+				tagComment.fragments().add(text);
+				javadoc.tags().add(tagComment);
+				fieldDeclaration.setJavadoc(javadoc);
+				
+				refactorator.addImport(typeBinding);
+				refactorator.addFieldDeclaration(fieldDeclaration);
+				
+				
+				
+				
+				break;
+			}
+		}
 	}
 
 	/**

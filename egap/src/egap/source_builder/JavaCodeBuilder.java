@@ -23,9 +23,9 @@ public class JavaCodeBuilder {
 	private static final String BRACKET_OPEN = "(";
 	private static final String NEWLINE = System.getProperty("line.separator");
 	private static final String SINGLE_SPACE = " ";
-	private static final String STATEMENT_FINISH = ";";
-	private static final String BLOCK_FINISH = "}";
-	private static final String BLOCK_START = "{";
+	private static final String SEMIKOLON = ";";
+	private static final String ANGLE_BRACKET_OPEN = "{";
+	private static final String ANGLE_BRACKET_CLOSE = "}";
 
 	private Appendable appendable;
 
@@ -42,35 +42,36 @@ public class JavaCodeBuilder {
 	}
 
 	public void startBlock() {
-		append(BLOCK_START);
+		append(ANGLE_BRACKET_OPEN);
 	}
 
 	public void finishBlock() {
-		append(BLOCK_FINISH);
+		append(ANGLE_BRACKET_CLOSE);
 	}
 
 	public void finishStatement() {
-		append(STATEMENT_FINISH);
+		append(SEMIKOLON);
 	}
 
 	public void startInterface(String interfaceName) {
 		append("public interface ");
 		append(interfaceName);
 	}
-	
+
 	public void startClass(String typeName) {
 		append("public class ");
 		append(typeName);
 	}
 
 	/**
-	 * Starts a method declaration.
+	 * Creates a new method declaration.
 	 * 
 	 * @param annotations the method annotations, may be null.
-	 * @param qualifier public, protected, ...
-	 * @param methodName the name of the method. mandatory.
-	 * @param returnType the return type.
-	 * @param variableDeclarations the variable declarations
+	 * @param qualifier public, protected, .... Must not be null.
+	 * @param methodName the name of the method. Must not be null.
+	 * @param returnType the return type. Must not be null.
+	 * @param variableDeclarations the variable declarations. Can be null
+	 * @param javadoc the javadoc comment. Can be null.
 	 */
 	public void startMethod(List<String> annotations, String qualifier,
 			String methodName, String returnType,
@@ -111,26 +112,28 @@ public class JavaCodeBuilder {
 
 		appendSingleSpace();
 		appendBracketOpen();
-		
-		int i = 0;
-		for (SingleVariableDeclaration variableDeclaration : variableDeclarations) {
-			
-			if(i++ > 0){
-				append(KOMMATA);
+
+		if (variableDeclarations != null) {
+			int i = 0;
+			for (SingleVariableDeclaration variableDeclaration : variableDeclarations) {
+
+				if (i++ > 0) {
+					append(KOMMATA);
+				}
+
+				Type type = variableDeclaration.getType();
+				ITypeBinding typeBinding = type.resolveBinding();
+				String varDecl = typeBinding.getName();
+				append(varDecl);
+				appendSingleSpace();
+				SimpleName simpleName = variableDeclaration.getName();
+				append(simpleName.toString());
 			}
-			
-			Type type = variableDeclaration.getType();
-			ITypeBinding typeBinding = type.resolveBinding();
-			String varDecl = typeBinding.getName();
-			append(varDecl);
-			appendSingleSpace();
-			SimpleName simpleName = variableDeclaration.getName();
-			append(simpleName.toString());
 		}
 
 		append(BRACKET_CLOSE); //$NON-NLS-1$
 	}
-	
+
 	private void appendBracketOpen() {
 		append(BRACKET_OPEN);
 	}
@@ -146,7 +149,7 @@ public class JavaCodeBuilder {
 	/**
 	 * Creates import statements for the given variable declarations.
 	 * 
-	 * @param targetClassType the class where the 
+	 * @param targetClassType the class where the
 	 * @param singleVariableDeclaration
 	 */
 	public void addImports(IType targetClassType,
@@ -157,16 +160,16 @@ public class JavaCodeBuilder {
 		importStatemenentCalculator.setVariableDecl(singleVariableDeclaration);
 
 		List<ITypeBinding> importBindings = importStatemenentCalculator.calculate();
-		
+
 		Set<String> importStatementSet = SetUtils.newHashSet();
-		
+
 		for (ITypeBinding importBinding : importBindings) {
 			/* Wir müssen die Type Declaration verwenden! */
 			ITypeBinding importBindingTypeDecl = importBinding.getTypeDeclaration();
 			String importName = importBindingTypeDecl.getQualifiedName();
-			
+
 			/* Prevent duplicates */
-			if(!importStatementSet.contains(importName)){
+			if (!importStatementSet.contains(importName)) {
 				append("import " + importName + ";");
 			}
 			importStatementSet.add(importName);

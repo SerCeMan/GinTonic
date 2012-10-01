@@ -76,7 +76,7 @@ public class Refactorator {
 		@SuppressWarnings("unchecked")
 		List<TypeDeclaration> types = compilationUnit.types();
 		ListRewrite container = astRewrite.getListRewrite(types.get(0), TypeDeclaration.BODY_DECLARATIONS_PROPERTY);
-		container.insertLast(fieldDeclaration, null);
+		container.insertFirst(fieldDeclaration, null);
 	}
 	
 	public TrackedStatement addAsLastStatementInMethod(
