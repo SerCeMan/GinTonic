@@ -26,6 +26,7 @@ import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.IExtendedModifier;
 import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.Javadoc;
+import org.eclipse.jdt.core.dom.MarkerAnnotation;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.Modifier;
 import org.eclipse.jdt.core.dom.SimpleName;
@@ -35,7 +36,6 @@ import org.eclipse.jdt.core.dom.TagElement;
 import org.eclipse.jdt.core.dom.TextElement;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
-import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jdt.ui.SharedASTProvider;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -87,12 +87,7 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 				SharedASTProvider.WAIT_YES,
 				null);
 
-		IPreferenceStore store = EgapPlugin.getEgapPlugin().getPreferenceStore();
-
-		testSuffix = store.getString(EgapPlugin.ID_TEST_SUFFIX);
-		testPackagePrefix = store.getString(EgapPlugin.ID_TEST_PACKAGE_PREFIX);
-		srcFolderForTests = store.getString(EgapPlugin.ID_TEST_SRC_FOLDER);
-		srcFolderForNormalClasses = store.getString(EgapPlugin.ID_SRC_FOLDER);
+		initializePreferences();
 
 		ProjectResource javaClass = IProjectResourceUtils.createProjectResource(icompilationUnit);
 		if (javaClass == null) {
@@ -127,7 +122,6 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 							junitTestAsProjectResource,
 							junitTest,
 							editorInputTypeRoot,
-							icompilationUnit,
 							classUnderTestAsCompilationUnit);
 				} catch (JavaModelException e) {
 					EgapPlugin.logException(e);
@@ -138,11 +132,22 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 		return null;
 	}
 
+	/**
+	 * 
+	 */
+	private void initializePreferences() {
+		IPreferenceStore store = EgapPlugin.getEgapPlugin().getPreferenceStore();
+
+		testSuffix = store.getString(EgapPlugin.ID_TEST_SUFFIX);
+		testPackagePrefix = store.getString(EgapPlugin.ID_TEST_PACKAGE_PREFIX);
+		srcFolderForTests = store.getString(EgapPlugin.ID_TEST_SRC_FOLDER);
+		srcFolderForNormalClasses = store.getString(EgapPlugin.ID_SRC_FOLDER);
+	}
+
 	private void createJUnitTest(IJavaProject javaProject,
 			ProjectResource junitTestAsProjectResource,
 			final ProjectResource classUnderTestAsProjectResource,
 			ITypeRoot classUnderTestAsTypeRoot,
-			ICompilationUnit classUnderTestAsICompilationUnit,
 			CompilationUnit classUnderTestAsCompilationUnit)
 			throws JavaModelException {
 
@@ -197,7 +202,11 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 				packageFragment,
 				typeName,
 				sourceCode);
-		CompilationUnit junitTestAsCompilationUnit = ASTParserUtils.parseCompilationUnitAst3(junitTestAsICompilationUnit);
+
+		CompilationUnit junitTestAsCompilationUnit = ASTParserUtils.parseCompilationUnitAst3(
+				junitTestAsICompilationUnit,
+				true,
+				false);
 
 		Refactorator refactorator = Refactorator.create(
 				junitTestAsICompilationUnit,
@@ -221,33 +230,59 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 				junitTestAsCompilationUnit,
 				refactorator);
 
-		/*
-		 * Create a new @Before method which injects the mocks into the
-		 * class-under-test.
-		 */
+		createInitializerMethod(
+				junitTestAsCompilationUnit,
+				refactorator,
+				primaryTypeDeclaration);
+
+		refactorator.refactor(null);
+
+		IProjectResourceUtils.openEditorWithStatementDeclaration(junitTestAsProjectResource);
+
+	}
+
+	/**
+	 * Creates a new @Before method which creates a new instance of the
+	 * class-under-test and then injects the mocks into it.
+	 * 
+	 * Example:
+	 * 
+	 * <pre>
+	 * &#064;Before
+	 * public void initialize() {
+	 * 	importJobTextRenderer = new ImportJobTextRenderer();
+	 * 	importJobTextRenderer.setDatenstandDeltaBerechner(datenstandDeltaBerechnerMock);
+	 * 	importJobTextRenderer.setTextBuilderFactory(textBuilderFactoryMock);
+	 * }
+	 * </pre>
+	 */
+	private void createInitializerMethod(
+			CompilationUnit junitTestAsCompilationUnit,
+			Refactorator refactorator, TypeDeclaration primaryTypeDeclaration) {
 		AST junitTestAst = junitTestAsCompilationUnit.getAST();
 		MethodDeclaration methodDecl = junitTestAst.newMethodDeclaration();
 		methodDecl.setConstructor(false);
 		@SuppressWarnings("unchecked")
 		List<IExtendedModifier> modifiers = methodDecl.modifiers();
+		MarkerAnnotation markerAnnotation = junitTestAst.newMarkerAnnotation();
+		markerAnnotation.setTypeName(junitTestAst.newName("Before"));
+		modifiers.add(markerAnnotation);
 		modifiers.add(junitTestAst.newModifier(Modifier.ModifierKeyword.PUBLIC_KEYWORD));
-		methodDecl.setName(junitTestAst.newSimpleName("before"));
+		methodDecl.setName(junitTestAst.newSimpleName("initialize"));
 		Block methodBody = junitTestAst.newBlock();
 		@SuppressWarnings("unchecked")
 		List<Statement> statements = methodBody.statements();
 		methodDecl.setBody(methodBody);
 
 		/* this.classUnderTest = new ClassUnderTest(); */
-		
 		ITypeBinding classUnderTestBinding = primaryTypeDeclaration.resolveBinding();
 		String name = classUnderTestBinding.getName();
 		SimpleType classUnderTestType = junitTestAst.newSimpleType(junitTestAst.newSimpleName(name));
 		String varName = StringUtils.uncapitalize(name);
-		
-		
+
 		ClassInstanceCreation classInstanceCreation = junitTestAst.newClassInstanceCreation();
 		classInstanceCreation.setType(classUnderTestType);
-		
+
 		Assignment assignment = junitTestAst.newAssignment();
 		assignment.setLeftHandSide(junitTestAst.newSimpleName(varName));
 		assignment.setRightHandSide(classInstanceCreation);
@@ -256,11 +291,6 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 
 		refactorator.addImport("org.junit.Before");
 		refactorator.addMethodDeclaration(methodDecl);
-
-		refactorator.refactor(null);
-
-		IProjectResourceUtils.openEditorWithStatementDeclaration(junitTestAsProjectResource);
-
 	}
 
 	/**
@@ -335,9 +365,17 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 			refactorator.addImport(targetTypeBinding);
 
 			FieldDeclaration fieldDeclaration = injectionPoint.getFieldDeclaration();
+			AST ast = junitTestAsCompilationUnit.getAST();
 			FieldDeclaration fieldDeclarationUnparented = (FieldDeclaration) ASTNode.copySubtree(
-					junitTestAsCompilationUnit.getAST(),
+					ast,
 					fieldDeclaration);
+
+			/* add Mock to every field declaration */
+			@SuppressWarnings("unchecked")
+			List<VariableDeclarationFragment> fragments = fieldDeclarationUnparented.fragments();
+			VariableDeclarationFragment variableDeclarationFragment = fragments.get(0);
+			variableDeclarationFragment.setName(ast.newSimpleName(variableDeclarationFragment.getName().getFullyQualifiedName()
+					+ "Mock"));
 
 			FieldDeclarationUtils.removeAnnotations(fieldDeclarationUnparented);
 			FieldDeclarationUtils.addAnnotation(
