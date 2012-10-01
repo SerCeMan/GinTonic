@@ -18,18 +18,24 @@ import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
+import org.eclipse.jdt.core.dom.Assignment;
+import org.eclipse.jdt.core.dom.Block;
+import org.eclipse.jdt.core.dom.ClassInstanceCreation;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.IExtendedModifier;
 import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.Javadoc;
+import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.Modifier;
 import org.eclipse.jdt.core.dom.SimpleName;
+import org.eclipse.jdt.core.dom.SimpleType;
+import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.TagElement;
 import org.eclipse.jdt.core.dom.TextElement;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
-import org.eclipse.jdt.internal.corext.codemanipulation.CodeGenerationMessages;
+import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jdt.ui.SharedASTProvider;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -140,53 +146,9 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 			CompilationUnit classUnderTestAsCompilationUnit)
 			throws JavaModelException {
 
-		final List<GuiceFieldDeclaration> injectionPoints = new ArrayList<GuiceFieldDeclaration>(
-				30);
-
-		final CompilationUnit compilationUnit = SharedASTProvider.getAST(
-				classUnderTestAsTypeRoot,
-				SharedASTProvider.WAIT_YES,
-				null);
-		compilationUnit.accept(new ASTVisitor(false) {
-
-			private String identifier;
-
-			@Override
-			public boolean visit(FieldDeclaration fieldDeclaration) {
-
-				/* We can skip static fields as they cannot be injected. */
-				boolean isStatic = FieldDeclarationUtils.isStatic(fieldDeclaration);
-				if (isStatic) {
-					return false;
-				}
-
-				fieldDeclaration.accept(new ASTVisitor() {
-
-					@Override
-					public boolean visit(VariableDeclarationFragment node) {
-						SimpleName name = node.getName();
-						identifier = name.getIdentifier();
-						return false;
-					}
-
-				});
-
-				GuiceFieldDeclaration injectionPoint = FieldDeclarationUtils.getTypeIfAnnotatedWithInject(
-						classUnderTestAsProjectResource,
-						fieldDeclaration,
-						compilationUnit,
-						identifier);
-
-				if (injectionPoint != null) {
-					injectionPoints.add(injectionPoint);
-				}
-
-				identifier = null;
-
-				return false;
-			}
-
-		});
+		final List<GuiceFieldDeclaration> injectionPoints = findInjectionPoints(
+				classUnderTestAsProjectResource,
+				classUnderTestAsTypeRoot);
 
 		StringBuffer sb = new StringBuffer(300);
 		JavaCodeBuilder codeGenerator = new JavaCodeBuilder(sb);
@@ -252,8 +214,10 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 				junitTestAsCompilationUnit,
 				refactorator);
 
+		TypeDeclaration primaryTypeDeclaration = findPrimaryTypeDeclaration(classUnderTestAsCompilationUnit);
+
 		addClassUnderTestAsField(
-				classUnderTestAsCompilationUnit,
+				primaryTypeDeclaration,
 				junitTestAsCompilationUnit,
 				refactorator);
 
@@ -262,7 +226,36 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 		 * class-under-test.
 		 */
 		AST junitTestAst = junitTestAsCompilationUnit.getAST();
-		junitTestAst.newMethodDeclaration();
+		MethodDeclaration methodDecl = junitTestAst.newMethodDeclaration();
+		methodDecl.setConstructor(false);
+		@SuppressWarnings("unchecked")
+		List<IExtendedModifier> modifiers = methodDecl.modifiers();
+		modifiers.add(junitTestAst.newModifier(Modifier.ModifierKeyword.PUBLIC_KEYWORD));
+		methodDecl.setName(junitTestAst.newSimpleName("before"));
+		Block methodBody = junitTestAst.newBlock();
+		@SuppressWarnings("unchecked")
+		List<Statement> statements = methodBody.statements();
+		methodDecl.setBody(methodBody);
+
+		/* this.classUnderTest = new ClassUnderTest(); */
+		
+		ITypeBinding classUnderTestBinding = primaryTypeDeclaration.resolveBinding();
+		String name = classUnderTestBinding.getName();
+		SimpleType classUnderTestType = junitTestAst.newSimpleType(junitTestAst.newSimpleName(name));
+		String varName = StringUtils.uncapitalize(name);
+		
+		
+		ClassInstanceCreation classInstanceCreation = junitTestAst.newClassInstanceCreation();
+		classInstanceCreation.setType(classUnderTestType);
+		
+		Assignment assignment = junitTestAst.newAssignment();
+		assignment.setLeftHandSide(junitTestAst.newSimpleName(varName));
+		assignment.setRightHandSide(classInstanceCreation);
+
+		statements.add(junitTestAst.newExpressionStatement(assignment));
+
+		refactorator.addImport("org.junit.Before");
+		refactorator.addMethodDeclaration(methodDecl);
 
 		refactorator.refactor(null);
 
@@ -271,8 +264,67 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 	}
 
 	/**
+	 * @param classUnderTestAsProjectResource
+	 * @param classUnderTestAsTypeRoot
+	 * @return
+	 */
+	private List<GuiceFieldDeclaration> findInjectionPoints(
+			final ProjectResource classUnderTestAsProjectResource,
+			ITypeRoot classUnderTestAsTypeRoot) {
+		final List<GuiceFieldDeclaration> injectionPoints = new ArrayList<GuiceFieldDeclaration>(
+				30);
+
+		final CompilationUnit compilationUnit = SharedASTProvider.getAST(
+				classUnderTestAsTypeRoot,
+				SharedASTProvider.WAIT_YES,
+				null);
+		compilationUnit.accept(new ASTVisitor(false) {
+
+			private String identifier;
+
+			@Override
+			public boolean visit(FieldDeclaration fieldDeclaration) {
+
+				/* We can skip static fields as they cannot be injected. */
+				boolean isStatic = FieldDeclarationUtils.isStatic(fieldDeclaration);
+				if (isStatic) {
+					return false;
+				}
+
+				fieldDeclaration.accept(new ASTVisitor() {
+
+					@Override
+					public boolean visit(VariableDeclarationFragment node) {
+						SimpleName name = node.getName();
+						identifier = name.getIdentifier();
+						return false;
+					}
+
+				});
+
+				GuiceFieldDeclaration injectionPoint = FieldDeclarationUtils.getTypeIfAnnotatedWithInject(
+						classUnderTestAsProjectResource,
+						fieldDeclaration,
+						compilationUnit,
+						identifier);
+
+				if (injectionPoint != null) {
+					injectionPoints.add(injectionPoint);
+				}
+
+				identifier = null;
+
+				return false;
+			}
+
+		});
+		return injectionPoints;
+	}
+
+	/**
 	 * Adds the injected dependencies from the class-under-test as fields in the
-	 * testcase.
+	 * testcase. The annotations from the class-under-test are not copied to the
+	 * new fields.
 	 */
 	private void addInjectionsAsMocksInTestcase(
 			final List<GuiceFieldDeclaration> injectionPoints,
@@ -296,47 +348,53 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 		}
 	}
 
-	/**
-	 * Adds the class under test as field in the testcase.
-	 */
-	private void addClassUnderTestAsField(
-			CompilationUnit classUnderTestAsCompilationUnit,
-			CompilationUnit junitTestAsCompilationUnit,
-			Refactorator refactorator) {
-		@SuppressWarnings("unchecked")
+	private TypeDeclaration findPrimaryTypeDeclaration(
+			CompilationUnit classUnderTestAsCompilationUnit) {
 		List<AbstractTypeDeclaration> types = classUnderTestAsCompilationUnit.types();
 		for (AbstractTypeDeclaration abstractTypeDeclaration : types) {
 			if (abstractTypeDeclaration instanceof TypeDeclaration) {
 				TypeDeclaration typeDecl = (TypeDeclaration) abstractTypeDeclaration;
-				AST ast = junitTestAsCompilationUnit.getAST();
-				VariableDeclarationFragment variableDeclarationFragment = ast.newVariableDeclarationFragment();
-				ITypeBinding typeBinding = typeDecl.resolveBinding();
-				String typeName2 = typeBinding.getName();
-				String varName = StringUtils.uncapitalize(typeName2);
-				variableDeclarationFragment.setName(ast.newSimpleName(varName));
-				FieldDeclaration fieldDeclaration = ast.newFieldDeclaration(variableDeclarationFragment);
-				fieldDeclaration.setType(ast.newSimpleType(ast.newName(typeName2)));
-				@SuppressWarnings("unchecked")
-				List<IExtendedModifier> modifiers = fieldDeclaration.modifiers();
-				modifiers.add(ast.newModifier(Modifier.ModifierKeyword.PRIVATE_KEYWORD));
-				
-				Javadoc javadoc= ast.newJavadoc();
-				final TagElement tagComment= ast.newTagElement();
-				TextElement text= ast.newTextElement();
-				text.setText("The class under test");
-				tagComment.fragments().add(text);
-				javadoc.tags().add(tagComment);
-				fieldDeclaration.setJavadoc(javadoc);
-				
-				refactorator.addImport(typeBinding);
-				refactorator.addFieldDeclaration(fieldDeclaration);
-				
-				
-				
-				
-				break;
+				return typeDecl;
 			}
 		}
+		return null;
+	}
+
+	/**
+	 * Adds the class under test as field in the testcase.
+	 * 
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	private void addClassUnderTestAsField(TypeDeclaration typeDecl,
+			CompilationUnit junitTestAsCompilationUnit,
+			Refactorator refactorator) {
+
+		AST ast = junitTestAsCompilationUnit.getAST();
+
+		VariableDeclarationFragment variableDeclarationFragment = ast.newVariableDeclarationFragment();
+		ITypeBinding typeBinding = typeDecl.resolveBinding();
+		String typeName2 = typeBinding.getName();
+		String varName = StringUtils.uncapitalize(typeName2);
+		variableDeclarationFragment.setName(ast.newSimpleName(varName));
+
+		FieldDeclaration fieldDeclaration = ast.newFieldDeclaration(variableDeclarationFragment);
+		SimpleType simpleType = ast.newSimpleType(ast.newName(typeName2));
+		fieldDeclaration.setType(simpleType);
+		List<IExtendedModifier> modifiers = fieldDeclaration.modifiers();
+		modifiers.add(ast.newModifier(Modifier.ModifierKeyword.PRIVATE_KEYWORD));
+
+		Javadoc javadoc = ast.newJavadoc();
+		final TagElement tagComment = ast.newTagElement();
+		TextElement text = ast.newTextElement();
+		text.setText("The class under test");
+		tagComment.fragments().add(text);
+		javadoc.tags().add(tagComment);
+		fieldDeclaration.setJavadoc(javadoc);
+
+		refactorator.addImport(typeBinding);
+		refactorator.addFieldDeclaration(fieldDeclaration);
+
 	}
 
 	/**

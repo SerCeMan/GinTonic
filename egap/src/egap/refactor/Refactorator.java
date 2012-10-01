@@ -35,7 +35,6 @@ import org.eclipse.jface.text.Document;
 import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.text.edits.TextEdit;
 
-
 import egap.utils.ASTParserUtils;
 import egap.utils.Preconditions;
 import egap.utils.StringUtils;
@@ -70,15 +69,17 @@ public class Refactorator {
 	private ASTRewrite getAstRewrite() {
 		return provider.getAstRewrite();
 	}
-	
+
 	public void addFieldDeclaration(FieldDeclaration fieldDeclaration) {
 		ASTRewrite astRewrite = getAstRewrite();
 		@SuppressWarnings("unchecked")
 		List<TypeDeclaration> types = compilationUnit.types();
-		ListRewrite container = astRewrite.getListRewrite(types.get(0), TypeDeclaration.BODY_DECLARATIONS_PROPERTY);
+		ListRewrite container = astRewrite.getListRewrite(
+				types.get(0),
+				TypeDeclaration.BODY_DECLARATIONS_PROPERTY);
 		container.insertFirst(fieldDeclaration, null);
 	}
-	
+
 	public TrackedStatement addAsLastStatementInMethod(
 			MethodDeclaration method, String statement) {
 		Statement bindingStatement = ASTParserUtils.parseStatementAst3(statement);
@@ -94,52 +95,60 @@ public class Refactorator {
 		bindingStatement.setSourceRange(startPosition, length);
 		return new TrackedStatement(bindingStatement, track);
 	}
-	
+
+	@SuppressWarnings("unchecked")
+	public TrackedMethodDeclaration addMethodDeclaration(
+			MethodDeclaration methodDeclaration) {
+		ASTRewrite astRewrite = getAstRewrite();
+		ITrackedNodePosition track = astRewrite.track(methodDeclaration);
+
+		List<TypeDeclaration> types = compilationUnit.types();
+		int nrOfTypes = types.size();
+		if (nrOfTypes > 0) {
+			TypeDeclaration typeDeclSource = types.get(0);
+			ListRewrite container = astRewrite.getListRewrite(
+					typeDeclSource,
+					TypeDeclaration.BODY_DECLARATIONS_PROPERTY);
+			container.insertLast(methodDeclaration, null);
+		}
+
+		return new TrackedMethodDeclaration(methodDeclaration, track);
+	}
+
 	/**
 	 * Adds the given method.
 	 * 
 	 * @param methodCode the java code of the method declaration.
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
 	public TrackedMethodDeclaration addMethod(String methodCode) {
-		
-		ASTRewrite astRewrite = getAstRewrite();
-		
 		TypeDeclaration typeDeclarationNew = ASTParserUtils.parseTypeDeclaration(methodCode);
 		MethodDeclaration[] methods = typeDeclarationNew.getMethods();
 		MethodDeclaration methodDeclaration = methods[0];
-		
-		ITrackedNodePosition track = astRewrite.track(methodDeclaration);
-		
-		List<TypeDeclaration> types = compilationUnit.types();
-		int nrOfTypes = types.size();
-		if(nrOfTypes > 0){
-			TypeDeclaration typeDeclSource = types.get(0);
-			ListRewrite container= astRewrite.getListRewrite(typeDeclSource, TypeDeclaration.BODY_DECLARATIONS_PROPERTY);
-			container.insertLast(methodDeclaration, null);
-		}
 
-		return new TrackedMethodDeclaration(methodDeclaration, track);
+		return addMethodDeclaration(methodDeclaration);
 	}
-	
+
 	/**
-	 * Adds a new import to the rewriter's record and returns a type reference that can be used in the code.
+	 * Adds a new import to the rewriter's record and returns a type reference
+	 * that can be used in the code.
 	 */
 	public String addImport(IType type) {
 		return addImport(type.getFullyQualifiedName());
 	}
-	
+
 	/**
-	 * Adds a new import to the rewriter's record and returns a type reference that can be used in the code.
+	 * Adds a new import to the rewriter's record and returns a type reference
+	 * that can be used in the code.
 	 */
 	public String addImport(ITypeBinding typeBinding) {
 		ImportRewrite importRewrite = getImportRewrite();
 		return importRewrite.addImport(typeBinding);
 	}
-	
+
 	/**
-	 * Adds a new import to the rewriter's record and returns a type reference that can be used in the code.
+	 * Adds a new import to the rewriter's record and returns a type reference
+	 * that can be used in the code.
 	 */
 	public String addImport(String fullyClassifiedTypeName) {
 		ImportRewrite importRewrite = getImportRewrite();
@@ -325,7 +334,5 @@ public class Refactorator {
 		}
 
 	}
-
-	
 
 }
