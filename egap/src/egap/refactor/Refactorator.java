@@ -70,6 +70,11 @@ public class Refactorator {
 		return provider.getAstRewrite();
 	}
 
+	/**
+	 * Adds the {@link FieldDeclaration} to the end of the body.
+	 * 
+	 * @param fieldDeclaration the fieldDeclaration
+	 */
 	public void addFieldDeclaration(FieldDeclaration fieldDeclaration) {
 		ASTRewrite astRewrite = getAstRewrite();
 		@SuppressWarnings("unchecked")
@@ -77,7 +82,7 @@ public class Refactorator {
 		ListRewrite container = astRewrite.getListRewrite(
 				types.get(0),
 				TypeDeclaration.BODY_DECLARATIONS_PROPERTY);
-		container.insertFirst(fieldDeclaration, null);
+		container.insertLast(fieldDeclaration, null);
 	}
 
 	public TrackedStatement addAsLastStatementInMethod(

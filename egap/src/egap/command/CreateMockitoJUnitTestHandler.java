@@ -99,10 +99,10 @@ import egap.utils.StringUtils;
  * 	private RealBillingService realBillingService;
  * 
  * 	&#064;Mock
- * 	private TransactionLog transactionLogMock;
- * 
- * 	&#064;Mock
  * 	private CreditCardProcessor creditCardProcessorMock;
+ * 	
+ *  &#064;Mock
+ * 	private TransactionLog transactionLogMock;
  * 
  * 	&#064;Before
  * 	public void initialize() {
@@ -279,15 +279,15 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 				classUnderTestAsProjectResource,
 				classUnderTestAsTypeRoot);
 
-		addInjectionsAsMocksInTestcase(
-				injectionPoints,
-				junitTestAsCompilationUnit,
-				refactorator);
-
 		TypeDeclaration primaryTypeDeclaration = findPrimaryTypeDeclaration(classUnderTestAsCompilationUnit);
 
 		addClassUnderTestAsField(
 				primaryTypeDeclaration,
+				junitTestAsCompilationUnit,
+				refactorator);
+
+		addInjectionsAsMocksInTestcase(
+				injectionPoints,
 				junitTestAsCompilationUnit,
 				refactorator);
 
@@ -305,10 +305,10 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 
 	/**
 	 * Creates a new @Before method. In the method there is a new instance of
-	 * the class-under-test created and the mocks injected to it. As there are 3
-	 * possible ways how to inject the mocks (constructor, setter, direct field
-	 * access) we assume it to be the same as where the @Inject annotation is
-	 * applied to the class-under-test (see
+	 * the class-under-test created and the mocks are injected into it. As there
+	 * are 3 possible ways how to inject the mocks (constructor, setter, direct
+	 * field access) we assume it to be the same as where the @Inject annotation
+	 * is applied to the class-under-test (see
 	 * {@link GuiceFieldDeclaration#getInjectionIsAttachedTo()}).
 	 * 
 	 * <h5>Example 1: The injections were attached to the constructor</h5>
@@ -344,7 +344,6 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 	 * }
 	 * </pre>
 	 * 
-	 * @param injectionPoints
 	 */
 	private void createInitializerMethod(
 			CompilationUnit junitTestAsCompilationUnit,
@@ -373,9 +372,12 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 			statements.add(expressionStatement);
 		}
 		else {
-			
-			/* We assume all declaration to be attached the same way(e.g all by setters, all by field, ...)
-			 * so we only check the first injection point. */
+
+			/*
+			 * We assume all declaration to be attached the same way(e.g all by
+			 * setters, all by field, ...) so we only check the first injection
+			 * point.
+			 */
 			GuiceFieldDeclaration firstFieldDeclaration = injectionPoints.get(0);
 			InjectionIsAttachedTo injectionIsAttachedTo = firstFieldDeclaration.getInjectionIsAttachedTo();
 
@@ -394,7 +396,8 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 					assignment.setLeftHandSide(junitTestAst.newQualifiedName(
 							junitTestAst.newSimpleName(classUnderTestVarName),
 							junitTestAst.newSimpleName(guiceFieldDeclaration.getVariableName())));
-					assignment.setRightHandSide(junitTestAst.newSimpleName(guiceFieldDeclaration.getVariableName()  + "Mock"));
+					assignment.setRightHandSide(junitTestAst.newSimpleName(guiceFieldDeclaration.getVariableName()
+							+ "Mock"));
 					ExpressionStatement expressionStatement2 = junitTestAst.newExpressionStatement(assignment);
 					statements.add(expressionStatement2);
 				}
@@ -566,7 +569,6 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 
 		refactorator.addImport(typeBinding);
 		refactorator.addFieldDeclaration(fieldDeclaration);
-
 	}
 
 	/**

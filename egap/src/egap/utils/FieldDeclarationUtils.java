@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.Annotation;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.MarkerAnnotation;
@@ -118,7 +119,7 @@ public class FieldDeclarationUtils {
 		List<ASTNode> annotationsToDelete = new ArrayList<ASTNode>(
 				modifiers.size());
 		for (ASTNode astNode : modifiers) {
-			if (astNode instanceof MarkerAnnotation) {
+			if (astNode instanceof Annotation) {
 				annotationsToDelete.add(astNode);
 
 				/*
