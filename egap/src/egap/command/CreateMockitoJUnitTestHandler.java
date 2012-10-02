@@ -56,8 +56,67 @@ import egap.utils.GuiceFieldDeclaration;
 import egap.utils.ICompilationUnitUtils;
 import egap.utils.IPackageFragmentUtils;
 import egap.utils.IProjectResourceUtils;
+import egap.utils.InjectionIsAttachedTo;
 import egap.utils.StringUtils;
 
+/**
+ * Creates a new JUnit 5 Test for the currently active class. The test contains
+ * the injections from the class-under-test as mocks.
+ * 
+ * <h5>Example:</h5>
+ * 
+ * Given the class RealBillingService
+ * 
+ * <pre>
+ * class RealBillingService implements BillingService {
+ * 	private CreditCardProcessor processor;
+ * 	private TransactionLog transactionLog;
+ * 
+ * 	&#064;Inject
+ * 	public void setProcessor(CreditCardProcessor processor) {
+ * 		this.processor = processor;
+ * 	}
+ * 
+ * 	&#064;Inject
+ * 	public void setTransactionLog(TransactionLog transactionLog) {
+ * 		this.transactionLog = transactionLog;
+ * 	}
+ * 
+ * 	&#064;Override
+ * 	public Receipt chargeOrder(PizzaOrder order, CreditCard creditCard) {
+ * 		return null;
+ * 	}
+ * }
+ * </pre>
+ * 
+ * the generated testcase will look like:
+ * 
+ * <pre>
+ * @RunWith(MockitoJUnitRunner.class)
+ * public class RealBillingServiceTest {
+ * 		
+ * 		private RealBillingService realBillingService;
+ * 		
+ * 		@Mock
+ * 		private TransactionLog transactionLogMock;
+ * 		
+ * 		@Mock
+ * 		private CreditCardProcessor creditCardProcessorMock;
+ * 	
+ * 		@Test
+ * 		public void test() {
+ * 		}
+ * 	
+ * 		@Before
+ * 		public void initialize() {
+ * 			realBillingService = new RealBillingService();
+ *          realBillingService.setTransactionLog(transactionLogMock);
+ *          realBillingService.setCreditCardProcessor(creditCardProcessorMock);
+ * 		}
+ * 	}
+ * </pre>
+ * 
+ */
 public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 
 	private String testSuffix;
@@ -213,11 +272,11 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 		refactorator.addImport("org.junit.runner.RunWith");
 		refactorator.addImport("org.mockito.runners.MockitoJUnitRunner");
 		refactorator.addImport("org.mockito.Mock");
-		
-		final List<GuiceFieldDeclaration> injectionPoints = findInjectionPoints(
+
+		List<GuiceFieldDeclaration> injectionPoints = findInjectionPoints(
 				classUnderTestAsProjectResource,
 				classUnderTestAsTypeRoot);
-		
+
 		addInjectionsAsMocksInTestcase(
 				injectionPoints,
 				junitTestAsCompilationUnit,
@@ -233,7 +292,8 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 		createInitializerMethod(
 				junitTestAsCompilationUnit,
 				refactorator,
-				primaryTypeDeclaration);
+				primaryTypeDeclaration,
+				injectionPoints);
 
 		refactorator.refactor(null);
 
@@ -242,10 +302,25 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 	}
 
 	/**
-	 * Creates a new @Before method which creates a new instance of the
-	 * class-under-test and then injects the mocks into it.
+	 * Creates a new @Before method. In the method there is a new instance of
+	 * the class-under-test created and the mocks injected to it. As there are 3
+	 * possible ways how to inject the mocks (constructor, setter, direct field
+	 * access) we assume it to be the same as where the @Inject annotation is
+	 * applied to the class-under-test (see
+	 * {@link GuiceFieldDeclaration#getInjectionIsAttachedTo()}.
 	 * 
-	 * Example:
+	 * <h5>Example 1: The injections were attached to the constructor</h5>
+	 * 
+	 * <pre>
+	 * &#064;Before
+	 * public void initialize() {
+	 * 	importJobTextRenderer = new ImportJobTextRenderer(
+	 * 			datenstandDeltaBerechnerMock,
+	 * 			textBuilderFactoryMock);
+	 * }
+	 * </pre>
+	 * 
+	 * <h5>Example 2: The injections were attached to the setter methods</h5>
 	 * 
 	 * <pre>
 	 * &#064;Before
@@ -255,10 +330,24 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 	 * 	importJobTextRenderer.setTextBuilderFactory(textBuilderFactoryMock);
 	 * }
 	 * </pre>
+	 * 
+	 * <h5>Example 3: The injections were attached to the field</h5>
+	 * 
+	 * <pre>
+	 * &#064;Before
+	 * public void initialize() {
+	 * 	importJobTextRenderer = new ImportJobTextRenderer();
+	 * 	importJobTextRenderer.datenstandDeltaBerechner = datenstandDeltaBerechnerMock;
+	 * 	importJobTextRenderer.textBuilderFactory = textBuilderFactoryMock;
+	 * }
+	 * </pre>
+	 * 
+	 * @param injectionPoints
 	 */
 	private void createInitializerMethod(
 			CompilationUnit junitTestAsCompilationUnit,
-			Refactorator refactorator, TypeDeclaration primaryTypeDeclaration) {
+			Refactorator refactorator, TypeDeclaration primaryTypeDeclaration,
+			List<GuiceFieldDeclaration> injectionPoints) {
 		AST junitTestAst = junitTestAsCompilationUnit.getAST();
 		MethodDeclaration methodDecl = junitTestAst.newMethodDeclaration();
 		methodDecl.setConstructor(false);
@@ -280,6 +369,32 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 		SimpleType classUnderTestType = junitTestAst.newSimpleType(junitTestAst.newSimpleName(name));
 		String varName = StringUtils.uncapitalize(name);
 
+		if (injectionPoints.isEmpty()) {
+			createClassInstanceCreation(
+					junitTestAst,
+					statements,
+					classUnderTestType,
+					varName);
+		}
+		else {
+			GuiceFieldDeclaration firstFieldDeclaration = injectionPoints.get(0);
+			InjectionIsAttachedTo injectionIsAttachedTo = firstFieldDeclaration.getInjectionIsAttachedTo();
+
+		}
+
+		refactorator.addImport("org.junit.Before");
+		refactorator.addMethodDeclaration(methodDecl);
+	}
+
+	/**
+	 * @param junitTestAst
+	 * @param statements
+	 * @param classUnderTestType
+	 * @param varName
+	 */
+	private void createClassInstanceCreation(AST junitTestAst,
+			List<Statement> statements, SimpleType classUnderTestType,
+			String varName) {
 		ClassInstanceCreation classInstanceCreation = junitTestAst.newClassInstanceCreation();
 		classInstanceCreation.setType(classUnderTestType);
 
@@ -288,9 +403,6 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 		assignment.setRightHandSide(classInstanceCreation);
 
 		statements.add(junitTestAst.newExpressionStatement(assignment));
-
-		refactorator.addImport("org.junit.Before");
-		refactorator.addMethodDeclaration(methodDecl);
 	}
 
 	/**
@@ -355,11 +467,15 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 	 * Adds the injected dependencies from the class-under-test as fields in the
 	 * testcase. The annotations from the class-under-test are not copied to the
 	 * new fields.
+	 * 
+	 * @return
 	 */
-	private void addInjectionsAsMocksInTestcase(
+	private List<FieldDeclaration> addInjectionsAsMocksInTestcase(
 			final List<GuiceFieldDeclaration> injectionPoints,
 			CompilationUnit junitTestAsCompilationUnit,
 			Refactorator refactorator) {
+		List<FieldDeclaration> fieldDeclarations = new ArrayList<FieldDeclaration>(
+				injectionPoints.size());
 		for (GuiceFieldDeclaration injectionPoint : injectionPoints) {
 			ITypeBinding targetTypeBinding = injectionPoint.getTargetTypeBinding();
 			refactorator.addImport(targetTypeBinding);
@@ -383,7 +499,9 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 					"Mock");
 
 			refactorator.addFieldDeclaration(fieldDeclarationUnparented);
+			fieldDeclarations.add(fieldDeclarationUnparented);
 		}
+		return fieldDeclarations;
 	}
 
 	private TypeDeclaration findPrimaryTypeDeclaration(

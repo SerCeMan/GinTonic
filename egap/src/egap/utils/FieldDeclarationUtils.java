@@ -36,7 +36,8 @@ public class FieldDeclarationUtils {
 					type.resolveBinding(),
 					guiceAnnotation,
 					fieldName,
-					fieldDeclaration);
+					fieldDeclaration,
+					InjectionIsAttachedTo.FIELD);
 		}
 
 		/*
@@ -57,7 +58,8 @@ public class FieldDeclarationUtils {
 						type.resolveBinding(),
 						guiceAnnotation,
 						fieldName,
-						fieldDeclaration);
+						fieldDeclaration,
+						InjectionIsAttachedTo.CONSTRUCTOR);
 			}
 		}
 
@@ -79,7 +81,8 @@ public class FieldDeclarationUtils {
 						type.resolveBinding(),
 						guiceAnnotation,
 						fieldName,
-						fieldDeclaration);
+						fieldDeclaration,
+						InjectionIsAttachedTo.SETTER);
 			}
 		}
 		return null;
@@ -112,13 +115,16 @@ public class FieldDeclarationUtils {
 	public static void removeAnnotations(FieldDeclaration fieldDeclaration) {
 		@SuppressWarnings("unchecked")
 		List<ASTNode> modifiers = fieldDeclaration.modifiers();
-		List<ASTNode> annotationsToDelete = new ArrayList<ASTNode>(modifiers.size());
+		List<ASTNode> annotationsToDelete = new ArrayList<ASTNode>(
+				modifiers.size());
 		for (ASTNode astNode : modifiers) {
 			if (astNode instanceof MarkerAnnotation) {
 				annotationsToDelete.add(astNode);
-				
-				/* astNode.delete(); doesnt work here. We have to collect the
-				 * annotations first and then delete them! */
+
+				/*
+				 * astNode.delete(); doesnt work here. We have to collect the
+				 * annotations first and then delete them!
+				 */
 			}
 		}
 		for (ASTNode astNode : annotationsToDelete) {
@@ -126,13 +132,13 @@ public class FieldDeclarationUtils {
 		}
 	}
 
-	public static void addAnnotation(
-			FieldDeclaration fieldDeclaration, String annotationUnqualifiedName) {
+	public static void addAnnotation(FieldDeclaration fieldDeclaration,
+			String annotationUnqualifiedName) {
 		AST ast = fieldDeclaration.getAST();
 		MarkerAnnotation annotation = ast.newMarkerAnnotation();
 		SimpleName name = ast.newSimpleName(annotationUnqualifiedName);
 		annotation.setTypeName(name);
-		
+
 		@SuppressWarnings("unchecked")
 		List<ASTNode> modifiers = fieldDeclaration.modifiers();
 		modifiers.add(0, annotation);
