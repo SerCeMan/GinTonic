@@ -151,10 +151,6 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 			CompilationUnit classUnderTestAsCompilationUnit)
 			throws JavaModelException {
 
-		final List<GuiceFieldDeclaration> injectionPoints = findInjectionPoints(
-				classUnderTestAsProjectResource,
-				classUnderTestAsTypeRoot);
-
 		StringBuffer sb = new StringBuffer(300);
 		JavaCodeBuilder codeGenerator = new JavaCodeBuilder(sb);
 
@@ -217,7 +213,11 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 		refactorator.addImport("org.junit.runner.RunWith");
 		refactorator.addImport("org.mockito.runners.MockitoJUnitRunner");
 		refactorator.addImport("org.mockito.Mock");
-
+		
+		final List<GuiceFieldDeclaration> injectionPoints = findInjectionPoints(
+				classUnderTestAsProjectResource,
+				classUnderTestAsTypeRoot);
+		
 		addInjectionsAsMocksInTestcase(
 				injectionPoints,
 				junitTestAsCompilationUnit,
@@ -388,6 +388,7 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 
 	private TypeDeclaration findPrimaryTypeDeclaration(
 			CompilationUnit classUnderTestAsCompilationUnit) {
+		@SuppressWarnings("unchecked")
 		List<AbstractTypeDeclaration> types = classUnderTestAsCompilationUnit.types();
 		for (AbstractTypeDeclaration abstractTypeDeclaration : types) {
 			if (abstractTypeDeclaration instanceof TypeDeclaration) {
@@ -469,7 +470,7 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 	}
 
 	/**
-	 * Creates a normal class from a given junit class.
+	 * Creates a class-under-test from a given junit class.
 	 * 
 	 * <h5>Example:</h5>
 	 * 
