@@ -22,6 +22,7 @@ import org.eclipse.jdt.core.dom.Assignment;
 import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.ClassInstanceCreation;
 import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.ExpressionStatement;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.IExtendedModifier;
 import org.eclipse.jdt.core.dom.ITypeBinding;
@@ -92,28 +93,29 @@ import egap.utils.StringUtils;
  * the generated testcase will look like:
  * 
  * <pre>
- * @RunWith(MockitoJUnitRunner.class)
+ * &#064;RunWith(MockitoJUnitRunner.class)
  * public class RealBillingServiceTest {
- * 		
- * 		private RealBillingService realBillingService;
- * 		
- * 		@Mock
- * 		private TransactionLog transactionLogMock;
- * 		
- * 		@Mock
- * 		private CreditCardProcessor creditCardProcessorMock;
- * 	
- * 		@Test
- * 		public void test() {
- * 		}
- * 	
- * 		@Before
- * 		public void initialize() {
- * 			realBillingService = new RealBillingService();
- *          realBillingService.setTransactionLog(transactionLogMock);
- *          realBillingService.setCreditCardProcessor(creditCardProcessorMock);
- * 		}
+ * 
+ * 	private RealBillingService realBillingService;
+ * 
+ * 	&#064;Mock
+ * 	private TransactionLog transactionLogMock;
+ * 
+ * 	&#064;Mock
+ * 	private CreditCardProcessor creditCardProcessorMock;
+ * 
+ * 	&#064;Before
+ * 	public void initialize() {
+ * 		realBillingService = new RealBillingService();
+ * 		realBillingService.setTransactionLog(transactionLogMock);
+ * 		realBillingService.setCreditCardProcessor(creditCardProcessorMock);
  * 	}
+ * 
+ * 	&#064;Test
+ * 	public void test() {
+ * 	}
+ * 
+ * }
  * </pre>
  * 
  */
@@ -307,7 +309,7 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 	 * possible ways how to inject the mocks (constructor, setter, direct field
 	 * access) we assume it to be the same as where the @Inject annotation is
 	 * applied to the class-under-test (see
-	 * {@link GuiceFieldDeclaration#getInjectionIsAttachedTo()}.
+	 * {@link GuiceFieldDeclaration#getInjectionIsAttachedTo()}).
 	 * 
 	 * <h5>Example 1: The injections were attached to the constructor</h5>
 	 * 
@@ -348,6 +350,7 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 			CompilationUnit junitTestAsCompilationUnit,
 			Refactorator refactorator, TypeDeclaration primaryTypeDeclaration,
 			List<GuiceFieldDeclaration> injectionPoints) {
+
 		AST junitTestAst = junitTestAsCompilationUnit.getAST();
 		MethodDeclaration methodDecl = junitTestAst.newMethodDeclaration();
 		methodDecl.setConstructor(false);
@@ -363,23 +366,40 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 		List<Statement> statements = methodBody.statements();
 		methodDecl.setBody(methodBody);
 
-		/* this.classUnderTest = new ClassUnderTest(); */
-		ITypeBinding classUnderTestBinding = primaryTypeDeclaration.resolveBinding();
-		String name = classUnderTestBinding.getName();
-		SimpleType classUnderTestType = junitTestAst.newSimpleType(junitTestAst.newSimpleName(name));
-		String varName = StringUtils.uncapitalize(name);
-
 		if (injectionPoints.isEmpty()) {
-			createClassInstanceCreation(
-					junitTestAst,
-					statements,
-					classUnderTestType,
-					varName);
+			ExpressionStatement expressionStatement = createClassInstanceCreation(
+					primaryTypeDeclaration,
+					junitTestAst);
+			statements.add(expressionStatement);
 		}
 		else {
+			
+			/* We assume all declaration to be attached the same way(e.g all by setters, all by field, ...)
+			 * so we only check the first injection point. */
 			GuiceFieldDeclaration firstFieldDeclaration = injectionPoints.get(0);
 			InjectionIsAttachedTo injectionIsAttachedTo = firstFieldDeclaration.getInjectionIsAttachedTo();
 
+			if (injectionIsAttachedTo == InjectionIsAttachedTo.FIELD) {
+				ExpressionStatement expressionStatement = createClassInstanceCreation(
+						primaryTypeDeclaration,
+						junitTestAst);
+				statements.add(expressionStatement);
+
+				ITypeBinding classUnderTestBinding = primaryTypeDeclaration.resolveBinding();
+				String classUnderTestTypeNameSimple = classUnderTestBinding.getName();
+				String classUnderTestVarName = StringUtils.uncapitalize(classUnderTestTypeNameSimple);
+
+				for (GuiceFieldDeclaration guiceFieldDeclaration : injectionPoints) {
+					Assignment assignment = junitTestAst.newAssignment();
+					assignment.setLeftHandSide(junitTestAst.newQualifiedName(
+							junitTestAst.newSimpleName(classUnderTestVarName),
+							junitTestAst.newSimpleName(guiceFieldDeclaration.getVariableName())));
+					assignment.setRightHandSide(junitTestAst.newSimpleName(guiceFieldDeclaration.getVariableName()  + "Mock"));
+					ExpressionStatement expressionStatement2 = junitTestAst.newExpressionStatement(assignment);
+					statements.add(expressionStatement2);
+				}
+
+			}
 		}
 
 		refactorator.addImport("org.junit.Before");
@@ -387,28 +407,27 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 	}
 
 	/**
-	 * @param junitTestAst
-	 * @param statements
-	 * @param classUnderTestType
-	 * @param varName
+	 * classUnderTest = new ClassUnderTest();
 	 */
-	private void createClassInstanceCreation(AST junitTestAst,
-			List<Statement> statements, SimpleType classUnderTestType,
-			String varName) {
+	private ExpressionStatement createClassInstanceCreation(
+			TypeDeclaration primaryTypeDeclaration, AST junitTestAst) {
+		ITypeBinding classUnderTestBinding = primaryTypeDeclaration.resolveBinding();
+		String classUnderTestTypeNameSimple = classUnderTestBinding.getName();
+		SimpleType classUnderTestType = junitTestAst.newSimpleType(junitTestAst.newSimpleName(classUnderTestTypeNameSimple));
+		String classUnderTestVarName = StringUtils.uncapitalize(classUnderTestTypeNameSimple);
 		ClassInstanceCreation classInstanceCreation = junitTestAst.newClassInstanceCreation();
 		classInstanceCreation.setType(classUnderTestType);
 
 		Assignment assignment = junitTestAst.newAssignment();
-		assignment.setLeftHandSide(junitTestAst.newSimpleName(varName));
+		assignment.setLeftHandSide(junitTestAst.newSimpleName(classUnderTestVarName));
 		assignment.setRightHandSide(classInstanceCreation);
 
-		statements.add(junitTestAst.newExpressionStatement(assignment));
+		ExpressionStatement expressionStatement = junitTestAst.newExpressionStatement(assignment);
+		return expressionStatement;
 	}
 
 	/**
-	 * @param classUnderTestAsProjectResource
-	 * @param classUnderTestAsTypeRoot
-	 * @return
+	 * TODO
 	 */
 	private List<GuiceFieldDeclaration> findInjectionPoints(
 			final ProjectResource classUnderTestAsProjectResource,
@@ -467,8 +486,6 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 	 * Adds the injected dependencies from the class-under-test as fields in the
 	 * testcase. The annotations from the class-under-test are not copied to the
 	 * new fields.
-	 * 
-	 * @return
 	 */
 	private List<FieldDeclaration> addInjectionsAsMocksInTestcase(
 			final List<GuiceFieldDeclaration> injectionPoints,
@@ -519,8 +536,6 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 
 	/**
 	 * Adds the class under test as field in the testcase.
-	 * 
-	 * @return
 	 */
 	@SuppressWarnings("unchecked")
 	private void addClassUnderTestAsField(TypeDeclaration typeDecl,

@@ -116,10 +116,9 @@ public class Refactorator {
 	}
 
 	/**
-	 * Adds the given method.
+	 * Adds the given method and returns it as {@link MethodDeclaration}.
 	 * 
 	 * @param methodCode the java code of the method declaration.
-	 * @return
 	 */
 	public TrackedMethodDeclaration addMethod(String methodCode) {
 		TypeDeclaration typeDeclarationNew = ASTParserUtils.parseTypeDeclaration(methodCode);
