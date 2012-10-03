@@ -2,7 +2,6 @@ package egap.utils;
 
 import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.Modifier;
-import org.eclipse.jdt.internal.compiler.lookup.ParameterizedTypeBinding;
 
 
 public class ITypeBindingUtils {
