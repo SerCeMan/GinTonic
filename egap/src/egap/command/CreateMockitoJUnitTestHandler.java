@@ -294,6 +294,17 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 
 	}
 
+	/**
+	 * Creates a new empty test method:
+	 * 
+	 * <pre>
+	 * @Test
+	 * public void test(){
+	 * 
+	 * }
+	 * </pre>
+     * 
+	 */
 	private void createTestMethod(AST ast, Refactorator refactorator) {
 		MethodDeclaration methodDecl = ast.newMethodDeclaration();
 		methodDecl.setConstructor(false);
