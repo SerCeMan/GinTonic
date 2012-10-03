@@ -100,8 +100,8 @@ import egap.utils.StringUtils;
  * 
  * 	&#064;Mock
  * 	private CreditCardProcessor creditCardProcessorMock;
- * 	
- *  &#064;Mock
+ * 
+ * 	&#064;Mock
  * 	private TransactionLog transactionLogMock;
  * 
  * 	&#064;Before
@@ -221,16 +221,6 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 		codeGenerator.startClass(typeName);
 		codeGenerator.startBlock();
 
-		codeGenerator.startMethod(
-				Arrays.asList("Test"),
-				"public",
-				"test",
-				"void",
-				null,
-				null);
-		codeGenerator.startBlock();
-		codeGenerator.finishBlock();
-
 		codeGenerator.finishBlock();
 
 		String sourceCode = sb.toString();
@@ -270,7 +260,6 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 				junitTestAsCompilationUnit,
 				junitTestAsCompilationUnit.getAST());
 
-		refactorator.addImport("org.junit.Test");
 		refactorator.addImport("org.junit.runner.RunWith");
 		refactorator.addImport("org.mockito.runners.MockitoJUnitRunner");
 		refactorator.addImport("org.mockito.Mock");
@@ -297,10 +286,29 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 				primaryTypeDeclaration,
 				injectionPoints);
 
+		createTestMethod(junitTestAsCompilationUnit.getAST(), refactorator);
+
 		refactorator.refactor(null);
 
 		IProjectResourceUtils.openEditorWithStatementDeclaration(junitTestAsProjectResource);
 
+	}
+
+	private void createTestMethod(AST ast, Refactorator refactorator) {
+		MethodDeclaration methodDecl = ast.newMethodDeclaration();
+		methodDecl.setConstructor(false);
+		@SuppressWarnings("unchecked")
+		List<IExtendedModifier> modifiers = methodDecl.modifiers();
+		MarkerAnnotation markerAnnotation = ast.newMarkerAnnotation();
+		markerAnnotation.setTypeName(ast.newName("Test"));
+		modifiers.add(markerAnnotation);
+		modifiers.add(ast.newModifier(Modifier.ModifierKeyword.PUBLIC_KEYWORD));
+		methodDecl.setName(ast.newSimpleName("test"));
+		Block methodBody = ast.newBlock();
+		methodDecl.setBody(methodBody);
+		
+		refactorator.addImport("org.junit.Test");
+		refactorator.addMethodDeclaration(methodDecl);
 	}
 
 	/**
@@ -350,17 +358,17 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 			Refactorator refactorator, TypeDeclaration primaryTypeDeclaration,
 			List<GuiceFieldDeclaration> injectionPoints) {
 
-		AST junitTestAst = junitTestAsCompilationUnit.getAST();
-		MethodDeclaration methodDecl = junitTestAst.newMethodDeclaration();
+		AST ast = junitTestAsCompilationUnit.getAST();
+		MethodDeclaration methodDecl = ast.newMethodDeclaration();
 		methodDecl.setConstructor(false);
 		@SuppressWarnings("unchecked")
 		List<IExtendedModifier> modifiers = methodDecl.modifiers();
-		MarkerAnnotation markerAnnotation = junitTestAst.newMarkerAnnotation();
-		markerAnnotation.setTypeName(junitTestAst.newName("Before"));
+		MarkerAnnotation markerAnnotation = ast.newMarkerAnnotation();
+		markerAnnotation.setTypeName(ast.newName("Before"));
 		modifiers.add(markerAnnotation);
-		modifiers.add(junitTestAst.newModifier(Modifier.ModifierKeyword.PUBLIC_KEYWORD));
-		methodDecl.setName(junitTestAst.newSimpleName("initialize"));
-		Block methodBody = junitTestAst.newBlock();
+		modifiers.add(ast.newModifier(Modifier.ModifierKeyword.PUBLIC_KEYWORD));
+		methodDecl.setName(ast.newSimpleName("initialize"));
+		Block methodBody = ast.newBlock();
 		@SuppressWarnings("unchecked")
 		List<Statement> statements = methodBody.statements();
 		methodDecl.setBody(methodBody);
@@ -368,7 +376,7 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 		if (injectionPoints.isEmpty()) {
 			ExpressionStatement expressionStatement = createClassInstanceCreation(
 					primaryTypeDeclaration,
-					junitTestAst);
+					ast);
 			statements.add(expressionStatement);
 		}
 		else {
@@ -381,24 +389,24 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 			GuiceFieldDeclaration firstFieldDeclaration = injectionPoints.get(0);
 			InjectionIsAttachedTo injectionIsAttachedTo = firstFieldDeclaration.getInjectionIsAttachedTo();
 
+			ITypeBinding classUnderTestBinding = primaryTypeDeclaration.resolveBinding();
+			String classUnderTestTypeNameSimple = classUnderTestBinding.getName();
+			String classUnderTestVarName = StringUtils.uncapitalize(classUnderTestTypeNameSimple);
+
 			if (injectionIsAttachedTo == InjectionIsAttachedTo.FIELD) {
 				ExpressionStatement expressionStatement = createClassInstanceCreation(
 						primaryTypeDeclaration,
-						junitTestAst);
+						ast);
 				statements.add(expressionStatement);
 
-				ITypeBinding classUnderTestBinding = primaryTypeDeclaration.resolveBinding();
-				String classUnderTestTypeNameSimple = classUnderTestBinding.getName();
-				String classUnderTestVarName = StringUtils.uncapitalize(classUnderTestTypeNameSimple);
-
 				for (GuiceFieldDeclaration guiceFieldDeclaration : injectionPoints) {
-					Assignment assignment = junitTestAst.newAssignment();
-					assignment.setLeftHandSide(junitTestAst.newQualifiedName(
-							junitTestAst.newSimpleName(classUnderTestVarName),
-							junitTestAst.newSimpleName(guiceFieldDeclaration.getVariableName())));
-					assignment.setRightHandSide(junitTestAst.newSimpleName(guiceFieldDeclaration.getVariableName()
+					Assignment assignment = ast.newAssignment();
+					assignment.setLeftHandSide(ast.newQualifiedName(
+							ast.newSimpleName(classUnderTestVarName),
+							ast.newSimpleName(guiceFieldDeclaration.getVariableName())));
+					assignment.setRightHandSide(ast.newSimpleName(guiceFieldDeclaration.getVariableName()
 							+ "Mock"));
-					ExpressionStatement expressionStatement2 = junitTestAst.newExpressionStatement(assignment);
+					ExpressionStatement expressionStatement2 = ast.newExpressionStatement(assignment);
 					statements.add(expressionStatement2);
 				}
 

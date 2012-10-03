@@ -2,6 +2,7 @@ package egap.utils;
 
 import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.Modifier;
+import org.eclipse.jdt.internal.compiler.lookup.ParameterizedTypeBinding;
 
 
 public class ITypeBindingUtils {
@@ -71,7 +72,11 @@ public class ITypeBindingUtils {
 		if (typeBinding == null) {
 			return null;
 		}
-
+		
+		if(typeBinding.isParameterizedType()){
+			typeBinding = typeBinding.getErasure();
+		}
+		
 		String qualifiedName = typeBinding.getQualifiedName();
 		if (fullyQualifiedTypeName.equals(qualifiedName)) {
 			return typeBinding;
