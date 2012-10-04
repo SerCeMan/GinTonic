@@ -55,21 +55,24 @@ public class IPackageFragmentUtils {
 	 * @param packageFullyQualified the package we are going to create as
 	 *            dot-separated package name
 	 * @param progressMonitor a progress monitor. Can be null.
+	 * @param force a flag controlling how to deal with resources that are not
+	 *            in sync with the local file system
+	 * 
 	 * @return the package fragment or null if the
 	 * 
 	 * @throws JavaModelException
 	 */
 	public static IPackageFragment createPackageFragment(
 			IJavaProject javaProject, String srcFolderAsString,
-			String packageFullyQualified, IProgressMonitor progressMonitor)
-			throws JavaModelException {
+			String packageFullyQualified, IProgressMonitor progressMonitor,
+			boolean force) throws JavaModelException {
 		IPackageFragmentRoot[] srcFoldersInProject = javaProject.getPackageFragmentRoots();
 		for (IPackageFragmentRoot srcFolder : srcFoldersInProject) {
 			String srcFolderName = srcFolder.getElementName();
 			if (srcFolderName.equals(srcFolderAsString)) {
 				IPackageFragment packageFragment = srcFolder.createPackageFragment(
 						packageFullyQualified,
-						false,
+						force,
 						progressMonitor);
 				return packageFragment;
 

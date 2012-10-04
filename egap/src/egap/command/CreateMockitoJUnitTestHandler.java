@@ -9,6 +9,7 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
@@ -29,6 +30,7 @@ import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.Javadoc;
 import org.eclipse.jdt.core.dom.MarkerAnnotation;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
+import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.Modifier;
 import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.SimpleType;
@@ -62,7 +64,8 @@ import egap.utils.StringUtils;
 
 /**
  * Creates a new JUnit 5 Test for the currently active class. The test contains
- * the injections from the class-under-test as mocks.
+ * the injections from the class-under-test as mocks and an initialize method,
+ * which injects the mocks into the class-under-test.
  * 
  * <h5>Example:</h5>
  * 
@@ -126,13 +129,34 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 	private String srcFolderForTests;
 	private String srcFolderForNormalClasses;
 
+	private enum Action {
+		JUMPED_TO_TEST, JUMPED_TO_CLASS_UNDER_TEST, CREATED_TEST, UNDEFINED
+	}
+
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 
+		Action action = Action.UNDEFINED;
+		long now = System.currentTimeMillis();
+		try {
+			action = execute();
+			return null;
+		} catch (Throwable e) {
+			throw new RuntimeException(e);
+		} finally {
+			long then = System.currentTimeMillis();
+			long elapsed = then - now;
+			EgapPlugin.logInfo("Action " + action.name() + " took " + elapsed
+					+ " ms.");
+		}
+
+	}
+
+	private Action execute() throws RuntimeException {
 		IEditorPart editorPart = EclipseUtils.getActiveEditor();
 
 		if (editorPart == null | !(editorPart instanceof ITextEditor)) {
-			return null;
+			return Action.UNDEFINED;
 		}
 		final ITextEditor textEditor = (ITextEditor) editorPart;
 		IEditorInput editorInput = textEditor.getEditorInput();
@@ -140,7 +164,7 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 		ITypeRoot editorInputTypeRoot = JavaUI.getEditorInputTypeRoot(editorInput);
 
 		if (!(editorInputTypeRoot instanceof ICompilationUnit)) {
-			return null;
+			return Action.UNDEFINED;
 		}
 		ICompilationUnit icompilationUnit = (ICompilationUnit) editorInputTypeRoot;
 		CompilationUnit classUnderTestAsCompilationUnit = SharedASTProvider.getAST(
@@ -152,19 +176,17 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 
 		ProjectResource javaClass = IProjectResourceUtils.createProjectResource(icompilationUnit);
 		if (javaClass == null) {
-			return null;
+			return Action.UNDEFINED;
 		}
 
 		if (icompilationUnit.getElementName().endsWith(
 				testSuffix + ICompilationUnitUtils.JAVA_EXTENSION)) {
 			/* JUnit Test */
-			ProjectResource normalClass = createClassForJuniTest(javaClass);
-			IFile normalClassAsIFile = IProjectResourceUtils.getJavaFile(normalClass);
+			ProjectResource classUnderTest = createClassForJuniTest(javaClass);
+			IFile normalClassAsIFile = IProjectResourceUtils.getJavaFile(classUnderTest);
 			if (normalClassAsIFile.exists()) {
-				IProjectResourceUtils.openEditorWithStatementDeclaration(normalClass);
-			}
-			else {
-
+				IProjectResourceUtils.openEditorWithStatementDeclaration(classUnderTest);
+				return Action.JUMPED_TO_CLASS_UNDER_TEST;
 			}
 
 		}
@@ -173,24 +195,26 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 			IFile junitTestAsIFile = IProjectResourceUtils.getJavaFile(junitTest);
 			if (junitTestAsIFile.exists()) {
 				IProjectResourceUtils.openEditorWithStatementDeclaration(junitTest);
+				return Action.JUMPED_TO_TEST;
 			}
-			else {
-				/* Test does not exist - lets create it! */
-				try {
-					ProjectResource junitTestAsProjectResource = createJUnitClassFor(javaClass);
-					createJUnitTest(
-							icompilationUnit.getJavaProject(),
-							junitTestAsProjectResource,
-							junitTest,
-							editorInputTypeRoot,
-							classUnderTestAsCompilationUnit);
-				} catch (JavaModelException e) {
-					EgapPlugin.logException(e);
-				}
+			/* Test does not exist - lets create it! */
+			try {
+				ProjectResource junitTestAsProjectResource = createJUnitClassFor(javaClass);
+
+				createJUnitTest(
+						icompilationUnit.getJavaProject(),
+						junitTestAsProjectResource,
+						junitTest,
+						editorInputTypeRoot,
+						classUnderTestAsCompilationUnit);
+
+				return Action.CREATED_TEST;
+			} catch (CoreException e) {
+				EgapPlugin.logException(e);
 			}
 		}
 
-		return null;
+		return Action.UNDEFINED;
 	}
 
 	/**
@@ -235,7 +259,8 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 				javaProject,
 				srcFolderForTests,
 				packageFullyQualified,
-				null);
+				null,
+				true);
 
 		if (packageFragment == null) {
 			EgapPlugin.logWarning("Unable to create package "
@@ -298,12 +323,12 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 	 * Creates a new empty test method:
 	 * 
 	 * <pre>
-	 * @Test
-	 * public void test(){
+	 * &#064;Test
+	 * public void test() {
 	 * 
 	 * }
 	 * </pre>
-     * 
+	 * 
 	 */
 	private void createTestMethod(AST ast, Refactorator refactorator) {
 		MethodDeclaration methodDecl = ast.newMethodDeclaration();
@@ -317,7 +342,7 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 		methodDecl.setName(ast.newSimpleName("test"));
 		Block methodBody = ast.newBlock();
 		methodDecl.setBody(methodBody);
-		
+
 		refactorator.addImport("org.junit.Test");
 		refactorator.addMethodDeclaration(methodDecl);
 	}
@@ -364,6 +389,7 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 	 * </pre>
 	 * 
 	 */
+	@SuppressWarnings("unchecked")
 	private void createInitializerMethod(
 			CompilationUnit junitTestAsCompilationUnit,
 			Refactorator refactorator, TypeDeclaration primaryTypeDeclaration,
@@ -372,7 +398,6 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 		AST ast = junitTestAsCompilationUnit.getAST();
 		MethodDeclaration methodDecl = ast.newMethodDeclaration();
 		methodDecl.setConstructor(false);
-		@SuppressWarnings("unchecked")
 		List<IExtendedModifier> modifiers = methodDecl.modifiers();
 		MarkerAnnotation markerAnnotation = ast.newMarkerAnnotation();
 		markerAnnotation.setTypeName(ast.newName("Before"));
@@ -380,7 +405,6 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 		modifiers.add(ast.newModifier(Modifier.ModifierKeyword.PUBLIC_KEYWORD));
 		methodDecl.setName(ast.newSimpleName("initialize"));
 		Block methodBody = ast.newBlock();
-		@SuppressWarnings("unchecked")
 		List<Statement> statements = methodBody.statements();
 		methodDecl.setBody(methodBody);
 
@@ -415,12 +439,31 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 					assignment.setLeftHandSide(ast.newQualifiedName(
 							ast.newSimpleName(classUnderTestVarName),
 							ast.newSimpleName(guiceFieldDeclaration.getVariableName())));
-					assignment.setRightHandSide(ast.newSimpleName(guiceFieldDeclaration.getVariableName()
-							+ "Mock"));
-					ExpressionStatement expressionStatement2 = ast.newExpressionStatement(assignment);
-					statements.add(expressionStatement2);
+					assignment.setRightHandSide(ast.newSimpleName((guiceFieldDeclaration.getVariableName() + "Mock")));
+					statements.add(ast.newExpressionStatement(assignment));
 				}
 
+			}
+			else if (injectionIsAttachedTo == InjectionIsAttachedTo.SETTER) {
+				ExpressionStatement expressionStatement = createClassInstanceCreation(
+						primaryTypeDeclaration,
+						ast);
+				statements.add(expressionStatement);
+
+				for (GuiceFieldDeclaration guiceFieldDeclaration : injectionPoints) {
+					String variableName = guiceFieldDeclaration.getVariableName();
+					String variableNameOfMock = guiceFieldDeclaration.getVariableName()
+							+ "Mock";
+					String setter = StringUtils.toSetterMethodname(variableName);
+
+					MethodInvocation methodInvocation = ast.newMethodInvocation();
+					methodInvocation.setExpression(ast.newSimpleName(classUnderTestVarName));
+					methodInvocation.setName(ast.newSimpleName(setter));
+					methodInvocation.arguments().add(
+							ast.newSimpleName(variableNameOfMock));
+
+					statements.add(ast.newExpressionStatement(methodInvocation));
+				}
 			}
 		}
 
@@ -506,8 +549,8 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 
 	/**
 	 * Adds the injected dependencies from the class-under-test as fields in the
-	 * testcase. The annotations from the class-under-test are not copied to the
-	 * new fields.
+	 * testcase. The annotations and the javadoc from the class-under-test are
+	 * not copied to the new fields.
 	 */
 	private List<FieldDeclaration> addInjectionsAsMocksInTestcase(
 			final List<GuiceFieldDeclaration> injectionPoints,
@@ -525,7 +568,6 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 					ast,
 					fieldDeclaration);
 
-			/* add Mock to every field declaration */
 			@SuppressWarnings("unchecked")
 			List<VariableDeclarationFragment> fragments = fieldDeclarationUnparented.fragments();
 			VariableDeclarationFragment variableDeclarationFragment = fragments.get(0);
@@ -533,7 +575,8 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 					+ "Mock"));
 
 			FieldDeclarationUtils.removeAnnotations(fieldDeclarationUnparented);
-			FieldDeclarationUtils.addAnnotation(
+			fieldDeclarationUnparented.setJavadoc(null);
+			FieldDeclarationUtils.addMarkerAnnotation(
 					fieldDeclarationUnparented,
 					"Mock");
 

@@ -133,7 +133,10 @@ public class FieldDeclarationUtils {
 		}
 	}
 
-	public static void addAnnotation(FieldDeclaration fieldDeclaration,
+	/**
+	 * Adds the annotation to the field declaration.
+	 */
+	public static void addMarkerAnnotation(FieldDeclaration fieldDeclaration,
 			String annotationUnqualifiedName) {
 		AST ast = fieldDeclaration.getAST();
 		MarkerAnnotation annotation = ast.newMarkerAnnotation();

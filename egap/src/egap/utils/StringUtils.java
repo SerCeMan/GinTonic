@@ -89,6 +89,16 @@ public class StringUtils {
 		result.append(name.substring(1));
 		return result.toString();
 	}
+	
+	/**
+	 * Returns the setter method name for the given property name.
+	 * 
+	 * @param name the name of the property
+	 * @return the setter method name
+	 */
+	public static String toSetterMethodname(String name) {
+		return "set" + capitalize(name);
+	}
 
 	/**
 	 * Translates primitives like int, double, etc to the fully qualified
