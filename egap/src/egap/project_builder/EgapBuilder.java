@@ -33,7 +33,7 @@ public class EgapBuilder extends IncrementalProjectBuilder {
 
 	public static String ID = "egap.EgapBuilder";
 
-	public static GuiceIndexer guiceIndexer = new GuiceIndexer();
+	private static GuiceIndexer guiceIndexer = new GuiceIndexer();
 
 	public EgapBuilder() {
 		super();
@@ -73,7 +73,7 @@ public class EgapBuilder extends IncrementalProjectBuilder {
 
 	private void cleanBuild() {
 		EgapPlugin.logInfo("Clean build triggered!");
-		GuiceIndex.clear();
+		GuiceIndex.rebuild();
 		GuiceIndexSerializer.clear();
 	}
 
@@ -117,7 +117,7 @@ public class EgapBuilder extends IncrementalProjectBuilder {
 		int nrOfGuiceModulesAdded = guiceIndex.getNrOfGuiceModules()
 				- nrOfGuiceModulesBefore;
 		String message = "Indexing " + project.getName() + " finished ("
-				+ elapsed + " ms, +" + nrOfGuiceModulesAdded + " => "
+				+ elapsed + " ms, +" + nrOfGuiceModulesAdded + " modules => "
 				+ guiceIndex.getNrOfGuiceModules() + " modules total).";
 
 		EgapPlugin.logInfo(message);
@@ -220,7 +220,7 @@ public class EgapBuilder extends IncrementalProjectBuilder {
 				GuiceIndex guiceIndex) {
 			IPath projectRelativePath = delta.getProjectRelativePath();
 			String javaClasspathString = IPathUtils.getRelativePathToJavaClasspathString(projectRelativePath);
-			guiceIndex.removeGuiceModule(javaClasspathString);
+			guiceIndex.removeGuiceModule(javaClasspathString, true);
 			monitor.subTask("Removed Guice module " + javaClasspathString
 					+ " from index.");
 		}

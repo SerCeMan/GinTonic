@@ -83,6 +83,8 @@ public class EgapPreferencePage extends FieldEditorPreferencePage implements
 				EgapPlugin.ID_TEST_SRC_FOLDER,
 				"Test src folder",
 				fieldEditorParent));
+		
+		
 	}
 
 	@Override

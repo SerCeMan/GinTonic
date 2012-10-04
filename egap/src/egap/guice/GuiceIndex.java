@@ -130,7 +130,10 @@ public class GuiceIndex implements Serializable {
 		return guiceModules.size();
 	}
 
-	public static void clear() {
+	/**
+	 * Rebuilds the index by triggering an asynchronous project builder job.
+	 */
+	public static void rebuild() {
 		set(null);
 		get();
 	}
@@ -153,11 +156,7 @@ public class GuiceIndex implements Serializable {
 		}
 	}
 
-	public void removeGuiceModule(String nameFullyQualified) {
-		removeGuiceModule(nameFullyQualified, true);
-	}
-
-	private void removeGuiceModule(String nameFullyQualified, boolean log) {
+	public void removeGuiceModule(String nameFullyQualified, boolean log) {
 		for (int i = 0; i < guiceModules.size(); i++) {
 			GuiceModule guiceModule = guiceModules.get(i);
 			String fullyQualifiedName = guiceModule.getTypeNameFullyQualified();
@@ -260,7 +259,7 @@ public class GuiceIndex implements Serializable {
 			}
 		}
 		for (GuiceModule guiceModule : guiceModuleInfosToRemove) {
-			removeGuiceModule(guiceModule.getTypeNameFullyQualified());
+			removeGuiceModule(guiceModule.getTypeNameFullyQualified(), false);
 		}
 	}
 

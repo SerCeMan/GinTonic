@@ -59,7 +59,7 @@ public class GuiceIndexer {
 					IType primaryType = compilationUnit.findPrimaryType();
 					String superclassName = primaryType.getSuperclassName();
 					/* Parsing the AST takes long so make sure to check ICompilationUnit first. */
-					if(superclassName.equals("AbstractModule") || superclassName.equals("PrivateModule")){
+					if(superclassName != null && (superclassName.equals("AbstractModule") || superclassName.equals("PrivateModule"))){
 						GuiceModule guiceModule = parseGuiceModule(
 								compilationUnit,
 								project);
@@ -89,7 +89,6 @@ public class GuiceIndexer {
 		 * works also with some errors (tested multiple times and sure it
 		 * depends on the type of the error).
 		 */
-
 		GuiceIndexerAstVisitor indexer = new GuiceIndexerAstVisitor();
 
 		try {
