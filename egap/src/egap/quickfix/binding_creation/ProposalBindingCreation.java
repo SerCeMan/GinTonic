@@ -88,9 +88,8 @@ public class ProposalBindingCreation implements IJavaCompletionProposal {
 				compilationUnitAstNode,
 				compilationUnitAstNode.getAST());
 
-		refactorator.addImport(StringUtils.GUICE_ASSISTEDINJECT_FACTORY_PROVIDER);
-		refactorator.addImport(sourceType.getQualifiedName());
-		refactorator.addImport(interfaceBinding.getQualifiedName());
+		refactorator.addImport(sourceType);
+		refactorator.addImport(interfaceBinding);
 
 		final boolean isParameterizedType = interfaceBinding.isParameterizedType();
 		if (isParameterizedType) {

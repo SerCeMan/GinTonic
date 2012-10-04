@@ -5,7 +5,7 @@ package egap.guice.statements;
 /**
  * @author tmajunke
  */
-public class ImplicitBindingStatement extends GuiceStatement{
+public class JustInTimeBindingStatement extends GuiceStatement{
 
 	private static final long serialVersionUID = 4724240897474687500L;
 

@@ -137,8 +137,7 @@ public class Refactorator {
 	}
 
 	/**
-	 * Adds a new import to the rewriter's record and returns a type reference
-	 * that can be used in the code.
+	 * See {@link ImportRewrite#addImport(ITypeBinding)}.
 	 */
 	public String addImport(ITypeBinding typeBinding) {
 		ImportRewrite importRewrite = getImportRewrite();

@@ -6,7 +6,9 @@ import java.util.List;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.IPackageBinding;
 import org.eclipse.jdt.core.dom.ITypeBinding;
@@ -46,14 +48,27 @@ public class GuiceIndexer {
 		if (!filename.endsWith(ICompilationUnitUtils.JAVA_EXTENSION)) {
 			return null;
 		}
-
+		
 		try {
 			ICompilationUnit compilationUnit = (ICompilationUnit) JavaCore.create(file);
+			
+			
 			if (compilationUnit != null) {
-				GuiceModule guiceModule = parseGuiceModule(
-						compilationUnit,
-						project);
-				return guiceModule;
+				
+				try {
+					IType primaryType = compilationUnit.findPrimaryType();
+					String superclassName = primaryType.getSuperclassName();
+					/* Parsing the AST takes long so make sure to check ICompilationUnit first. */
+					if(superclassName.equals("AbstractModule") || superclassName.equals("PrivateModule")){
+						GuiceModule guiceModule = parseGuiceModule(
+								compilationUnit,
+								project);
+						return guiceModule;
+					}
+				} catch (JavaModelException e) {
+					throw new RuntimeException(e);
+				}
+				
 			}
 		} catch (RuntimeException e) {
 			EgapPlugin.logException("Error analyzing " + filename, e);

@@ -27,7 +27,7 @@ import egap.guice.annotations.GuiceAnnotation;
 import egap.guice.statements.AssistedBindingStatement;
 import egap.guice.statements.BindingStatement;
 import egap.guice.statements.GuiceStatement;
-import egap.guice.statements.ImplicitBindingStatement;
+import egap.guice.statements.JustInTimeBindingStatement;
 import egap.guice.statements.InstallModuleStatement;
 import egap.nature.EgapNature;
 import egap.project_builder.EgapBuilder;
@@ -58,9 +58,9 @@ public class GuiceIndex implements Serializable {
 	private boolean fromDisc;
 
 	/**
-	 * The indexed Guice modules.
+	 * The guice modules.
 	 */
-	private ArrayList<GuiceModule> guiceModules = ListUtils.newArrayList();
+	private ArrayList<GuiceModule> guiceModules = new ArrayList<GuiceModule>(100);
 
 	private GuiceIndex() {
 		super();
@@ -299,22 +299,26 @@ public class GuiceIndex implements Serializable {
 	 * Returns the {@link BindingStatement}s for the given bound type and
 	 * annotation type.
 	 * 
-	 * <h5>Implicit binding</h5> If we could not find an explicit binding then
-	 * we check the type. If it is a concrete class the we return a
-	 * ImplicitBinding. In all other cases we return null.
+	 * <h5>Just in time binding</h5>
 	 * 
-	 * <h5>MapBinder Statements</h5> If the type to find is a {@link Map}, then
-	 * we also check if we can find a suitable MapBinder statement.
+	 * If we could not find an explicit binding then we check the type. If it is
+	 * a concrete class the we return a just in time binding. In all other cases we
+	 * return null.
+	 * 
+	 * <h5>MapBinder Statements</h5>
+	 * 
+	 * If the type to find is a {@link Map}, then we also check if we can find a
+	 * suitable MapBinder statement.
 	 * 
 	 * @param typeToFind the bound type. Cannot be null. Primitives (like "int")
 	 *            values are allowed. Provider types are not allowed( e.g
-	 *            instead of asking for "Provider<Date>" you must ask for
+	 *            instead of asking for "Provider&lt;Date&gt;" you must ask for
 	 *            "Date").
 	 * 
 	 * @param annotationTypeToFind the annotationType. Can be null.
 	 * @param namedAnnotationLiteralValueToFind the literal value of the named
 	 *            annotation. Can be null.
-	 * @param packageToLimit if given (optional) then only the Guice modules in
+	 * @param packageToLimit if given then only the Guice modules in
 	 *            the same package are processed. Can be null.
 	 * @return the discovered {@link BindingStatement}. Can be empty but not
 	 *         null if we did not find a binding.
@@ -369,12 +373,12 @@ public class GuiceIndex implements Serializable {
 
 		}
 
-		checkForImplicitBindings(guiceAnnotationToFind, typeToFind, bindings);
+		checkForJustInTimeBindings(guiceAnnotationToFind, typeToFind, bindings);
 
 		return bindings;
 	}
 
-	private void checkForImplicitBindings(
+	private void checkForJustInTimeBindings(
 			GuiceAnnotation guiceAnnotationToFind,
 			ITypeBinding typeBindingOfInterfaceType,
 			List<GuiceStatement> bindings) {
@@ -408,7 +412,7 @@ public class GuiceIndex implements Serializable {
 
 				IJavaProject javaProject = javaElement.getJavaProject();
 
-				ImplicitBindingStatement implicitBinding = new ImplicitBindingStatement();
+				JustInTimeBindingStatement implicitBinding = new JustInTimeBindingStatement();
 				IProject project = javaProject.getProject();
 				String projectName = project.getName();
 				implicitBinding.setProjectName(projectName);
@@ -442,7 +446,11 @@ public class GuiceIndex implements Serializable {
 	}
 
 	/**
-	 * Synonym for {@link #getBindings(ITypeBinding, GuiceAnnotation, null)}.
+	 * Synonym for getBindingsByTypeAndAnnotationLimitToPackage(typeToFind,
+	 * guiceAnnotationToFind, null);
+	 * 
+	 * @see #getBindingsByTypeAndAnnotationLimitToPackage(ITypeBinding,
+	 *      GuiceAnnotation, Set)
 	 */
 	public List<GuiceStatement> getBindingsByTypeAndAnnotation(
 			ITypeBinding typeToFind, GuiceAnnotation guiceAnnotationToFind) {

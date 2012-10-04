@@ -92,7 +92,7 @@ public class QuickFixBindingCreation extends AbstractEgapQuickFix {
 							sourceType,
 							interfaceBinding,
 							guiceModule,
-							true);
+							false);
 					proposals.add(proposalBindingCreation);
 				}
 			}
