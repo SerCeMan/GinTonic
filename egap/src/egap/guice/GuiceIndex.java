@@ -22,7 +22,6 @@ import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.dom.IPackageBinding;
 import org.eclipse.jdt.core.dom.ITypeBinding;
 
-
 import egap.EgapPlugin;
 import egap.guice.annotations.GuiceAnnotation;
 import egap.guice.statements.AssistedBindingStatement;
@@ -234,11 +233,11 @@ public class GuiceIndex implements Serializable {
 				String packageFullyQualified = guiceModule.getPackageFullyQualified();
 				boolean ignoreModule = guiceModule.getTypeNameFullyQualified().equals(
 						moduleToIgnore);
-				
-				if(ignoreModule){
+
+				if (ignoreModule) {
 					continue;
 				}
-				
+
 				if (packageFullyQualified.equals(packagePath)) {
 					guiceModulesInGivenPackages.add(guiceModule);
 				}
@@ -370,15 +369,13 @@ public class GuiceIndex implements Serializable {
 
 		}
 
-		checkForImplicitBindings(
-				guiceAnnotationToFind,
-				typeToFind,
-				bindings);
+		checkForImplicitBindings(guiceAnnotationToFind, typeToFind, bindings);
 
 		return bindings;
 	}
 
-	private void checkForImplicitBindings(GuiceAnnotation guiceAnnotationToFind,
+	private void checkForImplicitBindings(
+			GuiceAnnotation guiceAnnotationToFind,
 			ITypeBinding typeBindingOfInterfaceType,
 			List<GuiceStatement> bindings) {
 		if (bindings.isEmpty() && guiceAnnotationToFind == null) {
@@ -395,15 +392,23 @@ public class GuiceIndex implements Serializable {
 			 */
 			boolean isConcreteType = ITypeBindingUtils.isConcreteType(typeBindingOfInterfaceType);
 			if (isConcreteType) {
-				ImplicitBindingStatement implicitBinding = new ImplicitBindingStatement();
 				IJavaElement javaElement = typeBindingOfInterfaceType.getJavaElement();
 
 				if (!(javaElement instanceof IMember)) {
 					return;
 				}
 
+				IMember member = (IMember) javaElement;
+				if (member.isBinary()) {
+					/* Not supported ! */
+					EgapPlugin.logInfo("Just in time binding not supported for binary type "
+							+ typeBindingOfInterfaceType.getQualifiedName());
+					return;
+				}
+
 				IJavaProject javaProject = javaElement.getJavaProject();
 
+				ImplicitBindingStatement implicitBinding = new ImplicitBindingStatement();
 				IProject project = javaProject.getProject();
 				String projectName = project.getName();
 				implicitBinding.setProjectName(projectName);
@@ -425,18 +430,12 @@ public class GuiceIndex implements Serializable {
 				String[] packageName = packageBinding.getNameComponents();
 				implicitBinding.setPackage(Arrays.asList(packageName));
 
-				IMember member = (IMember) javaElement;
-				if (member.isBinary()) {
-					/* Not supported ! */
-				}
-				else {
-					ICompilationUnit compilationUnit = member.getCompilationUnit();
-					List<String> srcFolderPathComponents = ICompilationUnitUtils.getSrcFolderPathComponents(compilationUnit);
-					implicitBinding.setSrcFolderPathComponents(srcFolderPathComponents);
-					bindings.add(implicitBinding);
-					Integer startPositionOfTopLevelType = ICompilationUnitUtils.getStartPositionOfTopLevelType(compilationUnit);
-					implicitBinding.setStartPosition(startPositionOfTopLevelType);
-				}
+				ICompilationUnit compilationUnit = member.getCompilationUnit();
+				List<String> srcFolderPathComponents = ICompilationUnitUtils.getSrcFolderPathComponents(compilationUnit);
+				implicitBinding.setSrcFolderPathComponents(srcFolderPathComponents);
+				Integer startPositionOfTopLevelType = ICompilationUnitUtils.getStartPositionOfTopLevelType(compilationUnit);
+				implicitBinding.setStartPosition(startPositionOfTopLevelType);
+				bindings.add(implicitBinding);
 
 			}
 		}
