@@ -179,8 +179,8 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 			return Action.UNDEFINED;
 		}
 
-		if (icompilationUnit.getElementName().endsWith(
-				testSuffix + ICompilationUnitUtils.JAVA_EXTENSION)) {
+		boolean isJunitTestcase = isJunitTestcase(icompilationUnit);
+		if (isJunitTestcase) {
 			/* JUnit Test */
 			ProjectResource classUnderTest = createClassForJuniTest(javaClass);
 			IFile normalClassAsIFile = IProjectResourceUtils.getJavaFile(classUnderTest);
@@ -193,6 +193,9 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 		else {
 			ProjectResource junitTest = createJUnitClassFor(javaClass);
 			IFile junitTestAsIFile = IProjectResourceUtils.getJavaFile(junitTest);
+			
+			/* TODO check other projects too. */
+			
 			if (junitTestAsIFile.exists()) {
 				IProjectResourceUtils.openEditorWithStatementDeclaration(junitTest);
 				return Action.JUMPED_TO_TEST;
@@ -215,6 +218,15 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 		}
 
 		return Action.UNDEFINED;
+	}
+
+	/**
+	 * Returns true if the given ICompilationUnit is a JUnit Test. We assert
+	 * that it is if it ends with the test suffix.
+	 */
+	private boolean isJunitTestcase(ICompilationUnit icompilationUnit) {
+		return icompilationUnit.getElementName().endsWith(
+				testSuffix + ICompilationUnitUtils.JAVA_EXTENSION);
 	}
 
 	/**
