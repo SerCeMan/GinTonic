@@ -99,7 +99,7 @@ public class QuickfixNavigateTo extends AbstractEgapQuickFix {
 
 	@Override
 	public String getPreferencesDisplayName() {
-		return "Goto";
+		return "Jump to binding definition";
 	}
 
 	public static final String ENABLED_STATE_ID = "QuickfixNavigateTo.ENABLED_STATE";
