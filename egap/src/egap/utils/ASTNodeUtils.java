@@ -18,7 +18,6 @@ import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 
-
 import egap.guice.ProjectResource;
 import egap.guice.annotations.GuiceAnnotation;
 import egap.guice.statements.GuiceStatement;
@@ -98,8 +97,9 @@ public class ASTNodeUtils {
 	private static final class FindMethodByName extends ASTVisitor {
 		private final String fieldAsSetter;
 		private List<MethodDeclaration> methodDeclarations = ListUtils.newArrayList();
-
+		
 		private FindMethodByName(String fieldAsSetter) {
+			super(false);
 			this.fieldAsSetter = fieldAsSetter;
 		}
 
@@ -110,23 +110,7 @@ public class ASTNodeUtils {
 			if (fullyQualifiedName.equals(fieldAsSetter)) {
 				methodDeclarations.add(node);
 			}
-			return true;
-		}
-	}
-
-	private static final class ASTVisitorFindConstructor extends ASTVisitor {
-		public List<MethodDeclaration> constructors = ListUtils.newArrayList();
-
-		private ASTVisitorFindConstructor(boolean visitDocTags) {
-			super(visitDocTags);
-		}
-
-		@Override
-		public boolean visit(MethodDeclaration node) {
-			if (isConstructor(node)) {
-				constructors.add(node);
-			}
-			return true;
+			return false;
 		}
 	}
 
@@ -221,88 +205,6 @@ public class ASTNodeUtils {
 		return null;
 	}
 
-	/**
-	 * Returns the <b>first</b> constructor whose parameters contain at least
-	 * one paramter with an @Assisted annotation. Null if noone could be found.
-	 */
-	public static MethodDeclaration getConstructorWithAtLeastOneAssistedAnnotation(
-			ASTNode astNode) {
-		ASTVisitorFindConstructor visitor = new ASTVisitorFindConstructor(false);
-		astNode.accept(visitor);
-		List<MethodDeclaration> constructors = visitor.constructors;
-
-		for (MethodDeclaration constructor : constructors) {
-			@SuppressWarnings("unchecked")
-			List<SingleVariableDeclaration> parameters = constructor.parameters();
-			for (SingleVariableDeclaration singleVariableDeclaration : parameters) {
-				@SuppressWarnings("unchecked")
-				List<ASTNode> modifiers = singleVariableDeclaration.modifiers();
-				if (isAnyAnnotatedWithMarkerAnnotation(
-						modifiers,
-						StringUtils.GUICE_ANNOTATION_ASSISTED)) {
-					return constructor;
-				}
-			}
-		}
-
-		return null;
-	}
-
-	/**
-	 * Returns the constructor with @Inject marker annotation or null if there
-	 * is noone (Note: There may only be one constructor with @Inject, see
-	 * http://code.google.com/p/google-guice/wiki/InjectionPoints)
-	 * 
-	 * @param compilationUnit the compilation unit we check for the constructor.
-	 * @return the constructor with @Inject marker annotation or null if there
-	 *         is noone.
-	 */
-	public static MethodDeclaration getConstructorAnnotatedWithInject(
-			CompilationUnit compilationUnit) {
-		MethodDeclaration constructor = getConstructorWithAtLeastOneMarkerAnnotation(
-				compilationUnit,
-				StringUtils.GUICE_ANNOTATION_INJECT);
-		return constructor;
-	}
-
-	/**
-	 * Returns the <b>first</b> constructor which is annotated with the given
-	 * marker annotation. Null if noone could be found.
-	 */
-	public static MethodDeclaration getConstructorWithAtLeastOneMarkerAnnotation(
-			ASTNode astNode, String markerAnnotationFQ) {
-		ASTVisitorFindConstructor visitor = new ASTVisitorFindConstructor(false);
-		astNode.accept(visitor);
-		List<MethodDeclaration> constructors = visitor.constructors;
-
-		for (MethodDeclaration constructor : constructors) {
-			@SuppressWarnings("unchecked")
-			List<ASTNode> modifiers = constructor.modifiers();
-			if (ASTNodeUtils.isAnyAnnotatedWithMarkerAnnotation(
-					modifiers,
-					markerAnnotationFQ)) {
-				return constructor;
-			}
-		}
-
-		return null;
-	}
-
-	/**
-	 * Returns true if the given {@link ASTNode} is a constructor.
-	 * 
-	 * @param node the node
-	 * @return true if the given {@link ASTNode} is a constructor, otherwise
-	 *         false.
-	 */
-	public static boolean isConstructor(ASTNode node) {
-		if (node instanceof MethodDeclaration) {
-			MethodDeclaration methodDecl = (MethodDeclaration) node;
-			return methodDecl.isConstructor();
-		}
-		return false;
-	}
-
 	public static List<MethodDeclaration> getMethodByName(
 			CompilationUnit astRoot, final String methodName) {
 
@@ -345,7 +247,7 @@ public class ASTNodeUtils {
 		}
 		return null;
 	}
-	
+
 	public static GuiceTypeInfo getGuiceTypeInfoIfFieldDeclarationTypeDeclarationOrProviderMethod(
 			ASTNode astNode, CompilationUnit astRoot,
 			ICompilationUnit icompilationUnit) {
@@ -411,7 +313,7 @@ public class ASTNodeUtils {
 
 			List<ASTNode> modifiers = methodDeclaration.modifiers();
 			MarkerAnnotationList markerAnnotationList = ASTNodeUtils.getMarkerAnnotationList(modifiers);
-			if (markerAnnotationList.containsProvidesType()) {
+			if (markerAnnotationList.containsProvidesAnnotation()) {
 				return true;
 			}
 		}

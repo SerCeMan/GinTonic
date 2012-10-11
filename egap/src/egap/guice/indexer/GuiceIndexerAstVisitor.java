@@ -406,7 +406,7 @@ final class GuiceIndexerAstVisitor extends ASTVisitor {
 		List<ASTNode> modifiers = node.modifiers();
 		MarkerAnnotationList markerAnnotationList = ASTNodeUtils.getMarkerAnnotationList(modifiers);
 
-		if (markerAnnotationList.containsProvidesType()) {
+		if (markerAnnotationList.containsProvidesAnnotation()) {
 			ProviderBindingToMethodStatement providerBindingStatement = new ProviderBindingToMethodStatement();
 			Type returnType2 = node.getReturnType2();
 			String boundType = TypeUtils.resolveQualifiedName(returnType2);
@@ -417,8 +417,9 @@ final class GuiceIndexerAstVisitor extends ASTVisitor {
 			guiceAnnotation = markerAnnotationList.getGuiceAnnotation();
 			providerBindingStatement.setGuiceAnnotation(guiceAnnotation);
 
-			String singletonType = markerAnnotationList.getSingletonType();
-			providerBindingStatement.setScopeType(singletonType);
+			if(markerAnnotationList.containsSingletonScopeAnnotation()){
+				providerBindingStatement.setScopeType(StringUtils.GUICE_SCOPE_SINGLETON_NAME);
+			}
 
 			addBinding(providerBindingStatement);
 		}

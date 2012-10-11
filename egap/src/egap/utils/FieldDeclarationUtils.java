@@ -45,7 +45,7 @@ public class FieldDeclarationUtils {
 		 * Check the @Inject constructor if we can find a parameter with the
 		 * same name as the selected field.
 		 */
-		MethodDeclaration constructor = ASTNodeUtils.getConstructorAnnotatedWithInject(compilationUnit);
+		MethodDeclaration constructor = MethodDeclarationUtils.getConstructorAnnotatedWithInject(compilationUnit);
 		if (constructor != null) {
 			SingleVariableDeclaration variableDeclaration = MethodDeclarationUtils.getVariableDeclarationsByName(
 					constructor,

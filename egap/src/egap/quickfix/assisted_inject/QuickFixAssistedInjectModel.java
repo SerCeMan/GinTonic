@@ -22,6 +22,7 @@ import egap.quickfix.AbstractEgapQuickFix;
 import egap.quickfix.navigate.ProposalNavigateToStatement;
 import egap.utils.ASTNodeUtils;
 import egap.utils.ICompilationUnitUtils;
+import egap.utils.MethodDeclarationUtils;
 
 /**
  * @author tmajunke
@@ -50,7 +51,7 @@ public class QuickFixAssistedInjectModel extends AbstractEgapQuickFix {
 			return;
 		}
 		
-		MethodDeclaration constructorWithAssistedAnnotation = ASTNodeUtils.getConstructorWithAtLeastOneAssistedAnnotation(typeDeclaration);
+		MethodDeclaration constructorWithAssistedAnnotation = MethodDeclarationUtils.getConstructorAnnotatedWithAssisted(typeDeclaration);
 		if (constructorWithAssistedAnnotation == null) {
 			return;
 		}
