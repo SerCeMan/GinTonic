@@ -8,6 +8,11 @@ import egap.guice.annotations.GuiceAnnotation;
 /**
  * A {@link FieldDeclaration} which is annotated for injection.
  * 
+ * <pre>
+ * &#64Inject
+ * private Person person;
+ * </pre>
+ * 
  * @author tmajunke
  */
 public class GuiceFieldDeclaration extends GuiceTypeWithAnnotation {
@@ -26,6 +31,9 @@ public class GuiceFieldDeclaration extends GuiceTypeWithAnnotation {
 		this.injectionIsAttachedTo = injectionIsAttachedTo;
 	}
 
+	/**
+	 * Returns the {@link FieldDeclaration}.
+	 */
 	public FieldDeclaration getFieldDeclaration() {
 		return fieldDeclaration;
 	}
