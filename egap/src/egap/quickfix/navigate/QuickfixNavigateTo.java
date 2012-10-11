@@ -17,8 +17,7 @@ import egap.utils.GuiceTypeWithAnnotation;
 import egap.utils.ITypeBindingUtils;
 
 /**
- * Enables us to jump from an inject declaration to the inject binding
- * declaration.
+ * Enables us to jump from an injection point to its binding definition.
  * 
  * <h5>Example:</h5>
  * 
@@ -40,7 +39,7 @@ import egap.utils.ITypeBindingUtils;
  * </code>
  * </pre>
  * 
- * The quick fix enables us to jump from person (the inject declaration) to the
+ * The quick fix enables us to jump from person (the injection point) to the
  * binding statement in PersonModule.
  * 
  * 

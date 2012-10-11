@@ -24,7 +24,53 @@ public class MarkerAnnotationList {
 		this.singleMemberAnnotations = singleMemberAnnotations;
 	}
 
-	private boolean containsType(String annotationType) {
+	/**
+	 * Returns true if any of the annotations is of type
+	 * {@link StringUtils#GUICE_ANNOTATION_ASSISTED}, otherwise false.
+	 */
+	public boolean containsAssistedAnnotation() {
+		return containsAnnotation(StringUtils.GUICE_ANNOTATION_ASSISTED);
+	}
+	
+	/**
+	 * Returns true if any of the annotations is of type
+	 * {@link StringUtils#GUICE_ANNOTATION_INJECT}, otherwise false.
+	 */
+	public boolean containsInjectType() {
+		return containsAnnotation(StringUtils.GUICE_ANNOTATION_INJECT);
+	}
+	
+	/**
+	 * Returns true if any of the annotations is of type
+	 * {@link StringUtils#GUICE_SCOPE_SINGLETON_NAME}, otherwise false.
+	 */
+	public boolean containsSingletonScopeAnnotation() {
+		return containsAnnotation(StringUtils.GUICE_SCOPE_SINGLETON_NAME);
+	}
+	
+	/**
+	 * Returns true if any of the annotations is of type
+	 * {@link StringUtils#GUICE_PROVIDES}, otherwise false.
+	 */
+	public boolean containsProvidesAnnotation() {
+		return containsAnnotation(StringUtils.GUICE_PROVIDES);
+	}
+	
+	public GuiceAnnotation getGuiceAnnotation() {
+		String bindingAnnotation = getBindingAnnotation();
+
+		if (bindingAnnotation != null) {
+			return new GuiceClassAnnotation(bindingAnnotation);
+		}
+
+		String namedAnnotationLiteralValue = getNamedAnnotationLiteralValue();
+		if (namedAnnotationLiteralValue != null) {
+			return new GuiceNamedAnnotation(namedAnnotationLiteralValue);
+		}
+		return null;
+	}
+	
+	private boolean containsAnnotation(String annotationType) {
 		for (MarkerAnnotation markerAnnotation : markerAnnotations) {
 			boolean ofType = MarkerAnnotationUtils.isOfType(
 					markerAnnotation,
@@ -36,17 +82,6 @@ public class MarkerAnnotationList {
 		return false;
 	}
 
-	public boolean containsInjectType() {
-		return containsType(StringUtils.GUICE_ANNOTATION_INJECT);
-	}
-
-	public String getSingletonType() {
-		if(containsType(StringUtils.GUICE_SCOPE_SINGLETON_NAME)){
-			return StringUtils.GUICE_SCOPE_SINGLETON_NAME;
-		}
-		return null;
-	}
-
 	/**
 	 * Returns the name of the binding annotation or null otherwise.
 	 */
@@ -56,8 +91,7 @@ public class MarkerAnnotationList {
 			IAnnotationBinding[] annotations = typeBinding.getAnnotations();
 			for (IAnnotationBinding annotation : annotations) {
 				ITypeBinding annotationType = annotation.getAnnotationType();
-				if (annotationType.getQualifiedName().equals(
-						StringUtils.GUICE_BINDING_ANNOTATION)) {
+				if (ITypeBindingUtils.isGuiceBindingAnnotation(annotationType)) {
 					return typeBinding.getQualifiedName();
 				}
 			}
@@ -70,7 +104,7 @@ public class MarkerAnnotationList {
 		for (SingleMemberAnnotation singleMemberAnnotation : singleMemberAnnotations) {
 			IAnnotationBinding annotationBinding = singleMemberAnnotation.resolveAnnotationBinding();
 			ITypeBinding typeBinding = singleMemberAnnotation.resolveTypeBinding();
-			if(ITypeBindingUtils.isGuiceNamedType(typeBinding)){
+			if (ITypeBindingUtils.isGuiceNamedType(typeBinding)) {
 				IMemberValuePairBinding[] declaredMemberValuePairs = annotationBinding.getDeclaredMemberValuePairs();
 				IMemberValuePairBinding pairBinding = declaredMemberValuePairs[0];
 				String value = (String) pairBinding.getValue();
@@ -78,24 +112,6 @@ public class MarkerAnnotationList {
 			}
 		}
 
-		return null;
-	}
-
-	public boolean containsProvidesType() {
-		return containsType(StringUtils.GUICE_PROVIDES);
-	}
-
-	public GuiceAnnotation getGuiceAnnotation() {
-		String bindingAnnotation = getBindingAnnotation();
-		
-		if(bindingAnnotation != null){
-			return new GuiceClassAnnotation(bindingAnnotation);
-		}
-		
-		String namedAnnotationLiteralValue = getNamedAnnotationLiteralValue();
-		if(namedAnnotationLiteralValue != null){
-			return new GuiceNamedAnnotation(namedAnnotationLiteralValue);
-		}
 		return null;
 	}
 

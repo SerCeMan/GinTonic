@@ -77,10 +77,10 @@ public class MethodDeclarationUtils {
 	}
 
 	public static List<SingleVariableDeclaration> getVariableDeclAnnotatedWithAssisted(
-			MethodDeclaration constructorNode) {
+			MethodDeclaration methodDeclaration) {
 
 		final List<SingleVariableDeclaration> variableDeclarations = new ArrayList<SingleVariableDeclaration>();
-		constructorNode.accept(new ASTVisitor(false) {
+		methodDeclaration.accept(new ASTVisitor(false) {
 			@Override
 			public boolean visit(final SingleVariableDeclaration declNode) {
 				declNode.accept(new ASTVisitor(false) {
@@ -108,7 +108,7 @@ public class MethodDeclarationUtils {
 		return variableDeclWithName.declaration;
 	}
 
-	public static MethodDeclaration getMethodDeclarationByName(
+	private static MethodDeclaration getMethodDeclarationByName(
 			CompilationUnit compilationUnit, String name) {
 		ASTVisitorExtension visitorExtension = new ASTVisitorExtension(name);
 		compilationUnit.accept(visitorExtension);

@@ -5,6 +5,11 @@ import org.eclipse.jdt.core.dom.ITypeBinding;
 
 import egap.guice.annotations.GuiceAnnotation;
 
+/**
+ * A {@link FieldDeclaration} which is annotated for injection.
+ * 
+ * @author tmajunke
+ */
 public class GuiceFieldDeclaration extends GuiceTypeWithAnnotation {
 
 	private final FieldDeclaration fieldDeclaration;

@@ -115,29 +115,6 @@ public class ASTNodeUtils {
 	}
 
 	/**
-	 * Returns true if any of the given modifiers is a {@link MarkerAnnotation}
-	 * with the given name.
-	 * 
-	 * @param modifiers the modifiers
-	 * @param markerAnnotationFQ the fully qualified name of the marker
-	 *            annotation
-	 * @return true if any of the given modifiers is a {@link MarkerAnnotation}
-	 *         with the given name, otherwise false.
-	 */
-	public static boolean isAnyAnnotatedWithMarkerAnnotation(
-			List<ASTNode> modifiers, String markerAnnotationFQ) {
-		for (ASTNode modifier : modifiers) {
-			boolean foundAnnotation = ASTNodeUtils.isMarkerAnnotationAnnotatedWith(
-					modifier,
-					markerAnnotationFQ);
-			if (foundAnnotation) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	/**
 	 * Returns true if the given node is a {@link MarkerAnnotation} and the
 	 * qualified name of its type is equal to the given one.
 	 * 
@@ -249,7 +226,7 @@ public class ASTNodeUtils {
 	}
 
 	public static GuiceTypeInfo getGuiceTypeInfoIfFieldDeclarationTypeDeclarationOrProviderMethod(
-			ASTNode astNode, CompilationUnit astRoot,
+			ASTNode astNode, CompilationUnit compilationUnit,
 			ICompilationUnit icompilationUnit) {
 
 		if (!(astNode instanceof Name)) {
@@ -258,14 +235,14 @@ public class ASTNodeUtils {
 
 		ProjectResource origin = IProjectResourceUtils.createProjectResource(
 				astNode,
-				astRoot,
+				compilationUnit,
 				icompilationUnit);
 
 		Name name = (Name) astNode;
 		GuiceFieldDeclaration guiceFieldDeclaration = getGuiceFieldDeclarationIfFieldDeclaration(
 				origin,
 				name,
-				astRoot);
+				compilationUnit);
 		if (guiceFieldDeclaration != null) {
 			return guiceFieldDeclaration;
 		}
