@@ -23,6 +23,7 @@ import org.eclipse.jdt.core.dom.Assignment;
 import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.ClassInstanceCreation;
 import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.ExpressionStatement;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.IExtendedModifier;
@@ -451,7 +452,7 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 					assignment.setLeftHandSide(ast.newQualifiedName(
 							ast.newSimpleName(classUnderTestVarName),
 							ast.newSimpleName(guiceFieldDeclaration.getVariableName())));
-					assignment.setRightHandSide(ast.newSimpleName((guiceFieldDeclaration.getVariableName() + "Mock")));
+					assignment.setRightHandSide(ast.newSimpleName((getMockName(guiceFieldDeclaration))));
 					statements.add(ast.newExpressionStatement(assignment));
 				}
 
@@ -464,8 +465,7 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 
 				for (GuiceFieldDeclaration guiceFieldDeclaration : injectionPoints) {
 					String variableName = guiceFieldDeclaration.getVariableName();
-					String variableNameOfMock = guiceFieldDeclaration.getVariableName()
-							+ "Mock";
+					String variableNameOfMock = getMockName(guiceFieldDeclaration);
 					String setter = StringUtils.toSetterMethodname(variableName);
 
 					MethodInvocation methodInvocation = ast.newMethodInvocation();
@@ -477,29 +477,67 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 					statements.add(ast.newExpressionStatement(methodInvocation));
 				}
 			}
+			else { /* injectionIsAttachedTo == InjectionIsAttachedTo.CONSTRUCTOR */
+				ExpressionStatement expressionStatement = createClassInstanceCreation(
+						primaryTypeDeclaration,
+						ast, injectionPoints);
+				statements.add(expressionStatement);
+			}
 		}
 
 		refactorator.addImport("org.junit.Before");
 		refactorator.addMethodDeclaration(methodDecl);
+	}
+	
+	/**
+	 * classUnderTest = new ClassUnderTest(dependency1, dependency2);
+	 */
+	private ExpressionStatement createClassInstanceCreation(
+			TypeDeclaration primaryTypeDeclaration, AST ast,
+			List<GuiceFieldDeclaration> injectionPoints) {
+		ITypeBinding classUnderTestBinding = primaryTypeDeclaration.resolveBinding();
+		String classUnderTestTypeNameSimple = classUnderTestBinding.getName();
+		SimpleType classUnderTestType = ast.newSimpleType(ast.newSimpleName(classUnderTestTypeNameSimple));
+		String classUnderTestVarName = StringUtils.uncapitalize(classUnderTestTypeNameSimple);
+		ClassInstanceCreation classInstanceCreation = ast.newClassInstanceCreation();
+		classInstanceCreation.setType(classUnderTestType);
+		
+		for (GuiceFieldDeclaration guiceFieldDeclaration : injectionPoints) {
+			String variableNameOfMock = getMockName(guiceFieldDeclaration);
+			List<Expression> arguments = classInstanceCreation.arguments();
+			arguments.add(ast.newSimpleName(variableNameOfMock));
+		}
+		
+		Assignment assignment = ast.newAssignment();
+		assignment.setLeftHandSide(ast.newSimpleName(classUnderTestVarName));
+		assignment.setRightHandSide(classInstanceCreation);
+
+		ExpressionStatement expressionStatement = ast.newExpressionStatement(assignment);
+		return expressionStatement;
+	}
+
+	private String getMockName(GuiceFieldDeclaration guiceFieldDeclaration) {
+		return guiceFieldDeclaration.getVariableName()
+				+ "Mock";
 	}
 
 	/**
 	 * classUnderTest = new ClassUnderTest();
 	 */
 	private ExpressionStatement createClassInstanceCreation(
-			TypeDeclaration primaryTypeDeclaration, AST junitTestAst) {
+			TypeDeclaration primaryTypeDeclaration, AST ast) {
 		ITypeBinding classUnderTestBinding = primaryTypeDeclaration.resolveBinding();
 		String classUnderTestTypeNameSimple = classUnderTestBinding.getName();
-		SimpleType classUnderTestType = junitTestAst.newSimpleType(junitTestAst.newSimpleName(classUnderTestTypeNameSimple));
+		SimpleType classUnderTestType = ast.newSimpleType(ast.newSimpleName(classUnderTestTypeNameSimple));
 		String classUnderTestVarName = StringUtils.uncapitalize(classUnderTestTypeNameSimple);
-		ClassInstanceCreation classInstanceCreation = junitTestAst.newClassInstanceCreation();
+		ClassInstanceCreation classInstanceCreation = ast.newClassInstanceCreation();
 		classInstanceCreation.setType(classUnderTestType);
 
-		Assignment assignment = junitTestAst.newAssignment();
-		assignment.setLeftHandSide(junitTestAst.newSimpleName(classUnderTestVarName));
+		Assignment assignment = ast.newAssignment();
+		assignment.setLeftHandSide(ast.newSimpleName(classUnderTestVarName));
 		assignment.setRightHandSide(classInstanceCreation);
 
-		ExpressionStatement expressionStatement = junitTestAst.newExpressionStatement(assignment);
+		ExpressionStatement expressionStatement = ast.newExpressionStatement(assignment);
 		return expressionStatement;
 	}
 
@@ -583,8 +621,7 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 			@SuppressWarnings("unchecked")
 			List<VariableDeclarationFragment> fragments = fieldDeclarationUnparented.fragments();
 			VariableDeclarationFragment variableDeclarationFragment = fragments.get(0);
-			variableDeclarationFragment.setName(ast.newSimpleName(variableDeclarationFragment.getName().getFullyQualifiedName()
-					+ "Mock"));
+			variableDeclarationFragment.setName(ast.newSimpleName(getMockName(injectionPoint)));
 
 			FieldDeclarationUtils.removeAnnotations(fieldDeclarationUnparented);
 			fieldDeclarationUnparented.setJavadoc(null);
@@ -670,10 +707,15 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 		junitTest.setProjectName(javaClass.getProjectName());
 		junitTest.setSrcFolderPathComponents(Arrays.asList(srcFolderForTests));
 
-		LinkedList<String> junitTestcasePackage = new LinkedList<String>(
-				javaClass.getPackage());
-		junitTestcasePackage.addFirst(testPackagePrefix);
-		junitTest.setPackage(junitTestcasePackage);
+		if(testPackagePrefix.trim().isEmpty()){
+			junitTest.setPackage(javaClass.getPackage());
+		}else{
+			LinkedList<String> junitTestcasePackage = new LinkedList<String>(
+					javaClass.getPackage());
+			junitTestcasePackage.addFirst(testPackagePrefix);
+			junitTest.setPackage(junitTestcasePackage);
+		}
+		
 		junitTest.setTypeName(javaClass.getTypeName() + testSuffix);
 		return junitTest;
 	}
