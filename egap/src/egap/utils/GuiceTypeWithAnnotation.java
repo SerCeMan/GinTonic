@@ -23,6 +23,9 @@ public class GuiceTypeWithAnnotation extends GuiceTypeInfo {
 		return guiceAnnotation;
 	}
 
+	/**
+	 * Returns the unqualified variable name.
+	 */
 	public String getVariableName() {
 		return variableName;
 	}

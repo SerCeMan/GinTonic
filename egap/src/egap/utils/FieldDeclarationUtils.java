@@ -65,7 +65,7 @@ public class FieldDeclarationUtils {
 		}
 
 		/*
-		 * Check if a guicified setter method exists. If it does
+		 * Check if a guicified setter method exists. 
 		 */
 		String setterMethodName = "set" + StringUtils.capitalize(fieldName);
 
@@ -119,14 +119,12 @@ public class FieldDeclarationUtils {
 		List<ASTNode> annotationsToDelete = new ArrayList<ASTNode>(
 				modifiers.size());
 		for (ASTNode astNode : modifiers) {
-			if (astNode instanceof Annotation) {
-				annotationsToDelete.add(astNode);
+			annotationsToDelete.add(astNode);
 
-				/*
-				 * astNode.delete(); doesnt work here. We have to collect the
-				 * annotations first and then delete them!
-				 */
-			}
+			/*
+			 * astNode.delete(); doesnt work here. We have to collect the
+			 * annotations first and then delete them!
+			 */
 		}
 		for (ASTNode astNode : annotationsToDelete) {
 			astNode.delete();

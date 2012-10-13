@@ -33,6 +33,7 @@ import org.eclipse.jdt.core.dom.MarkerAnnotation;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.Modifier;
+import org.eclipse.jdt.core.dom.Modifier.ModifierKeyword;
 import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.SimpleType;
 import org.eclipse.jdt.core.dom.Statement;
@@ -504,6 +505,7 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 		
 		for (GuiceFieldDeclaration guiceFieldDeclaration : injectionPoints) {
 			String variableNameOfMock = getMockName(guiceFieldDeclaration);
+			@SuppressWarnings("unchecked")
 			List<Expression> arguments = classInstanceCreation.arguments();
 			arguments.add(ast.newSimpleName(variableNameOfMock));
 		}
@@ -624,6 +626,11 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 			variableDeclarationFragment.setName(ast.newSimpleName(getMockName(injectionPoint)));
 
 			FieldDeclarationUtils.removeAnnotations(fieldDeclarationUnparented);
+			
+			@SuppressWarnings("unchecked")
+			List<ASTNode> modifiers = fieldDeclarationUnparented.modifiers();
+			modifiers.add(ast.newModifier(ModifierKeyword.PRIVATE_KEYWORD));
+			
 			fieldDeclarationUnparented.setJavadoc(null);
 			FieldDeclarationUtils.addMarkerAnnotation(
 					fieldDeclarationUnparented,

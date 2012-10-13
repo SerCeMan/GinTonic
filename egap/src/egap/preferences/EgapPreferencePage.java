@@ -32,7 +32,7 @@ public class EgapPreferencePage extends FieldEditorPreferencePage implements
 		EgapPlugin egapPlugin = EgapPlugin.getEgapPlugin();
 		setPreferenceStore(egapPlugin.getPreferenceStore());
 		Version version = EgapPlugin.getEgapPlugin().getBundle().getVersion();
-		setDescription("Egap Plugin (" + version.toString() + ")");
+		setDescription("Version '" + version.toString() + "'");
 	}
 
 	/**
@@ -76,12 +76,12 @@ public class EgapPreferencePage extends FieldEditorPreferencePage implements
 				"Test package prefix",
 				fieldEditorParent));
 		addField(new StringFieldEditor(
-				EgapPlugin.ID_SRC_FOLDER,
-				"Src folder",
-				fieldEditorParent));
-		addField(new StringFieldEditor(
 				EgapPlugin.ID_TEST_SRC_FOLDER,
 				"Test src folder",
+				fieldEditorParent));
+		addField(new StringFieldEditor(
+				EgapPlugin.ID_SRC_FOLDER,
+				"Src folder",
 				fieldEditorParent));
 		
 		
