@@ -16,22 +16,14 @@ import egap.guice.statements.GuiceStatement;
 import egap.quickfix.AbstractEgapQuickFix;
 import egap.utils.ASTNodeUtils;
 import egap.utils.ITypeBindingUtils;
-import egap.utils.StringUtils;
 
 /**
- * Enables the user to create a linked binding for the selected type module (the
- * source module) in another guice module (the target module).
+ * Enables the user to create a linked binding for the selected type (the
+ * source module) in a nearby guice module (the target module).
  * 
  * <h5>How is the quick fix activated?</h5>
  * 
- * The quick fix is triggered if the covering node implements
- * {@link StringUtils#GUICE_MODULE}
- * 
  * <h5>How do you discover the target module?</h5>
- * 
- * We collect all modules in the package of the source module and in the parent
- * package. A proposal ("Install SourceModule in TargetModule") is shown for
- * every discovered target module.
  * 
  * @author tmajunke
  */

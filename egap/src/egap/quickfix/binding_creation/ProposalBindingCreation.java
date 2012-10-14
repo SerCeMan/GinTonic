@@ -53,12 +53,12 @@ public class ProposalBindingCreation implements IJavaCompletionProposal {
 	public String getDisplayString() {
 		String typeName = guiceModule.getTypeName();
 		if (annotated) {
-			String displayString = "Create annotated binding to "
+			String displayString = "Create an annotated binding to "
 					+ interfaceBinding.getName() + " in "
 					+ typeName + "";
 			return displayString;
 		}
-		String displayString = "Create binding to "
+		String displayString = "Create a linked binding to "
 				+ interfaceBinding.getName() + " in "
 				+ typeName + "";
 		return displayString;

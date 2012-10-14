@@ -126,6 +126,9 @@ public class GuiceIndex implements Serializable {
 		return job;
 	}
 
+	/**
+	 * Returns the number of guice modules contained in this index.
+	 */
 	public int getNrOfGuiceModules() {
 		return guiceModules.size();
 	}
@@ -155,7 +158,24 @@ public class GuiceIndex implements Serializable {
 					+ " to Guice index " + getIndexInfoShort() + ".");
 		}
 	}
-
+	
+	/**
+	 * Removes all modules of the given project from the index.
+	 */
+	public void removeGuiceModulesByProjectName(String projectName) {
+		Preconditions.checkNotNull(projectName);
+		List<GuiceModule> guiceModuleInfosToRemove = ListUtils.newArrayListWithCapacity(guiceModules.size());
+		for (GuiceModule guiceModule : guiceModules) {
+			String guiceModuleProjectName = guiceModule.getProjectName();
+			if (guiceModuleProjectName.equals(projectName)) {
+				guiceModuleInfosToRemove.add(guiceModule);
+			}
+		}
+		for (GuiceModule guiceModule : guiceModuleInfosToRemove) {
+			removeGuiceModule(guiceModule.getTypeNameFullyQualified(), false);
+		}
+	}
+	
 	public void removeGuiceModule(String nameFullyQualified, boolean log) {
 		for (int i = 0; i < guiceModules.size(); i++) {
 			GuiceModule guiceModule = guiceModules.get(i);
@@ -188,7 +208,7 @@ public class GuiceIndex implements Serializable {
 
 	/**
 	 * Returns the guice modules of the given package and the parent packages as
-	 * indicated by the parameter depth. Returns an empty List if no modules
+	 * indicated by the parameter depth. Returns an empty list if no modules
 	 * were found.
 	 * 
 	 * @param depth the number of parent packages to include (0 = the empty list
@@ -244,23 +264,6 @@ public class GuiceIndex implements Serializable {
 		}
 
 		return guiceModulesInGivenPackages;
-	}
-
-	/**
-	 * Removes all modules of the given project from the index.
-	 */
-	public void removeGuiceModulesByProjectName(String projectName) {
-		Preconditions.checkNotNull(projectName);
-		List<GuiceModule> guiceModuleInfosToRemove = ListUtils.newArrayListWithCapacity(guiceModules.size());
-		for (GuiceModule guiceModule : guiceModules) {
-			String guiceModuleProjectName = guiceModule.getProjectName();
-			if (guiceModuleProjectName.equals(projectName)) {
-				guiceModuleInfosToRemove.add(guiceModule);
-			}
-		}
-		for (GuiceModule guiceModule : guiceModuleInfosToRemove) {
-			removeGuiceModule(guiceModule.getTypeNameFullyQualified(), false);
-		}
 	}
 
 	public List<GuiceStatement> getBindingsByType(ITypeBinding typeToFind) {
