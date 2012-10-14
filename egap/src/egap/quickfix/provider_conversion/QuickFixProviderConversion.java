@@ -10,7 +10,6 @@ import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.ui.text.java.IInvocationContext;
 import org.eclipse.jdt.ui.text.java.IJavaCompletionProposal;
 
-import egap.EgapPlugin;
 import egap.guice.ProjectResource;
 import egap.quickfix.AbstractEgapQuickFix;
 import egap.utils.ASTNodeUtils;
@@ -86,16 +85,6 @@ public class QuickFixProviderConversion extends AbstractEgapQuickFix {
 		}
 		
 
-	}
-
-	@Override
-	public String getPreferencesDisplayName() {
-		return "Provider conversion";
-	}
-
-	@Override
-	public String getEnabledStateID() {
-		return EgapPlugin.ID_QUICKFIXPROVIDERCONVERSION_ENABLED_STATE;
 	}
 
 }

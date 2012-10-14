@@ -19,7 +19,6 @@ import org.eclipse.jdt.core.JavaCore;
 
 
 import egap.EgapPlugin;
-import egap.nature.EgapNature;
 
 public class IProjectUtils {
 
@@ -90,7 +89,7 @@ public class IProjectUtils {
 			/* Nature not found -- adding it */
 			final String[] newNatures = new String[natures.length + 1];
 			System.arraycopy(natures, 0, newNatures, 0, natures.length);
-			newNatures[natures.length] = EgapNature.ID;
+			newNatures[natures.length] = EgapPlugin.ID_NATURE;
 			description.setNatureIds(newNatures);
 			project.setDescription(description, null);
 		} catch (final CoreException e) {

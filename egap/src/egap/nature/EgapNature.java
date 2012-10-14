@@ -12,8 +12,6 @@ import egap.project_builder.EgapBuilder;
 
 public class EgapNature implements IProjectNature {
 
-	public static final String ID = "egap.EgapNature";
-
 	private IProject project;
 
 	public EgapNature() {

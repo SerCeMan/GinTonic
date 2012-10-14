@@ -1,7 +1,5 @@
 package egap.preferences;
 
-import java.util.List;
-
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.StringFieldEditor;
@@ -11,7 +9,6 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.osgi.framework.Version;
 
 import egap.EgapPlugin;
-import egap.quickfix.EgapQuickFix;
 
 /**
  * This class represents a preference page that is contributed to the
@@ -43,19 +40,7 @@ public class EgapPreferencePage extends FieldEditorPreferencePage implements
 	@Override
 	public void createFieldEditors() {
 
-		EgapPlugin egapPlugin = EgapPlugin.getEgapPlugin();
-
-		List<EgapQuickFix> quickfixes = egapPlugin.getQuickfixes();
-
 		Composite fieldEditorParent = getFieldEditorParent();
-		for (final EgapQuickFix quickFix : quickfixes) {
-			BooleanFieldEditor booleanFieldEditor = new BooleanFieldEditor(
-					quickFix.getEnabledStateID(),
-					quickFix.getPreferencesDisplayName(),
-					fieldEditorParent);
-
-			addField(booleanFieldEditor);
-		}
 
 		BooleanFieldEditor debugModeField = new BooleanFieldEditor(
 				EgapPlugin.ID_DEBUG_MODE,

@@ -10,7 +10,6 @@ import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.ui.text.java.IInvocationContext;
 import org.eclipse.jdt.ui.text.java.IJavaCompletionProposal;
 
-import egap.EgapPlugin;
 import egap.guice.GuiceIndex;
 import egap.guice.GuiceModule;
 import egap.guice.statements.InstallModuleStatement;
@@ -110,14 +109,5 @@ public class QuickFixInstallModule extends AbstractEgapQuickFix {
 		proposals.add(proposalInstallModule);
 	}
 
-	@Override
-	public String getPreferencesDisplayName() {
-		return "Install Guice module in parent module";
-	}
-
-	@Override
-	public String getEnabledStateID() {
-		return EgapPlugin.ID_QUICKFIXINSTALLMODULE_ENABLED_STATE;
-	}
 
 }

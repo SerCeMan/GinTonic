@@ -10,7 +10,6 @@ import org.eclipse.jdt.ui.text.java.IInvocationContext;
 import org.eclipse.jdt.ui.text.java.IJavaCompletionProposal;
 
 
-import egap.EgapPlugin;
 import egap.guice.GuiceIndex;
 import egap.guice.GuiceModule;
 import egap.guice.ProjectResource;
@@ -74,16 +73,6 @@ public class QuickFixProviderMethodCreation extends AbstractEgapQuickFix {
 			}
 		}
 
-	}
-
-	@Override
-	public String getPreferencesDisplayName() {
-		return "Create provider method";
-	}
-
-	@Override
-	public String getEnabledStateID() {
-		return EgapPlugin.ID_QUICKFIXPROVIDERMETHODCREATION_ENABLED_STATE;
 	}
 
 }

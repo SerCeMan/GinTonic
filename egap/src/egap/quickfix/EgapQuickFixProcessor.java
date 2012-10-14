@@ -12,11 +12,9 @@ import org.eclipse.jdt.ui.text.java.IInvocationContext;
 import org.eclipse.jdt.ui.text.java.IJavaCompletionProposal;
 import org.eclipse.jdt.ui.text.java.IProblemLocation;
 import org.eclipse.jdt.ui.text.java.IQuickFixProcessor;
-import org.eclipse.jface.preference.IPreferenceStore;
 
 
 import egap.EgapPlugin;
-import egap.nature.EgapNature;
 import egap.utils.ListUtils;
 
 public class EgapQuickFixProcessor implements IQuickFixProcessor {
@@ -50,7 +48,7 @@ public class EgapQuickFixProcessor implements IQuickFixProcessor {
 		IJavaProject javaProject = parent.getJavaProject();
 		IProject project = javaProject.getProject();
 
-		if (!project.hasNature(EgapNature.ID)) {
+		if (!project.hasNature(EgapPlugin.ID_NATURE)) {
 
 			if (!loggedWarningAboutProjectWithoutEgapNature) {
 				/* One log message is sufficient! */
@@ -76,18 +74,13 @@ public class EgapQuickFixProcessor implements IQuickFixProcessor {
 		List<IJavaCompletionProposal> proposals = ListUtils.newLinkedList();
 
 		int nrOfEnabledQuickFixes = 0;
-		IPreferenceStore store = egapPlugin.getPreferenceStore();
 		for (EgapQuickFix quickFix : egapQuickfixes) {
-			/* The quick fixes can be disabled in the preferences */
-			boolean isEnabled = store.getBoolean(quickFix.getEnabledStateID());
-			if (isEnabled) {
-				nrOfEnabledQuickFixes++;
-				/* Every quickfix can contribute a proposal. */
-				try {
-					quickFix.addProposals(context, proposals);
-				} catch (Exception e) {
-					EgapPlugin.log(IStatus.ERROR, e.getMessage(), e);
-				}
+			nrOfEnabledQuickFixes++;
+			/* Every quickfix can contribute a proposal. */
+			try {
+				quickFix.addProposals(context, proposals);
+			} catch (Exception e) {
+				EgapPlugin.log(IStatus.ERROR, e.getMessage(), e);
 			}
 		}
 

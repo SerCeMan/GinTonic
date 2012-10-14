@@ -29,6 +29,8 @@ import egap.utils.ListUtils;
 public class EgapPlugin extends AbstractUIPlugin implements IStartup {
 
 	public static final String ID_PLUGIN = "de.jaculon.egap";
+
+	public static final String ID_NATURE = "de.jaculon.egap.nature";
 	
 	public static final String ID_DEBUG_MODE = "de.jaculon.egap.DEBUG_MODE";
 	public static final String ID_TEST_SRC_FOLDER = "de.jaculon.egap.test_src_folder";
@@ -36,18 +38,11 @@ public class EgapPlugin extends AbstractUIPlugin implements IStartup {
 	public static final String ID_TEST_PACKAGE_PREFIX = "de.jaculon.egap.package_prefix";
 	public static final String ID_SRC_FOLDER = "de.jaculon.egap.src_folder";
 
-	public static final String ID_QUICKFIXBINDINGCREATION_ENABLED_STATE = "de.jaculon.egap.QuickBindingCreation.ENABLED_STATE";
-	public static final String ID_QUICKFIXCREATEASSISTEDFACTORY_ENABLED_STATE = "de.jaculon.egap.QuickFixCreateAssistedFactory.ENABLED_STATE";
-	public static final String ID_QUICKFIXPROVIDERMETHODCREATION_ENABLED_STATE = "de.jaculon.egap.QuickFixProviderMethodCreation.ENABLED_STATE";
-	public static final String ID_QUICKFIXNAVIGATETO_ENABLED_STATE = "de.jaculon.egap.QuickfixNavigateTo.ENABLED_STATE";
-	public static final String ID_QUICKFIXINSTALLMODULE_ENABLED_STATE = "de.jaculon.egap.QuickFixInstallModule.ENABLED_STATE";
-	public static final String ID_QUICKFIXCREATEGUICEMODULE_ENABLED_STATE_ID = "de.jaculon.egap.QuickFixCreateGuiceModule.ENABLED_STATE";
-
 	private static EgapPlugin egapPlugin;
 
 	private List<EgapQuickFix> quickfixes = ListUtils.newArrayList();
 
-	public static final String ID_QUICKFIXPROVIDERCONVERSION_ENABLED_STATE = "QuickFixProviderConversion.ENABLED_STATE";
+
 
 
 

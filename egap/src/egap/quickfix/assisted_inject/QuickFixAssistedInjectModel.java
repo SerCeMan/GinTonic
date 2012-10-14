@@ -15,7 +15,6 @@ import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.ui.text.java.IInvocationContext;
 import org.eclipse.jdt.ui.text.java.IJavaCompletionProposal;
 
-import egap.EgapPlugin;
 import egap.guice.GuiceIndex;
 import egap.guice.GuiceModule;
 import egap.guice.statements.BindingStatement;
@@ -29,16 +28,6 @@ import egap.utils.MethodDeclarationUtils;
  * @author tmajunke
  */
 public class QuickFixAssistedInjectModel extends AbstractEgapQuickFix {
-	
-	@Override
-	public String getPreferencesDisplayName() {
-		return "Assisted Inject Quickfixes";
-	}
-
-	@Override
-	public String getEnabledStateID() {
-		return EgapPlugin.ID_QUICKFIXCREATEASSISTEDFACTORY_ENABLED_STATE;
-	}
 	
 	@Override
 	public void addProposals(IInvocationContext context,

@@ -10,7 +10,6 @@ import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.ui.text.java.IInvocationContext;
 import org.eclipse.jdt.ui.text.java.IJavaCompletionProposal;
 
-import egap.EgapPlugin;
 import egap.guice.GuiceIndex;
 import egap.guice.GuiceModule;
 import egap.guice.statements.GuiceStatement;
@@ -91,16 +90,6 @@ public class QuickFixBindingCreation extends AbstractEgapQuickFix {
 			}
 		}
 
-	}
-
-	@Override
-	public String getPreferencesDisplayName() {
-		return "Create a Linked Binding";
-	}
-
-	@Override
-	public String getEnabledStateID() {
-		return EgapPlugin.ID_QUICKFIXBINDINGCREATION_ENABLED_STATE;
 	}
 
 }

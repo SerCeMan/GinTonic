@@ -32,7 +32,7 @@ public class EgapToggleNatureAction implements IObjectActionDelegate {
 		
 		final IProject project = getProject(selection);
 		if (project != null) {
-			boolean natureToggled = IProjectUtils.toggleNature(project, EgapNature.ID);
+			boolean natureToggled = IProjectUtils.toggleNature(project, EgapPlugin.ID_NATURE);
 			if (natureToggled) {
 				action.setText(REMOVE);
 			} else {
@@ -54,7 +54,7 @@ public class EgapToggleNatureAction implements IObjectActionDelegate {
 		final IProject project = getProject(selection);
 		if (project != null) {
 			try {
-				if (project.hasNature(EgapNature.ID)) {
+				if (project.hasNature(EgapPlugin.ID_NATURE)) {
 					action.setText(REMOVE);
 				} else {
 					action.setText(ADD);

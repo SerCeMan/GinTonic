@@ -29,7 +29,6 @@ import egap.guice.statements.BindingStatement;
 import egap.guice.statements.GuiceStatement;
 import egap.guice.statements.JustInTimeBindingStatement;
 import egap.guice.statements.InstallModuleStatement;
-import egap.nature.EgapNature;
 import egap.project_builder.EgapBuilder;
 import egap.utils.ICompilationUnitUtils;
 import egap.utils.IPackageFragmentUtils;
@@ -95,7 +94,7 @@ public class GuiceIndex implements Serializable {
 	}
 
 	private static Job build() {
-		final List<IProject> projectsWithEgapNature = IProjectUtils.getOpenProjectsWithNature(EgapNature.ID);
+		final List<IProject> projectsWithEgapNature = IProjectUtils.getOpenProjectsWithNature(EgapPlugin.ID_NATURE);
 
 		/*
 		 * The Job has versus the IWorkspaceRunnable approach the nose ahead as

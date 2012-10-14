@@ -21,14 +21,6 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		EgapPlugin egapPlugin = EgapPlugin.getEgapPlugin();
 		IPreferenceStore store = egapPlugin.getPreferenceStore();
 		
-		store.setDefault(EgapPlugin.ID_QUICKFIXCREATEASSISTEDFACTORY_ENABLED_STATE, true);
-		store.setDefault(EgapPlugin.ID_QUICKFIXCREATEGUICEMODULE_ENABLED_STATE_ID, true);
-		store.setDefault(EgapPlugin.ID_QUICKFIXINSTALLMODULE_ENABLED_STATE, true);
-		store.setDefault(EgapPlugin.ID_QUICKFIXPROVIDERCONVERSION_ENABLED_STATE, true);
-		store.setDefault(EgapPlugin.ID_QUICKFIXNAVIGATETO_ENABLED_STATE, true);
-		store.setDefault(EgapPlugin.ID_QUICKFIXBINDINGCREATION_ENABLED_STATE, true);
-		store.setDefault(EgapPlugin.ID_QUICKFIXPROVIDERMETHODCREATION_ENABLED_STATE, true);
-		
 		store.setDefault(EgapPlugin.ID_DEBUG_MODE, false);
 
 		store.setDefault(EgapPlugin.ID_TEST_PACKAGE_PREFIX, "test");

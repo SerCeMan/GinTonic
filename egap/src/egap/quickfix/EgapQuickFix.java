@@ -11,9 +11,4 @@ public interface EgapQuickFix {
 	void addProposals(IInvocationContext context, List<IJavaCompletionProposal> proposals)
 			throws CoreException;
 
-
-	String getPreferencesDisplayName();
-
-	String getEnabledStateID();
-
 }

@@ -12,7 +12,6 @@ import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.ui.text.java.IInvocationContext;
 import org.eclipse.jdt.ui.text.java.IJavaCompletionProposal;
 
-import egap.EgapPlugin;
 import egap.quickfix.AbstractEgapQuickFix;
 import egap.utils.ICompilationUnitUtils;
 import egap.utils.ITypeBindingUtils;
@@ -107,16 +106,6 @@ public class QuickFixCreateGuiceModule extends AbstractEgapQuickFix {
 					guiceModuleName);
 			proposals.add(createGuiceModule);
 		}
-	}
-
-	@Override
-	public String getPreferencesDisplayName() {
-		return "Create Guice Module";
-	}
-
-	@Override
-	public String getEnabledStateID() {
-		return EgapPlugin.ID_QUICKFIXCREATEGUICEMODULE_ENABLED_STATE_ID;
 	}
 
 }
