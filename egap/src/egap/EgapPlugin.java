@@ -30,7 +30,10 @@ public class EgapPlugin extends AbstractUIPlugin implements IStartup {
 
 	public static final String ID_PLUGIN = "de.jaculon.egap";
 
-	public static final String ID_NATURE = "de.jaculon.egap.nature";
+	/**
+	 * Nicht ändern!
+	 */
+	public static final String ID_NATURE = "egap.EgapNature";
 	
 	public static final String ID_DEBUG_MODE = "de.jaculon.egap.DEBUG_MODE";
 	public static final String ID_TEST_SRC_FOLDER = "de.jaculon.egap.test_src_folder";
@@ -41,11 +44,6 @@ public class EgapPlugin extends AbstractUIPlugin implements IStartup {
 	private static EgapPlugin egapPlugin;
 
 	private List<EgapQuickFix> quickfixes = ListUtils.newArrayList();
-
-
-
-
-
 
 	public EgapPlugin() {
 		egapPlugin = this;

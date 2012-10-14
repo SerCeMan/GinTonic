@@ -52,18 +52,19 @@ public class GuiceIndexer {
 		try {
 			ICompilationUnit compilationUnit = (ICompilationUnit) JavaCore.create(file);
 			
-			
 			if (compilationUnit != null) {
 				
 				try {
 					IType primaryType = compilationUnit.findPrimaryType();
-					String superclassName = primaryType.getSuperclassName();
-					/* Parsing the AST takes long so make sure to check ICompilationUnit first. */
-					if(superclassName != null && (superclassName.equals("AbstractModule") || superclassName.equals("PrivateModule"))){
-						GuiceModule guiceModule = parseGuiceModule(
-								compilationUnit,
-								project);
-						return guiceModule;
+					if (primaryType != null) {
+						String superclassName = primaryType.getSuperclassName();
+						/* Parsing the AST takes long so make sure to check ICompilationUnit first. */
+						if(superclassName != null && (superclassName.equals("AbstractModule") || superclassName.equals("PrivateModule"))){
+							GuiceModule guiceModule = parseGuiceModule(
+									compilationUnit,
+									project);
+							return guiceModule;
+						}
 					}
 				} catch (JavaModelException e) {
 					throw new RuntimeException(e);

@@ -42,16 +42,8 @@ public class EgapPreferencePage extends FieldEditorPreferencePage implements
 
 		Composite fieldEditorParent = getFieldEditorParent();
 
-		BooleanFieldEditor debugModeField = new BooleanFieldEditor(
-				EgapPlugin.ID_DEBUG_MODE,
-				"Debug mode",
-				fieldEditorParent);
-		addField(debugModeField);
-		
-		
 		
 		/* Preferences for the junit testcase creation command */
-		
 		addField(new StringFieldEditor(
 				EgapPlugin.ID_TEST_SUFFIX,
 				"Testcase suffix",
@@ -69,6 +61,10 @@ public class EgapPreferencePage extends FieldEditorPreferencePage implements
 				"Src folder",
 				fieldEditorParent));
 		
+		addField(new BooleanFieldEditor(
+				EgapPlugin.ID_DEBUG_MODE,
+				"Debug mode",
+				fieldEditorParent));
 		
 	}
 
