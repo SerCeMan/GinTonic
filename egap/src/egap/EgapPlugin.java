@@ -28,18 +28,29 @@ import egap.utils.ListUtils;
  */
 public class EgapPlugin extends AbstractUIPlugin implements IStartup {
 
-	public static final String PLUGIN_ID = "com.jaculon.egap";
+	public static final String ID_PLUGIN = "de.jaculon.egap";
 	
-	public static final String DEBUG_MODE_ID = "egap.DEBUG_MODE";
-	public static final String ID_TEST_SRC_FOLDER = "egap.test_src_folder";
-	public static final String ID_TEST_SUFFIX = "egap.test_suffix";
-	public static final String ID_TEST_PACKAGE_PREFIX = "egap.package_prefix";
-	public static final String ID_SRC_FOLDER = "egap.src_folder";
+	public static final String ID_DEBUG_MODE = "de.jaculon.egap.DEBUG_MODE";
+	public static final String ID_TEST_SRC_FOLDER = "de.jaculon.egap.test_src_folder";
+	public static final String ID_TEST_SUFFIX = "de.jaculon.egap.test_suffix";
+	public static final String ID_TEST_PACKAGE_PREFIX = "de.jaculon.egap.package_prefix";
+	public static final String ID_SRC_FOLDER = "de.jaculon.egap.src_folder";
 
+	public static final String ID_QUICKFIXBINDINGCREATION_ENABLED_STATE = "de.jaculon.egap.QuickBindingCreation.ENABLED_STATE";
+	public static final String ID_QUICKFIXCREATEASSISTEDFACTORY_ENABLED_STATE = "de.jaculon.egap.QuickFixCreateAssistedFactory.ENABLED_STATE";
+	public static final String ID_QUICKFIXPROVIDERMETHODCREATION_ENABLED_STATE = "de.jaculon.egap.QuickFixProviderMethodCreation.ENABLED_STATE";
+	public static final String ID_QUICKFIXNAVIGATETO_ENABLED_STATE = "de.jaculon.egap.QuickfixNavigateTo.ENABLED_STATE";
+	public static final String ID_QUICKFIXINSTALLMODULE_ENABLED_STATE = "de.jaculon.egap.QuickFixInstallModule.ENABLED_STATE";
+	public static final String ID_QUICKFIXCREATEGUICEMODULE_ENABLED_STATE_ID = "de.jaculon.egap.QuickFixCreateGuiceModule.ENABLED_STATE";
 
 	private static EgapPlugin egapPlugin;
 
 	private List<EgapQuickFix> quickfixes = ListUtils.newArrayList();
+
+	public static final String ID_QUICKFIXPROVIDERCONVERSION_ENABLED_STATE = "QuickFixProviderConversion.ENABLED_STATE";
+
+
+
 
 	public EgapPlugin() {
 		egapPlugin = this;
@@ -119,7 +130,7 @@ public class EgapPlugin extends AbstractUIPlugin implements IStartup {
 	public static void doLog(int severity, String message, Throwable throwable) {
 		EgapPlugin egapPlugin = getEgapPlugin();
 		ILog logger = egapPlugin.getLog();
-		Status status = new Status(severity, PLUGIN_ID, message, throwable);
+		Status status = new Status(severity, ID_PLUGIN, message, throwable);
 		logger.log(status);
 	}
 
@@ -150,7 +161,7 @@ public class EgapPlugin extends AbstractUIPlugin implements IStartup {
 
 	public static boolean isDebugMode() {
 		IPreferenceStore store = egapPlugin.getPreferenceStore();
-		boolean isDebugModeEnabled = store.getBoolean(DEBUG_MODE_ID);
+		boolean isDebugModeEnabled = store.getBoolean(ID_DEBUG_MODE);
 		return isDebugModeEnabled;
 	}
 

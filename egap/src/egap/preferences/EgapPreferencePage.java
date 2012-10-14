@@ -58,7 +58,7 @@ public class EgapPreferencePage extends FieldEditorPreferencePage implements
 		}
 
 		BooleanFieldEditor debugModeField = new BooleanFieldEditor(
-				EgapPlugin.DEBUG_MODE_ID,
+				EgapPlugin.ID_DEBUG_MODE,
 				"Debug mode",
 				fieldEditorParent);
 		addField(debugModeField);

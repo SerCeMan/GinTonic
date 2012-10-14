@@ -7,6 +7,7 @@ import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.ui.text.java.IInvocationContext;
 import org.eclipse.jdt.ui.text.java.IJavaCompletionProposal;
 
+import egap.EgapPlugin;
 import egap.guice.GuiceIndex;
 import egap.guice.annotations.GuiceAnnotation;
 import egap.guice.statements.GuiceStatement;
@@ -102,10 +103,8 @@ public class QuickfixNavigateTo extends AbstractEgapQuickFix {
 		return "Jump to binding definition";
 	}
 
-	public static final String ENABLED_STATE_ID = "QuickfixNavigateTo.ENABLED_STATE";
-
 	@Override
 	public String getEnabledStateID() {
-		return ENABLED_STATE_ID;
+		return EgapPlugin.ID_QUICKFIXNAVIGATETO_ENABLED_STATE;
 	}
 }
