@@ -66,7 +66,7 @@ public class ProposalRemoveProvider implements IJavaCompletionProposal {
 	 */
 	public String getAdditionalProposalInfo() {
 		String typeDeclarationAsString = TypeUtils.getTypeDeclarationAsString(providedType);
-		String proposalInfo = "Change to " + typeDeclarationAsString + "";
+		String proposalInfo = "Convert to " + typeDeclarationAsString + "";
 		return proposalInfo;
 	}
 
