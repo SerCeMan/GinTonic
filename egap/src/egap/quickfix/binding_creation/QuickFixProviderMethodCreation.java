@@ -12,12 +12,10 @@ import org.eclipse.jdt.ui.text.java.IJavaCompletionProposal;
 
 import egap.guice.GuiceIndex;
 import egap.guice.GuiceModule;
-import egap.guice.ProjectResource;
 import egap.guice.statements.GuiceStatement;
 import egap.quickfix.AbstractEgapQuickFix;
 import egap.utils.ASTNodeUtils;
-import egap.utils.GuiceFieldDeclaration;
-import egap.utils.IProjectResourceUtils;
+import egap.utils.InjectionPoint;
 import egap.utils.ITypeBindingUtils;
 import egap.utils.SetUtils;
 
@@ -31,13 +29,7 @@ public class QuickFixProviderMethodCreation extends AbstractEgapQuickFix {
 			List<IJavaCompletionProposal> proposals) throws CoreException {
 		CompilationUnit astRoot = context.getASTRoot();
 		
-		ProjectResource origin = IProjectResourceUtils.createProjectResource(
-				context.getCoveringNode(),
-				context.getASTRoot(),
-				context.getCompilationUnit());
-		
-		GuiceFieldDeclaration guiceFieldDecl = ASTNodeUtils.getGuiceFieldDeclarationIfFieldDeclaration(
-				origin,
+		InjectionPoint guiceFieldDecl = ASTNodeUtils.getGuiceFieldDeclarationIfFieldDeclaration(
 				context.getCoveringNode(),
 				astRoot);
 

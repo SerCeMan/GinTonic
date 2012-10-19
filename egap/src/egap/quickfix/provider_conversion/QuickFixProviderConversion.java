@@ -10,11 +10,9 @@ import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.ui.text.java.IInvocationContext;
 import org.eclipse.jdt.ui.text.java.IJavaCompletionProposal;
 
-import egap.guice.ProjectResource;
 import egap.quickfix.AbstractEgapQuickFix;
 import egap.utils.ASTNodeUtils;
-import egap.utils.GuiceFieldDeclaration;
-import egap.utils.IProjectResourceUtils;
+import egap.utils.InjectionPoint;
 import egap.utils.ITypeBindingUtils;
 
 /**
@@ -26,13 +24,7 @@ public class QuickFixProviderConversion extends AbstractEgapQuickFix {
 	public void addProposals(IInvocationContext context,
 			List<IJavaCompletionProposal> proposals) throws CoreException {
 		
-		ProjectResource origin = IProjectResourceUtils.createProjectResource(
-				context.getCoveringNode(),
-				context.getASTRoot(),
-				context.getCompilationUnit());
-		
-		GuiceFieldDeclaration guiceFieldDeclaration = ASTNodeUtils.getGuiceFieldDeclarationIfFieldDeclaration(
-				origin,
+		InjectionPoint guiceFieldDeclaration = ASTNodeUtils.getGuiceFieldDeclarationIfFieldDeclaration(
 				context.getCoveringNode(),
 				context.getASTRoot());
 		

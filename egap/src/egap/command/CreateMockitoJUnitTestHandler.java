@@ -17,7 +17,6 @@ import org.eclipse.jdt.core.ITypeRoot;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
-import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
 import org.eclipse.jdt.core.dom.Assignment;
 import org.eclipse.jdt.core.dom.Block;
@@ -34,7 +33,6 @@ import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.Modifier;
 import org.eclipse.jdt.core.dom.Modifier.ModifierKeyword;
-import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.SimpleType;
 import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.TagElement;
@@ -57,7 +55,7 @@ import egap.source_formatter.SourceFormatFailedException;
 import egap.utils.ASTParserUtils;
 import egap.utils.EclipseUtils;
 import egap.utils.FieldDeclarationUtils;
-import egap.utils.GuiceFieldDeclaration;
+import egap.utils.InjectionPoint;
 import egap.utils.ICompilationUnitUtils;
 import egap.utils.IPackageFragmentUtils;
 import egap.utils.IProjectResourceUtils;
@@ -169,10 +167,6 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 			return Action.UNDEFINED;
 		}
 		ICompilationUnit icompilationUnit = (ICompilationUnit) editorInputTypeRoot;
-		CompilationUnit classUnderTestAsCompilationUnit = SharedASTProvider.getAST(
-				editorInputTypeRoot,
-				SharedASTProvider.WAIT_YES,
-				null);
 
 		initializePreferences();
 
@@ -183,14 +177,12 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 
 		boolean isJunitTestcase = isJunitTestcase(icompilationUnit);
 		if (isJunitTestcase) {
-			/* JUnit Test */
 			ProjectResource classUnderTest = createClassForJuniTest(javaClass);
 			IFile normalClassAsIFile = IProjectResourceUtils.getJavaFile(classUnderTest);
 			if (normalClassAsIFile.exists()) {
 				IProjectResourceUtils.openEditorWithStatementDeclaration(classUnderTest);
 				return Action.JUMPED_TO_CLASS_UNDER_TEST;
 			}
-
 		}
 		else {
 			ProjectResource junitTest = createJUnitClassFor(javaClass);
@@ -204,15 +196,12 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 			}
 			/* Test does not exist - lets create it! */
 			try {
-				ProjectResource junitTestAsProjectResource = createJUnitClassFor(javaClass);
-
 				createJUnitTest(
-						icompilationUnit.getJavaProject(),
-						junitTestAsProjectResource,
-						junitTest,
-						editorInputTypeRoot,
-						classUnderTestAsCompilationUnit);
-
+						icompilationUnit,
+						junitTest);
+				
+				IProjectResourceUtils.openEditorWithStatementDeclaration(junitTest);
+				
 				return Action.CREATED_TEST;
 			} catch (CoreException e) {
 				EgapPlugin.logException(e);
@@ -243,17 +232,15 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 		srcFolderForNormalClasses = store.getString(EgapPlugin.ID_SRC_FOLDER);
 	}
 
-	private void createJUnitTest(IJavaProject javaProject,
-			ProjectResource junitTestAsProjectResource,
-			final ProjectResource classUnderTestAsProjectResource,
-			ITypeRoot classUnderTestAsTypeRoot,
-			CompilationUnit classUnderTestAsCompilationUnit)
+	private void createJUnitTest(ICompilationUnit classUnderTest, ProjectResource junitTest)
 			throws JavaModelException {
-
+		
+		IJavaProject javaProject = classUnderTest.getJavaProject();
+		
 		StringBuffer sb = new StringBuffer(300);
 		JavaCodeBuilder codeGenerator = new JavaCodeBuilder(sb);
-
-		String typeName = classUnderTestAsProjectResource.getTypeName();
+		
+		String typeName = junitTest.getTypeName();
 
 		codeGenerator.append("@RunWith( MockitoJUnitRunner.class )");
 		codeGenerator.startClass(typeName);
@@ -268,7 +255,7 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 			EgapPlugin.logException(e);
 		}
 
-		String packageFullyQualified = classUnderTestAsProjectResource.getPackageFullyQualified();
+		String packageFullyQualified = junitTest.getPackageFullyQualified();
 		IPackageFragment packageFragment = IPackageFragmentUtils.createPackageFragment(
 				javaProject,
 				srcFolderForTests,
@@ -303,10 +290,14 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 		refactorator.addImport("org.mockito.runners.MockitoJUnitRunner");
 		refactorator.addImport("org.mockito.Mock");
 
-		List<GuiceFieldDeclaration> injectionPoints = findInjectionPoints(
-				classUnderTestAsProjectResource,
-				classUnderTestAsTypeRoot);
-
+		List<InjectionPoint> injectionPoints = ICompilationUnitUtils.findInjectionPoints(
+				classUnderTest);
+		
+		CompilationUnit classUnderTestAsCompilationUnit = SharedASTProvider.getAST(
+				classUnderTest,
+				SharedASTProvider.WAIT_YES,
+				null);
+		
 		TypeDeclaration primaryTypeDeclaration = findPrimaryTypeDeclaration(classUnderTestAsCompilationUnit);
 
 		addClassUnderTestAsField(
@@ -328,8 +319,6 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 		createTestMethod(junitTestAsCompilationUnit.getAST(), refactorator);
 
 		refactorator.refactor(null);
-
-		IProjectResourceUtils.openEditorWithStatementDeclaration(junitTestAsProjectResource);
 
 	}
 
@@ -367,7 +356,7 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 	 * are 3 possible ways how to inject the mocks (constructor, setter, direct
 	 * field access) we assume it to be the same as where the @Inject annotation
 	 * is applied to the class-under-test (see
-	 * {@link GuiceFieldDeclaration#getInjectionIsAttachedTo()}).
+	 * {@link InjectionPoint#getInjectionIsAttachedTo()}).
 	 * 
 	 * <h5>Example 1: The injections were attached to the constructor</h5>
 	 * 
@@ -407,7 +396,7 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 	private void createInitializerMethod(
 			CompilationUnit junitTestAsCompilationUnit,
 			Refactorator refactorator, TypeDeclaration primaryTypeDeclaration,
-			List<GuiceFieldDeclaration> injectionPoints) {
+			List<InjectionPoint> injectionPoints) {
 
 		AST ast = junitTestAsCompilationUnit.getAST();
 		MethodDeclaration methodDecl = ast.newMethodDeclaration();
@@ -435,7 +424,7 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 			 * setters, all by field, ...) so we only check the first injection
 			 * point.
 			 */
-			GuiceFieldDeclaration firstFieldDeclaration = injectionPoints.get(0);
+			InjectionPoint firstFieldDeclaration = injectionPoints.get(0);
 			InjectionIsAttachedTo injectionIsAttachedTo = firstFieldDeclaration.getInjectionIsAttachedTo();
 
 			ITypeBinding classUnderTestBinding = primaryTypeDeclaration.resolveBinding();
@@ -448,7 +437,7 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 						ast);
 				statements.add(expressionStatement);
 
-				for (GuiceFieldDeclaration guiceFieldDeclaration : injectionPoints) {
+				for (InjectionPoint guiceFieldDeclaration : injectionPoints) {
 					Assignment assignment = ast.newAssignment();
 					assignment.setLeftHandSide(ast.newQualifiedName(
 							ast.newSimpleName(classUnderTestVarName),
@@ -464,7 +453,7 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 						ast);
 				statements.add(expressionStatement);
 
-				for (GuiceFieldDeclaration guiceFieldDeclaration : injectionPoints) {
+				for (InjectionPoint guiceFieldDeclaration : injectionPoints) {
 					String variableName = guiceFieldDeclaration.getVariableName();
 					String variableNameOfMock = getMockName(guiceFieldDeclaration);
 					String setter = StringUtils.toSetterMethodname(variableName);
@@ -495,7 +484,7 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 	 */
 	private ExpressionStatement createClassInstanceCreation(
 			TypeDeclaration primaryTypeDeclaration, AST ast,
-			List<GuiceFieldDeclaration> injectionPoints) {
+			List<InjectionPoint> injectionPoints) {
 		ITypeBinding classUnderTestBinding = primaryTypeDeclaration.resolveBinding();
 		String classUnderTestTypeNameSimple = classUnderTestBinding.getName();
 		SimpleType classUnderTestType = ast.newSimpleType(ast.newSimpleName(classUnderTestTypeNameSimple));
@@ -503,7 +492,7 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 		ClassInstanceCreation classInstanceCreation = ast.newClassInstanceCreation();
 		classInstanceCreation.setType(classUnderTestType);
 		
-		for (GuiceFieldDeclaration guiceFieldDeclaration : injectionPoints) {
+		for (InjectionPoint guiceFieldDeclaration : injectionPoints) {
 			String variableNameOfMock = getMockName(guiceFieldDeclaration);
 			@SuppressWarnings("unchecked")
 			List<Expression> arguments = classInstanceCreation.arguments();
@@ -518,7 +507,7 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 		return expressionStatement;
 	}
 
-	private String getMockName(GuiceFieldDeclaration guiceFieldDeclaration) {
+	private String getMockName(InjectionPoint guiceFieldDeclaration) {
 		return guiceFieldDeclaration.getVariableName()
 				+ "Mock";
 	}
@@ -544,73 +533,17 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 	}
 
 	/**
-	 * TODO
-	 */
-	private List<GuiceFieldDeclaration> findInjectionPoints(
-			final ProjectResource classUnderTestAsProjectResource,
-			ITypeRoot classUnderTestAsTypeRoot) {
-		final List<GuiceFieldDeclaration> injectionPoints = new ArrayList<GuiceFieldDeclaration>(
-				30);
-
-		final CompilationUnit compilationUnit = SharedASTProvider.getAST(
-				classUnderTestAsTypeRoot,
-				SharedASTProvider.WAIT_YES,
-				null);
-		compilationUnit.accept(new ASTVisitor(false) {
-
-			private String identifier;
-
-			@Override
-			public boolean visit(FieldDeclaration fieldDeclaration) {
-
-				/* We can skip static fields as they cannot be injected. */
-				boolean isStatic = FieldDeclarationUtils.isStatic(fieldDeclaration);
-				if (isStatic) {
-					return false;
-				}
-
-				fieldDeclaration.accept(new ASTVisitor() {
-
-					@Override
-					public boolean visit(VariableDeclarationFragment node) {
-						SimpleName name = node.getName();
-						identifier = name.getIdentifier();
-						return false;
-					}
-
-				});
-
-				GuiceFieldDeclaration injectionPoint = FieldDeclarationUtils.getTypeIfAnnotatedWithInject(
-						classUnderTestAsProjectResource,
-						fieldDeclaration,
-						compilationUnit,
-						identifier);
-
-				if (injectionPoint != null) {
-					injectionPoints.add(injectionPoint);
-				}
-
-				identifier = null;
-
-				return false;
-			}
-
-		});
-		return injectionPoints;
-	}
-
-	/**
 	 * Adds the injected dependencies from the class-under-test as fields in the
 	 * testcase. The annotations and the javadoc from the class-under-test are
 	 * not copied to the new fields.
 	 */
 	private List<FieldDeclaration> addInjectionsAsMocksInTestcase(
-			final List<GuiceFieldDeclaration> injectionPoints,
+			final List<InjectionPoint> injectionPoints,
 			CompilationUnit junitTestAsCompilationUnit,
 			Refactorator refactorator) {
 		List<FieldDeclaration> fieldDeclarations = new ArrayList<FieldDeclaration>(
 				injectionPoints.size());
-		for (GuiceFieldDeclaration injectionPoint : injectionPoints) {
+		for (InjectionPoint injectionPoint : injectionPoints) {
 			ITypeBinding targetTypeBinding = injectionPoint.getTargetTypeBinding();
 			refactorator.addImport(targetTypeBinding);
 

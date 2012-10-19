@@ -32,19 +32,6 @@ public class ASTParserUtils {
 		return astRoot;
 	}
 
-	public static CompilationUnit parseCompilationUnitAst3(String source,
-			boolean resolveBindings, boolean recoverBindings) {
-		ASTParser astParser = ASTParser.newParser(AST.JLS3);
-
-		astParser.setSource(source.toCharArray());
-		astParser.setResolveBindings(resolveBindings);
-		astParser.setBindingsRecovery(recoverBindings);
-		astParser.setKind(ASTParser.K_COMPILATION_UNIT);
-
-		CompilationUnit astRoot = (CompilationUnit) astParser.createAST(null);
-		return astRoot;
-	}
-
 	public static Statement parseStatementAst3(String statementAsString) {
 		ASTParser astParser = ASTParser.newParser(AST.JLS3);
 		astParser.setSource(statementAsString.toCharArray());

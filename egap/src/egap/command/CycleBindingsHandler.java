@@ -28,8 +28,8 @@ import egap.guice.annotations.GuiceAnnotation;
 import egap.guice.statements.GuiceStatement;
 import egap.utils.ASTNodeUtils;
 import egap.utils.EclipseUtils;
-import egap.utils.GuiceTypeInfo;
-import egap.utils.GuiceTypeWithAnnotation;
+import egap.utils.IAnnotatedInjectionPoint;
+import egap.utils.IInjectionPoint;
 import egap.utils.IProjectResource;
 import egap.utils.IProjectResourceUtils;
 import egap.utils.ITypeBindingUtils;
@@ -80,7 +80,7 @@ public class CycleBindingsHandler extends AbstractHandler {
 			}
 		}
 
-		GuiceTypeInfo binding = findBinding();
+		IInjectionPoint binding = findBinding();
 
 		if (binding != null) {
 			List<GuiceStatement> bindingDefinitions = findBindingDefinitions(binding);
@@ -139,7 +139,7 @@ public class CycleBindingsHandler extends AbstractHandler {
 	 *         is not a guice binding.
 	 * @throws JavaModelException
 	 */
-	private GuiceTypeInfo findBinding() throws JavaModelException {
+	private IInjectionPoint findBinding() throws JavaModelException {
 
 		IJavaElement selectedJavaElement = icompilationUnit.getElementAt(currentSelection.getOffset());
 		int elementType = selectedJavaElement.getElementType();
@@ -180,10 +180,9 @@ public class CycleBindingsHandler extends AbstractHandler {
 		int offset = currentSelection.getOffset();
 		ASTNode coveredNode = findCoveredNode(compilationUnit, offset, length);
 		
-		GuiceTypeInfo binding = ASTNodeUtils.getGuiceTypeInfoIfFieldDeclarationTypeDeclarationOrProviderMethod(
+		IInjectionPoint binding = ASTNodeUtils.getInjectionPoint(
 				coveredNode,
-				compilationUnit,
-				icompilationUnit);
+				compilationUnit);
 
 		return binding;
 
@@ -198,13 +197,13 @@ public class CycleBindingsHandler extends AbstractHandler {
 		return coveredNode;
 	}
 
-	private List<GuiceStatement> findBindingDefinitions(GuiceTypeInfo binding) {
+	private List<GuiceStatement> findBindingDefinitions(IInjectionPoint binding) {
 		List<GuiceStatement> projectResourcesToVisit;
 		ITypeBinding typeBinding = binding.getTargetTypeBinding();
 		GuiceIndex guiceIndex = GuiceIndex.get();
 		ITypeBinding typeBindingWithoutProvider = ITypeBindingUtils.removeSurroundingProvider(typeBinding);
-		if (binding instanceof GuiceTypeWithAnnotation) {
-			GuiceTypeWithAnnotation annotatedThing = (GuiceTypeWithAnnotation) binding;
+		if (binding instanceof IAnnotatedInjectionPoint) {
+			IAnnotatedInjectionPoint annotatedThing = (IAnnotatedInjectionPoint) binding;
 			GuiceAnnotation guiceAnnotation = annotatedThing.getGuiceAnnotation();
 			projectResourcesToVisit = guiceIndex.getBindingsByTypeAndAnnotation(
 					typeBindingWithoutProvider,

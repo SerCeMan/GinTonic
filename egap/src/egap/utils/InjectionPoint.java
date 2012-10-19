@@ -6,7 +6,11 @@ import org.eclipse.jdt.core.dom.ITypeBinding;
 import egap.guice.annotations.GuiceAnnotation;
 
 /**
- * A {@link FieldDeclaration} which is annotated for injection.
+ * An injection point is a {@link FieldDeclaration} which is annotated for
+ * injection. The injection information can be attached to the field itself, the
+ * setter or the constructor (see {@link #getInjectionIsAttachedTo()}).
+ * 
+ * <h1>Example:</h1>
  * 
  * <pre>
  * &#64Inject
@@ -15,18 +19,22 @@ import egap.guice.annotations.GuiceAnnotation;
  * 
  * @author tmajunke
  */
-public class GuiceFieldDeclaration extends GuiceTypeWithAnnotation {
+public class InjectionPoint implements IAnnotatedInjectionPoint{
 
 	private final FieldDeclaration fieldDeclaration;
 	private final InjectionIsAttachedTo injectionIsAttachedTo;
+	private final ITypeBinding targetTypeBinding;
+	private final GuiceAnnotation guiceAnnotation;
+	private final String variableName;
 
-	public GuiceFieldDeclaration(IProjectResource origin,
-			ITypeBinding targetTypeBinding,
+	public InjectionPoint(ITypeBinding targetTypeBinding,
 			GuiceAnnotation guiceAnnotation,
 			String variableName,
 			FieldDeclaration fieldDeclaration,
 			InjectionIsAttachedTo injectionIsAttachedTo) {
-		super(origin, targetTypeBinding, guiceAnnotation, variableName);
+		this.targetTypeBinding = targetTypeBinding;
+		this.guiceAnnotation = guiceAnnotation;
+		this.variableName = variableName;
 		this.fieldDeclaration = fieldDeclaration;
 		this.injectionIsAttachedTo = injectionIsAttachedTo;
 	}
@@ -44,6 +52,23 @@ public class GuiceFieldDeclaration extends GuiceTypeWithAnnotation {
 	 */
 	public InjectionIsAttachedTo getInjectionIsAttachedTo() {
 		return injectionIsAttachedTo;
+	}
+	
+	@Override
+	public ITypeBinding getTargetTypeBinding() {
+		return targetTypeBinding;
+	}
+	
+	@Override
+	public GuiceAnnotation getGuiceAnnotation() {
+		return guiceAnnotation;
+	}
+
+	/**
+	 * Returns the unqualified variable name.
+	 */
+	public String getVariableName() {
+		return variableName;
 	}
 
 }

@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
-import org.eclipse.jdt.core.dom.Annotation;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.MarkerAnnotation;
@@ -15,14 +14,13 @@ import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.Type;
 
-import egap.guice.ProjectResource;
 import egap.guice.annotations.GuiceAnnotation;
 
 public class FieldDeclarationUtils {
 
 	@SuppressWarnings("unchecked")
-	public static GuiceFieldDeclaration getTypeIfAnnotatedWithInject(
-			ProjectResource origin, FieldDeclaration fieldDeclaration,
+	public static InjectionPoint getTypeIfAnnotatedWithInject(
+			FieldDeclaration fieldDeclaration,
 			CompilationUnit compilationUnit, String fieldName) {
 
 		List<ASTNode> modifiers = fieldDeclaration.modifiers();
@@ -32,8 +30,7 @@ public class FieldDeclarationUtils {
 		if (annotationList.containsInjectType()) {
 			Type type = fieldDeclaration.getType();
 			GuiceAnnotation guiceAnnotation = annotationList.getGuiceAnnotation();
-			return new GuiceFieldDeclaration(
-					origin,
+			return new InjectionPoint(
 					type.resolveBinding(),
 					guiceAnnotation,
 					fieldName,
@@ -54,8 +51,7 @@ public class FieldDeclarationUtils {
 				annotationList = ASTNodeUtils.getMarkerAnnotationList(variableDeclaration.modifiers());
 				Type type = variableDeclaration.getType();
 				GuiceAnnotation guiceAnnotation = annotationList.getGuiceAnnotation();
-				return new GuiceFieldDeclaration(
-						origin,
+				return new InjectionPoint(
 						type.resolveBinding(),
 						guiceAnnotation,
 						fieldName,
@@ -77,8 +73,7 @@ public class FieldDeclarationUtils {
 			if (annotationList.containsInjectType()) {
 				Type type = fieldDeclaration.getType();
 				GuiceAnnotation guiceAnnotation = annotationList.getGuiceAnnotation();
-				return new GuiceFieldDeclaration(
-						origin,
+				return new InjectionPoint(
 						type.resolveBinding(),
 						guiceAnnotation,
 						fieldName,

@@ -12,8 +12,8 @@ import egap.guice.annotations.GuiceAnnotation;
 import egap.guice.statements.GuiceStatement;
 import egap.quickfix.AbstractEgapQuickFix;
 import egap.utils.ASTNodeUtils;
-import egap.utils.GuiceTypeInfo;
-import egap.utils.GuiceTypeWithAnnotation;
+import egap.utils.IAnnotatedInjectionPoint;
+import egap.utils.IInjectionPoint;
 import egap.utils.ITypeBindingUtils;
 
 /**
@@ -50,10 +50,9 @@ public class QuickfixNavigateTo extends AbstractEgapQuickFix {
 	@Override
 	public void addProposals(IInvocationContext context,
 			List<IJavaCompletionProposal> proposals) throws CoreException {
-		GuiceTypeInfo guiceTypeInfo = ASTNodeUtils.getGuiceTypeInfoIfFieldDeclarationTypeDeclarationOrProviderMethod(
+		IInjectionPoint guiceTypeInfo = ASTNodeUtils.getInjectionPoint(
 				context.getCoveringNode(),
-				context.getASTRoot(),
-				context.getCompilationUnit());
+				context.getASTRoot());
 
 		if (guiceTypeInfo != null) {
 			addGotoProposalFrom(
@@ -63,7 +62,7 @@ public class QuickfixNavigateTo extends AbstractEgapQuickFix {
 
 	}
 
-	private void addGotoProposalFrom(GuiceTypeInfo guiceTypeInfo,
+	private void addGotoProposalFrom(IInjectionPoint guiceTypeInfo,
 			List<IJavaCompletionProposal> proposals) {
 		GuiceIndex guiceIndex = GuiceIndex.get();
 		ITypeBinding typeBinding = guiceTypeInfo.getTargetTypeBinding();
@@ -71,8 +70,8 @@ public class QuickfixNavigateTo extends AbstractEgapQuickFix {
 		
 		List<GuiceStatement> bindingStatements = null;
 		
-		if (guiceTypeInfo instanceof GuiceTypeWithAnnotation) {
-			GuiceTypeWithAnnotation annotatedThing = (GuiceTypeWithAnnotation) guiceTypeInfo;
+		if (guiceTypeInfo instanceof IAnnotatedInjectionPoint) {
+			IAnnotatedInjectionPoint annotatedThing = (IAnnotatedInjectionPoint) guiceTypeInfo;
 			GuiceAnnotation guiceAnnotation = annotatedThing.getGuiceAnnotation();
 			bindingStatements = guiceIndex.getBindingsByTypeAndAnnotation(
 					typeBindingWithoutProvider,

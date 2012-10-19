@@ -4,28 +4,31 @@ import org.eclipse.jdt.core.dom.ITypeBinding;
 
 import egap.guice.annotations.GuiceAnnotation;
 
-public class GuiceTypeWithAnnotation extends GuiceTypeInfo {
-	
+public class ProviderMethod implements IAnnotatedInjectionPoint{
+
+	private final ITypeBinding targetTypeBinding;
 	private final GuiceAnnotation guiceAnnotation;
 	private final String variableName;
 
-	public GuiceTypeWithAnnotation(
-			IProjectResource origin,
-			ITypeBinding targetTypeBinding,
+	public ProviderMethod(ITypeBinding targetTypeBinding,
 			GuiceAnnotation guiceAnnotation,
 			String variableName) {
-		super(origin, targetTypeBinding);
+		this.targetTypeBinding = targetTypeBinding;
 		this.guiceAnnotation = guiceAnnotation;
 		this.variableName = variableName;
+
 	}
 
+	@Override
+	public ITypeBinding getTargetTypeBinding() {
+		return targetTypeBinding;
+	}
+
+	@Override
 	public GuiceAnnotation getGuiceAnnotation() {
 		return guiceAnnotation;
 	}
 
-	/**
-	 * Returns the unqualified variable name.
-	 */
 	public String getVariableName() {
 		return variableName;
 	}

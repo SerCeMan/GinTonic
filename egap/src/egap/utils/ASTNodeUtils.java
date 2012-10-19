@@ -2,7 +2,6 @@ package egap.utils;
 
 import java.util.List;
 
-import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.CompilationUnit;
@@ -18,7 +17,6 @@ import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 
-import egap.guice.ProjectResource;
 import egap.guice.annotations.GuiceAnnotation;
 import egap.guice.statements.GuiceStatement;
 
@@ -123,7 +121,7 @@ public class ASTNodeUtils {
 	 * 
 	 * @return true if it is annotated with the given type otherwise false.
 	 */
-	public static boolean isMarkerAnnotationAnnotatedWith(ASTNode node,
+	private static boolean isMarkerAnnotationAnnotatedWith(ASTNode node,
 			String annotationFullyQualified) {
 		if (node instanceof MarkerAnnotation) {
 			MarkerAnnotation markerAnnotation = (MarkerAnnotation) node;
@@ -204,8 +202,8 @@ public class ASTNodeUtils {
 		return null;
 	}
 
-	public static GuiceFieldDeclaration getGuiceFieldDeclarationIfFieldDeclaration(
-			ProjectResource origin, ASTNode astNode, CompilationUnit astRoot) {
+	public static InjectionPoint getGuiceFieldDeclarationIfFieldDeclaration(
+			ASTNode astNode, CompilationUnit astRoot) {
 		if (!(astNode instanceof Name)) {
 			return null;
 		}
@@ -214,8 +212,7 @@ public class ASTNodeUtils {
 
 		FieldDeclaration fieldDeclaration = ASTNodeUtils.getFieldDeclaration(name);
 		if (fieldDeclaration != null) {
-			GuiceFieldDeclaration guiceFieldDeclaration = FieldDeclarationUtils.getTypeIfAnnotatedWithInject(
-					origin,
+			InjectionPoint guiceFieldDeclaration = FieldDeclarationUtils.getTypeIfAnnotatedWithInject(
 					fieldDeclaration,
 					astRoot,
 					variableName);
@@ -225,42 +222,29 @@ public class ASTNodeUtils {
 		return null;
 	}
 
-	public static GuiceTypeInfo getGuiceTypeInfoIfFieldDeclarationTypeDeclarationOrProviderMethod(
-			ASTNode astNode, CompilationUnit compilationUnit,
-			ICompilationUnit icompilationUnit) {
+	public static IInjectionPoint getInjectionPoint(
+			ASTNode astNode, CompilationUnit compilationUnit) {
 
 		if (!(astNode instanceof Name)) {
 			return null;
 		}
 
-		ProjectResource origin = IProjectResourceUtils.createProjectResource(
-				astNode,
-				compilationUnit,
-				icompilationUnit);
-
 		Name name = (Name) astNode;
-		GuiceFieldDeclaration guiceFieldDeclaration = getGuiceFieldDeclarationIfFieldDeclaration(
-				origin,
+		IInjectionPoint injectionPoint = getGuiceFieldDeclarationIfFieldDeclaration(
 				name,
 				compilationUnit);
-		if (guiceFieldDeclaration != null) {
-			return guiceFieldDeclaration;
+		if (injectionPoint != null) {
+			return injectionPoint;
 		}
 
-		TypeDeclaration typeDeclaration = ASTNodeUtils.getTypeDeclaration(astNode);
-		if (typeDeclaration != null) {
-			ITypeBinding typeBinding = typeDeclaration.resolveBinding();
-			return new GuiceTypeInfo(origin, typeBinding);
-		}
-
-		GuiceProviderMethodVar guicyProviderMethodVar = getGuiceTypeInfoIfVariableDeclOfProviderMethod(
-				origin,
+		ProviderMethod guicyProviderMethodVar = getProviderMethod(
 				name);
+		
 		return guicyProviderMethodVar;
 	}
 
-	public static GuiceProviderMethodVar getGuiceTypeInfoIfVariableDeclOfProviderMethod(
-			ProjectResource origin, Name name) {
+	public static ProviderMethod getProviderMethod(
+			Name name) {
 		ASTNode parentNode = name.getParent();
 		if (parentNode instanceof SingleVariableDeclaration) {
 			SingleVariableDeclaration singleVariableDeclaration = (SingleVariableDeclaration) parentNode;
@@ -271,8 +255,7 @@ public class ASTNodeUtils {
 				MarkerAnnotationList markerAnnotationList = getMarkerAnnotationList(singleVariableDeclaration.modifiers());
 				Type type = singleVariableDeclaration.getType();
 				GuiceAnnotation guiceAnnotation = markerAnnotationList.getGuiceAnnotation();
-				return new GuiceProviderMethodVar(
-						origin,
+				return new ProviderMethod(
 						type.resolveBinding(),
 						guiceAnnotation,
 						name.getFullyQualifiedName());
