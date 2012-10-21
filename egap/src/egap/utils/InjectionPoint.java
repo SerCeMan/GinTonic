@@ -70,5 +70,10 @@ public class InjectionPoint implements IAnnotatedInjectionPoint{
 	public String getVariableName() {
 		return variableName;
 	}
+	
+	@Override
+	public String toString() {
+		return fieldDeclaration.toString();
+	}
 
 }

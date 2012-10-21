@@ -8,14 +8,14 @@ public class ProviderMethod implements IAnnotatedInjectionPoint{
 
 	private final ITypeBinding targetTypeBinding;
 	private final GuiceAnnotation guiceAnnotation;
-	private final String variableName;
+	private final String identifier;
 
 	public ProviderMethod(ITypeBinding targetTypeBinding,
 			GuiceAnnotation guiceAnnotation,
-			String variableName) {
+			String identifier) {
 		this.targetTypeBinding = targetTypeBinding;
 		this.guiceAnnotation = guiceAnnotation;
-		this.variableName = variableName;
+		this.identifier = identifier;
 
 	}
 
@@ -29,8 +29,11 @@ public class ProviderMethod implements IAnnotatedInjectionPoint{
 		return guiceAnnotation;
 	}
 
-	public String getVariableName() {
-		return variableName;
+	/**
+	 * Returns the name of the selected identifier.
+	 */
+	public String getIdentifier() {
+		return identifier;
 	}
 
 }

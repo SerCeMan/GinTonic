@@ -60,7 +60,6 @@ public class ProjectResource implements Serializable, IProjectResource {
 		return packageNameComponents;
 	}
 	
-
 	@Override
 	public String getPackageFullyQualified() {
 		return StringUtils.join('.', packageNameComponents);
@@ -83,7 +82,7 @@ public class ProjectResource implements Serializable, IProjectResource {
 
 	@Override
 	public String getTypeNameFullyQualified() {
-		return packageNameComponents + "." + typeName;
+		return getPackageFullyQualified() + "." + typeName;
 	}
 
 	@Override

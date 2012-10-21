@@ -8,15 +8,11 @@ import egap.guice.statements.InstallModuleStatement;
 import egap.utils.Preconditions;
 
 /**
- * A TypeReference to a guice module.
+ * A guice module. 
  * 
  * @author tmajunke
  */
-/**
- * @author tmajunke
- * 
- */
-public class GuiceModule extends BindingStatement {
+public class GuiceModule extends ProjectResource{
 
 	private static final long serialVersionUID = -5175606018524563987L;
 
@@ -45,13 +41,11 @@ public class GuiceModule extends BindingStatement {
 		this.bindingStatements = bindingStatements;
 	}
 
+	/**
+	 * Returns the list of installed module statements.
+	 */
 	public List<InstallModuleStatement> getInstalledModules() {
 		return installedModules;
-	}
-
-	@Override
-	public String getTypeNameFullyQualified() {
-		return getPackageFullyQualified() + "." + getTypeName();
 	}
 
 	public void validate() {

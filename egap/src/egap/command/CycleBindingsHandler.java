@@ -80,13 +80,13 @@ public class CycleBindingsHandler extends AbstractHandler {
 			}
 		}
 
-		IInjectionPoint binding = findBinding();
+		IInjectionPoint injectionPoint = findInjectionPoint();
 
-		if (binding != null) {
-			List<GuiceStatement> bindingDefinitions = findBindingDefinitions(binding);
+		if (injectionPoint != null) {
+			List<GuiceStatement> bindingDefinitions = findBindingDefinitions(injectionPoint);
 			if (!bindingDefinitions.isEmpty()) {
 				/*
-				 * We have a binding and binding definitions, now we can create
+				 * We have an injection point and a binding definition, now we can create
 				 * a new navigation cycle!
 				 */
 				navigationCycle = new BindingNavigationCycle(
@@ -95,8 +95,8 @@ public class CycleBindingsHandler extends AbstractHandler {
 				navigationCycle.jumpToNext();
 			}
 			else {
-				EgapPlugin.logInfo("No binding definition found for injection "
-						+ binding.getTargetTypeBinding().getName());
+				EgapPlugin.logInfo("No binding definition found for injection point "
+						+ injectionPoint.toString());
 			}
 		}
 
@@ -133,13 +133,13 @@ public class CycleBindingsHandler extends AbstractHandler {
 	}
 
 	/**
-	 * Returns the guice binding based upon the current selection.
+	 * Returns the injection point based upon the currently selected ast node.
 	 * 
-	 * @return the guice binding based upon the current selection or null if it
-	 *         is not a guice binding.
+	 * @return the injection point based upon the current selection or null if
+	 *         the current selected ast node is not a guice binding.
 	 * @throws JavaModelException
 	 */
-	private IInjectionPoint findBinding() throws JavaModelException {
+	private IInjectionPoint findInjectionPoint() throws JavaModelException {
 
 		IJavaElement selectedJavaElement = icompilationUnit.getElementAt(currentSelection.getOffset());
 		int elementType = selectedJavaElement.getElementType();
@@ -179,7 +179,7 @@ public class CycleBindingsHandler extends AbstractHandler {
 		int length = currentSelection.getLength();
 		int offset = currentSelection.getOffset();
 		ASTNode coveredNode = findCoveredNode(compilationUnit, offset, length);
-		
+
 		IInjectionPoint binding = ASTNodeUtils.getInjectionPoint(
 				coveredNode,
 				compilationUnit);
