@@ -285,7 +285,7 @@ public class GuiceIndex implements Serializable {
 			}
 
 			for (BindingStatement bindingStatement : bindingStatements) {
-				String bindingsBoundType = bindingStatement.getInterfaceType();
+				String bindingsBoundType = bindingStatement.getBoundType();
 				if (bindingsBoundType.equals(typeToFindQualifiedName)) {
 					bindings.add(bindingStatement);
 				}
@@ -353,7 +353,7 @@ public class GuiceIndex implements Serializable {
 			}
 
 			for (BindingStatement bindingStatement : bindingStatements) {
-				String bindingsBoundType = bindingStatement.getInterfaceType();
+				String bindingsBoundType = bindingStatement.getBoundType();
 				if (!bindingsBoundType.equals(typeToFindQualifiedName)) {
 					continue;
 				}

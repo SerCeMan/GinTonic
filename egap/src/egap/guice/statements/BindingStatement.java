@@ -10,16 +10,16 @@ public class BindingStatement extends GuiceStatement {
 
 	private static final long serialVersionUID = -8478037964657180287L;
 
-	private String interfaceType;
+	private String boundType;
 
 	private GuiceAnnotation guiceAnnotation;
 
 	private String scopeType;
 
 	private boolean isEagerSingleton;
-	
-	public void setInterfaceType(String interfaceType) {
-		this.interfaceType = interfaceType;
+
+	public void setBoundType(String boundType) {
+		this.boundType = boundType;
 	}
 
 	public void setGuiceAnnotation(GuiceAnnotation guiceAnnotation) {
@@ -31,10 +31,11 @@ public class BindingStatement extends GuiceStatement {
 	}
 
 	/**
-	 * This is the type you declare with @Inject.
+	 * Returns the bound type. The bound type is the type you declare with
+	 * @Inject.
 	 */
-	public String getInterfaceType() {
-		return interfaceType;
+	public String getBoundType() {
+		return boundType;
 	}
 
 	public boolean isEagerSingleton() {

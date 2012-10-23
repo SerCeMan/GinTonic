@@ -50,7 +50,7 @@ public class GuiceModule extends ProjectResource{
 
 	public void validate() {
 		for (BindingStatement bindingStatement : bindingStatements) {
-			Preconditions.checkNotNull(bindingStatement.getInterfaceType());
+			Preconditions.checkNotNull(bindingStatement.getBoundType());
 			/* Preconditions.checkNotNull(bindingStatement.getImplType()); */
 			Integer startPosition2 = bindingStatement.getStartPosition();
 			Preconditions.checkNotNull(startPosition2);

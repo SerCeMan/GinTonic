@@ -314,7 +314,7 @@ final class GuiceIndexerAstVisitor extends ASTVisitor {
 	}
 
 	private void finishBindingStatement(MethodInvocation methodInvocation) {
-		bindingStatement.setInterfaceType(interfaceType);
+		bindingStatement.setBoundType(interfaceType);
 		if (implType != null) {
 			((LinkedBindingStatement) bindingStatement).setImplType(implType);
 		}
@@ -374,7 +374,7 @@ final class GuiceIndexerAstVisitor extends ASTVisitor {
 				String interfaceType = TypeUtils.wrapInType(
 						parameterizedType.typeArguments(),
 						StringUtils.MAP_TYPE);
-				bindingStatement.setInterfaceType(interfaceType);
+				bindingStatement.setBoundType(interfaceType);
 				ASTNodeUtils.copyStartPositionAndLength(node, bindingStatement);
 
 				addBinding(bindingStatement);
@@ -387,7 +387,7 @@ final class GuiceIndexerAstVisitor extends ASTVisitor {
 				String boundType = TypeUtils.wrapInType(
 						parameterizedType.typeArguments(),
 						StringUtils.SET_TYPE);
-				bindingStatement.setInterfaceType(boundType);
+				bindingStatement.setBoundType(boundType);
 				ASTNodeUtils.copyStartPositionAndLength(node, bindingStatement);
 				addBinding(bindingStatement);
 				return true;
@@ -410,7 +410,7 @@ final class GuiceIndexerAstVisitor extends ASTVisitor {
 			ProviderBindingToMethodStatement providerBindingStatement = new ProviderBindingToMethodStatement();
 			Type returnType2 = node.getReturnType2();
 			String boundType = TypeUtils.resolveQualifiedName(returnType2);
-			providerBindingStatement.setInterfaceType(boundType);
+			providerBindingStatement.setBoundType(boundType);
 			ASTNodeUtils.copyStartPositionAndLength(
 					node,
 					providerBindingStatement);
