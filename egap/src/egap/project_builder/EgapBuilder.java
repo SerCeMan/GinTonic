@@ -21,6 +21,7 @@ import egap.guice.GuiceIndex;
 import egap.guice.GuiceIndexSerializer;
 import egap.guice.GuiceModule;
 import egap.guice.indexer.GuiceIndexer;
+import egap.utils.DateUtils;
 import egap.utils.IPathUtils;
 import egap.utils.IProjectUtils;
 
@@ -116,8 +117,8 @@ public class EgapBuilder extends IncrementalProjectBuilder {
 		long elapsed = then - now;
 		int nrOfGuiceModulesAdded = guiceIndex.getNrOfGuiceModules()
 				- nrOfGuiceModulesBefore;
-		String message = "Indexing " + project.getName() + " finished ("
-				+ elapsed + " ms, +" + nrOfGuiceModulesAdded + " modules => "
+		String message = "Indexing " + project.getName() + " finished in "
+				+ DateUtils.formatMilliseconds(elapsed) + " (+" + nrOfGuiceModulesAdded + " modules => "
 				+ guiceIndex.getNrOfGuiceModules() + " modules total).";
 
 		EgapPlugin.logInfo(message);
