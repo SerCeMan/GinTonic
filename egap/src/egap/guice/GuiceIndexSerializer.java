@@ -12,6 +12,7 @@ import java.io.ObjectOutputStream;
 import org.eclipse.core.runtime.IPath;
 
 import egap.EgapPlugin;
+import egap.utils.DateUtils;
 
 public class GuiceIndexSerializer {
 
@@ -53,7 +54,7 @@ public class GuiceIndexSerializer {
 			long elapsed = then - now;
 			EgapPlugin.logInfo("Succesfully read Guice index from file '"
 					+ guiceIndexSerialized.getAbsolutePath() + "' ("
-					+ elapsed + " ms).");
+					+ DateUtils.formatMilliseconds(elapsed) + ").");
 			EgapPlugin.logInfo(guiceIndex.getIndexInfoDetailed());
 			return guiceIndex;
 		} finally {
