@@ -1,0 +1,483 @@
+### Eclipse Workspace Patch 1.0
+#P egap
+Index: src/egap/quickfix/module_creation/QuickFixCreateGuiceModule.java
+===================================================================
+--- src/egap/quickfix/module_creation/QuickFixCreateGuiceModule.java	(revision 129)
++++ src/egap/quickfix/module_creation/QuickFixCreateGuiceModule.java	(working copy)
+@@ -71,7 +71,7 @@
+ 		ITypeBinding typeDeclBinding = typeDecl.resolveBinding();
+ 
+ 		/* Make sure the source class is not a guice module! */
+-		boolean isGuiceModule = ITypeBindingUtils.isGuiceModuleType(typeDeclBinding);
++		boolean isGuiceModule = ITypeBindingUtils.isGuiceAbstractModule(typeDeclBinding);
+ 		if (isGuiceModule) {
+ 			return;
+ 		}
+Index: src/egap/guice/indexer/GuiceIndexer.java
+===================================================================
+--- src/egap/guice/indexer/GuiceIndexer.java	(revision 129)
++++ src/egap/guice/indexer/GuiceIndexer.java	(working copy)
+@@ -23,7 +23,7 @@
+ 
+ public class GuiceIndexer {
+ 
+-	/**
++/**
+ 	 * Analyzes the given file it is a Guice Module (see {@link ITypeBindingUtils#isGuiceModuleType(ITypeBinding)).
+ 	 * 
+ 	 * @return the {@link GuiceModule} or null if it is not a guice module.
+@@ -36,30 +36,33 @@
+ 
+ 		String filename = file.getName();
+ 		/*
+-		 * We have to reject non java files (like binary .class files). Note to the developer: 
+-		 * If you remove this check the following call to
++		 * We have to reject non java files (like binary .class files). Note to
++		 * the developer: If you remove this check the following call to
+ 		 * 
+-		 * <pre>
+-		 * ICompilationUnit compilationUnit = (ICompilationUnit) JavaCore.create(file);
+-		 * </pre>
++		 * <pre> ICompilationUnit compilationUnit = (ICompilationUnit)
++		 * JavaCore.create(file); </pre>
+ 		 * 
+-		 * can fail with a ClassCastException. 
++		 * can fail with a ClassCastException.
+ 		 */
+ 		if (!filename.endsWith(ICompilationUnitUtils.JAVA_EXTENSION)) {
+ 			return null;
+ 		}
+-		
++
+ 		try {
+ 			ICompilationUnit compilationUnit = (ICompilationUnit) JavaCore.create(file);
+-			
++
+ 			if (compilationUnit != null) {
+-				
++
+ 				try {
+ 					IType primaryType = compilationUnit.findPrimaryType();
+ 					if (primaryType != null) {
+ 						String superclassName = primaryType.getSuperclassName();
+-						/* Parsing the AST takes long so make sure to check ICompilationUnit first. */
+-						if(superclassName != null && (superclassName.equals("AbstractModule") || superclassName.equals("PrivateModule"))){
++						/*
++						 * Parsing the AST takes long so make sure to check
++						 * ICompilationUnit first.
++						 */
++						if (superclassName != null
++								&& (superclassName.equals("AbstractModule") || superclassName.equals("PrivateModule"))) {
+ 							GuiceModule guiceModule = parseGuiceModule(
+ 									compilationUnit,
+ 									project);
+@@ -69,7 +72,7 @@
+ 				} catch (JavaModelException e) {
+ 					throw new RuntimeException(e);
+ 				}
+-				
++
+ 			}
+ 		} catch (RuntimeException e) {
+ 			EgapPlugin.logException("Error analyzing " + filename, e);
+@@ -101,38 +104,34 @@
+ 			return null;
+ 		}
+ 
+-		if (indexer.isGuiceModuleType()) {
+-			ITypeBinding guiceModuleAsTypeBinding = indexer.getGuiceModuleTypeBinding();
+-			IPackageBinding packageBinding = guiceModuleAsTypeBinding.getPackage();
+-			String[] packageFullyQualified = packageBinding.getNameComponents();
+-			String guiceModuleName = guiceModuleAsTypeBinding.getName();
+-			String projectName = project.getName();
+-			List<String> srcFolderPath = ICompilationUnitUtils.getSrcFolderPathComponents(compilationUnit);
++		ITypeBinding guiceModuleAsTypeBinding = indexer.getGuiceModuleTypeBinding();
++		IPackageBinding packageBinding = guiceModuleAsTypeBinding.getPackage();
++		String[] packageFullyQualified = packageBinding.getNameComponents();
++		String guiceModuleName = guiceModuleAsTypeBinding.getName();
++		String projectName = project.getName();
++		List<String> srcFolderPath = ICompilationUnitUtils.getSrcFolderPathComponents(compilationUnit);
+ 
+-			GuiceModule guiceModule = new GuiceModule();
+-			guiceModule.setTypeName(guiceModuleName);
+-			guiceModule.setPackage(Arrays.asList(packageFullyQualified));
+-			guiceModule.setProjectName(projectName);
+-			guiceModule.setSrcFolderPathComponents(srcFolderPath);
++		GuiceModule guiceModule = new GuiceModule();
++		guiceModule.setTypeName(guiceModuleName);
++		guiceModule.setPackage(Arrays.asList(packageFullyQualified));
++		guiceModule.setProjectName(projectName);
++		guiceModule.setSrcFolderPathComponents(srcFolderPath);
+ 
+-			List<BindingStatement> bindingStatements = indexer.getBindingStatements();
+-			for (BindingStatement bindingStatement : bindingStatements) {
+-				copyInfo(guiceModule, bindingStatement);
+-			}
+-			List<InstallModuleStatement> installModuleStatements = indexer.getInstallModuleStatements();
+-			for (InstallModuleStatement installModuleStatement : installModuleStatements) {
+-				copyInfo(guiceModule, installModuleStatement);
+-			}
++		List<BindingStatement> bindingStatements = indexer.getBindingStatements();
++		for (BindingStatement bindingStatement : bindingStatements) {
++			copyInfo(guiceModule, bindingStatement);
++		}
++		List<InstallModuleStatement> installModuleStatements = indexer.getInstallModuleStatements();
++		for (InstallModuleStatement installModuleStatement : installModuleStatements) {
++			copyInfo(guiceModule, installModuleStatement);
++		}
+ 
+-			guiceModule.setBindingStatements(bindingStatements);
+-			guiceModule.setInstalledModules(installModuleStatements);
++		guiceModule.setBindingStatements(bindingStatements);
++		guiceModule.setInstalledModules(installModuleStatements);
+ 
+-			guiceModule.validate();
++		guiceModule.validate();
+ 
+-			return guiceModule;
+-		}
+-
+-		return null;
++		return guiceModule;
+ 	}
+ 
+ 	private void copyInfo(GuiceModule guiceModule, GuiceStatement statement) {
+Index: src/egap/utils/MarkerAnnotationList.java
+===================================================================
+--- src/egap/utils/MarkerAnnotationList.java	(revision 129)
++++ src/egap/utils/MarkerAnnotationList.java	(working copy)
+@@ -2,10 +2,10 @@
+ 
+ import java.util.List;
+ 
++import org.eclipse.jdt.core.dom.Annotation;
+ import org.eclipse.jdt.core.dom.IAnnotationBinding;
+ import org.eclipse.jdt.core.dom.IMemberValuePairBinding;
+ import org.eclipse.jdt.core.dom.ITypeBinding;
+-import org.eclipse.jdt.core.dom.MarkerAnnotation;
+ import org.eclipse.jdt.core.dom.SingleMemberAnnotation;
+ 
+ import egap.guice.annotations.GuiceAnnotation;
+@@ -14,14 +14,11 @@
+ 
+ public class MarkerAnnotationList {
+ 
+-	private List<MarkerAnnotation> markerAnnotations;
+-	private final List<SingleMemberAnnotation> singleMemberAnnotations;
++	private final List<Annotation> annotations;
+ 
+-	MarkerAnnotationList(List<MarkerAnnotation> markerAnnotations,
+-			List<SingleMemberAnnotation> singleMemberAnnotations) {
++	MarkerAnnotationList(List<Annotation> annotations) {
+ 		super();
+-		this.markerAnnotations = markerAnnotations;
+-		this.singleMemberAnnotations = singleMemberAnnotations;
++		this.annotations = annotations;
+ 	}
+ 
+ 	/**
+@@ -57,23 +54,23 @@
+ 	}
+ 	
+ 	public GuiceAnnotation getGuiceAnnotation() {
++		String namedAnnotationLiteralValue = getNamedAnnotationLiteralValue();
++		if (namedAnnotationLiteralValue != null) {
++			return new GuiceNamedAnnotation(namedAnnotationLiteralValue);
++		}
++
+ 		String bindingAnnotation = getBindingAnnotation();
+-
+ 		if (bindingAnnotation != null) {
+ 			return new GuiceClassAnnotation(bindingAnnotation);
+ 		}
+ 
+-		String namedAnnotationLiteralValue = getNamedAnnotationLiteralValue();
+-		if (namedAnnotationLiteralValue != null) {
+-			return new GuiceNamedAnnotation(namedAnnotationLiteralValue);
+-		}
+ 		return null;
+ 	}
+ 	
+ 	private boolean containsAnnotation(String annotationType) {
+-		for (MarkerAnnotation markerAnnotation : markerAnnotations) {
+-			boolean ofType = MarkerAnnotationUtils.isOfType(
+-					markerAnnotation,
++		for (Annotation annotation : annotations) {
++			boolean ofType = isOfType(
++					annotation,
+ 					annotationType);
+ 			if (ofType) {
+ 				return true;
+@@ -86,11 +83,11 @@
+ 	 * Returns the name of the binding annotation or null otherwise.
+ 	 */
+ 	private String getBindingAnnotation() {
+-		for (MarkerAnnotation markerAnnotation : markerAnnotations) {
+-			ITypeBinding typeBinding = markerAnnotation.resolveTypeBinding();
+-			IAnnotationBinding[] annotations = typeBinding.getAnnotations();
+-			for (IAnnotationBinding annotation : annotations) {
+-				ITypeBinding annotationType = annotation.getAnnotationType();
++		for (Annotation annotation : annotations) {
++			ITypeBinding typeBinding = annotation.resolveTypeBinding();
++			IAnnotationBinding[] annotationBindings = typeBinding.getAnnotations();
++			for (IAnnotationBinding annotationBinding : annotationBindings) {
++				ITypeBinding annotationType = annotationBinding.getAnnotationType();
+ 				if (ITypeBindingUtils.isGuiceBindingAnnotation(annotationType)) {
+ 					return typeBinding.getQualifiedName();
+ 				}
+@@ -101,9 +98,13 @@
+ 	}
+ 
+ 	private String getNamedAnnotationLiteralValue() {
+-		for (SingleMemberAnnotation singleMemberAnnotation : singleMemberAnnotations) {
+-			IAnnotationBinding annotationBinding = singleMemberAnnotation.resolveAnnotationBinding();
+-			ITypeBinding typeBinding = singleMemberAnnotation.resolveTypeBinding();
++		for (Annotation annotation : annotations) {
++			
++			if(!(annotation instanceof SingleMemberAnnotation)){
++				continue;
++			}
++			IAnnotationBinding annotationBinding = annotation.resolveAnnotationBinding();
++			ITypeBinding typeBinding = annotation.resolveTypeBinding();
+ 			if (ITypeBindingUtils.isGuiceNamedType(typeBinding)) {
+ 				IMemberValuePairBinding[] declaredMemberValuePairs = annotationBinding.getDeclaredMemberValuePairs();
+ 				IMemberValuePairBinding pairBinding = declaredMemberValuePairs[0];
+@@ -115,4 +116,14 @@
+ 		return null;
+ 	}
+ 
++	private boolean isOfType(
++			Annotation annotation, String typeFullyQualified) {
++		ITypeBinding typeBinding = annotation.resolveTypeBinding();
++		String qualifiedName = typeBinding.getQualifiedName();
++		if (qualifiedName.equals(typeFullyQualified)) {
++			return true;
++		}
++		return false;
++	}
++
+ }
+Index: src/egap/utils/ASTNodeUtils.java
+===================================================================
+--- src/egap/utils/ASTNodeUtils.java	(revision 129)
++++ src/egap/utils/ASTNodeUtils.java	(working copy)
+@@ -4,6 +4,7 @@
+ 
+ import org.eclipse.jdt.core.dom.ASTNode;
+ import org.eclipse.jdt.core.dom.ASTVisitor;
++import org.eclipse.jdt.core.dom.Annotation;
+ import org.eclipse.jdt.core.dom.CompilationUnit;
+ import org.eclipse.jdt.core.dom.FieldDeclaration;
+ import org.eclipse.jdt.core.dom.ITypeBinding;
+@@ -11,7 +12,6 @@
+ import org.eclipse.jdt.core.dom.MethodDeclaration;
+ import org.eclipse.jdt.core.dom.Name;
+ import org.eclipse.jdt.core.dom.SimpleName;
+-import org.eclipse.jdt.core.dom.SingleMemberAnnotation;
+ import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
+ import org.eclipse.jdt.core.dom.Type;
+ import org.eclipse.jdt.core.dom.TypeDeclaration;
+@@ -39,7 +39,7 @@
+ 		if (node instanceof Name) {
+ 			Name name = (Name) node;
+ 			ITypeBinding guiceModuleSource = name.resolveTypeBinding();
+-			boolean isGuiceModule = ITypeBindingUtils.isGuiceModuleType(guiceModuleSource);
++			boolean isGuiceModule = ITypeBindingUtils.isGuiceAbstractModule(guiceModuleSource);
+ 			if (isGuiceModule) {
+ 				return guiceModuleSource;
+ 			}
+@@ -59,7 +59,7 @@
+ 		if (node instanceof Name) {
+ 			Name name = (Name) node;
+ 			ITypeBinding guiceModuleSource = name.resolveTypeBinding();
+-			boolean isGuiceModule = ITypeBindingUtils.isGuiceModuleType(guiceModuleSource);
++			boolean isGuiceModule = ITypeBindingUtils.isGuiceAbstractModule(guiceModuleSource);
+ 			if (!isGuiceModule) {
+ 				return guiceModuleSource;
+ 			}
+@@ -75,27 +75,20 @@
+ 
+ 	public static MarkerAnnotationList getMarkerAnnotationList(
+ 			List<ASTNode> modifiers) {
+-		List<MarkerAnnotation> markerAnnotations = ListUtils.newArrayListWithCapacity(modifiers.size());
+-		List<SingleMemberAnnotation> singleMemberAnnotations = ListUtils.newArrayListWithCapacity(modifiers.size());
++		List<Annotation> annotations = ListUtils.newArrayListWithCapacity(modifiers.size());
+ 
+ 		for (ASTNode modifier : modifiers) {
+-			if (modifier instanceof MarkerAnnotation) {
+-				markerAnnotations.add((MarkerAnnotation) modifier);
++			if (modifier instanceof Annotation) {
++				annotations.add((Annotation) modifier);
+ 			}
+-			else if (modifier instanceof SingleMemberAnnotation) {
+-				/* Names.named("jack") */
+-				singleMemberAnnotations.add((SingleMemberAnnotation) modifier);
+-			}
+ 		}
+-		return new MarkerAnnotationList(
+-				markerAnnotations,
+-				singleMemberAnnotations);
++		return new MarkerAnnotationList(annotations);
+ 	}
+ 
+ 	private static final class FindMethodByName extends ASTVisitor {
+ 		private final String fieldAsSetter;
+ 		private List<MethodDeclaration> methodDeclarations = ListUtils.newArrayList();
+-		
++
+ 		private FindMethodByName(String fieldAsSetter) {
+ 			super(false);
+ 			this.fieldAsSetter = fieldAsSetter;
+@@ -137,11 +130,8 @@
+ 	}
+ 
+ 	/**
+-	 * Checks if the given node is an identifier of a {@link FieldDeclaration}.
+-	 * If it is then it is returned, otherwise null is returned.
+-	 * 
+-	 * @param astNode the node
+-	 * @return the field declaration or null.
++	 * Checks if the parent of the given node is a {@link FieldDeclaration}. If
++	 * it is then it is returned, otherwise null is returned.
+ 	 */
+ 	public static FieldDeclaration getFieldDeclaration(ASTNode astNode) {
+ 		if (!(astNode instanceof Name)) {
+@@ -222,8 +212,8 @@
+ 		return null;
+ 	}
+ 
+-	public static IInjectionPoint getInjectionPoint(
+-			ASTNode astNode, CompilationUnit compilationUnit) {
++	public static IInjectionPoint getInjectionPoint(ASTNode astNode,
++			CompilationUnit compilationUnit) {
+ 
+ 		if (!(astNode instanceof Name)) {
+ 			return null;
+@@ -237,14 +227,12 @@
+ 			return injectionPoint;
+ 		}
+ 
+-		ProviderMethod guicyProviderMethodVar = getProviderMethod(
+-				name);
+-		
++		ProviderMethod guicyProviderMethodVar = getProviderMethod(name);
++
+ 		return guicyProviderMethodVar;
+ 	}
+ 
+-	public static ProviderMethod getProviderMethod(
+-			Name name) {
++	public static ProviderMethod getProviderMethod(Name name) {
+ 		ASTNode parentNode = name.getParent();
+ 		if (parentNode instanceof SingleVariableDeclaration) {
+ 			SingleVariableDeclaration singleVariableDeclaration = (SingleVariableDeclaration) parentNode;
+Index: src/egap/utils/ITypeBindingUtils.java
+===================================================================
+--- src/egap/utils/ITypeBindingUtils.java	(revision 129)
++++ src/egap/utils/ITypeBindingUtils.java	(working copy)
+@@ -21,8 +21,8 @@
+ 		return kindOf != null;
+ 	}
+ 
+-	public static boolean isGuiceModuleType(ITypeBinding typeBinding) {
+-		return isKindOf(typeBinding, StringUtils.GUICE_MODULE);
++	public static boolean isGuiceAbstractModule(ITypeBinding typeBinding) {
++		return isKindOf(typeBinding, StringUtils.GUICE_ABSTRACT_MODULE);
+ 	}
+ 
+ 	public static boolean isGuiceProviderType(ITypeBinding typeBinding) {
+Index: src/egap/utils/StringUtils.java
+===================================================================
+--- src/egap/utils/StringUtils.java	(revision 129)
++++ src/egap/utils/StringUtils.java	(working copy)
+@@ -18,7 +18,6 @@
+ 	public static final String GUICE_ANNOTATION_ASSISTED = GUICE_BASE_PACKAGE
+ 	+ ".assistedinject.Assisted";
+ 	public static final String GUICE_ANNOTATION_INJECT = GUICE_BASE_PACKAGE + ".Inject";
+-	public static final String GUICE_MODULE = GUICE_BASE_PACKAGE + ".Module";
+ 	public static final String GUICE_PROVIDER = GUICE_BASE_PACKAGE + ".Provider";
+ 	public static final String GUICE_BINDING_ANNOTATION = GUICE_BASE_PACKAGE
+ 	+ ".BindingAnnotation";
+Index: src/egap/utils/MarkerAnnotationUtils.java
+===================================================================
+--- src/egap/utils/MarkerAnnotationUtils.java	(revision 129)
++++ src/egap/utils/MarkerAnnotationUtils.java	(working copy)
+@@ -1,20 +0,0 @@
+-package egap.utils;
+-
+-
+-import org.eclipse.jdt.core.dom.ITypeBinding;
+-import org.eclipse.jdt.core.dom.MarkerAnnotation;
+-
+-
+-public class MarkerAnnotationUtils {
+-
+-	public static boolean isOfType(
+-			MarkerAnnotation markerAnnotation, String typeFullyQualified) {
+-		ITypeBinding typeBinding = markerAnnotation.resolveTypeBinding();
+-		String qualifiedName = typeBinding.getQualifiedName();
+-		if (qualifiedName.equals(typeFullyQualified)) {
+-			return true;
+-		}
+-		return false;
+-	}
+-
+-}
+Index: src/egap/guice/indexer/GuiceIndexerAstVisitor.java
+===================================================================
+--- src/egap/guice/indexer/GuiceIndexerAstVisitor.java	(revision 129)
++++ src/egap/guice/indexer/GuiceIndexerAstVisitor.java	(working copy)
+@@ -17,7 +17,6 @@
+ import org.eclipse.jdt.core.dom.TypeDeclaration;
+ import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
+ 
+-
+ import egap.EgapPlugin;
+ import egap.guice.annotations.GuiceAnnotation;
+ import egap.guice.statements.BindingStatement;
+@@ -31,7 +30,6 @@
+ import egap.guice.statements.SetBinderCreateStatement;
+ import egap.utils.ASTNodeUtils;
+ import egap.utils.ExpressionUtils;
+-import egap.utils.ITypeBindingUtils;
+ import egap.utils.ListUtils;
+ import egap.utils.MarkerAnnotationList;
+ import egap.utils.MethodInvocationUtils;
+@@ -60,7 +58,6 @@
+ 	private String implType;
+ 	private String scopeType;
+ 	private boolean isEagerSingleton;
+-	private boolean isGuiceModuleType;
+ 
+ 	public List<BindingStatement> getBindingStatements() {
+ 		return bindingStatements;
+@@ -74,25 +71,14 @@
+ 		return installModuleStatements;
+ 	}
+ 
+-	/**
+-	 * Returns true if it is a guice module type (it implements Module).
+-	 */
+-	public boolean isGuiceModuleType() {
+-		return isGuiceModuleType;
+-	}
+-
+ 	@Override
+ 	public boolean visit(TypeDeclaration node) {
+ 		guiceModuleTypeBinding = node.resolveBinding();
+ 		Preconditions.checkNotNull(guiceModuleTypeBinding);
+-		isGuiceModuleType = ITypeBindingUtils.isGuiceModuleType(guiceModuleTypeBinding);
+-
+-		if (isGuiceModuleType) {
+-			return true;
+-		}
+-
+-		/* Not a Guice module -- No need to further examine this type. */
+-		return false;
++		
++		/* No need to check if it is a guice module here. */
++		
++		return true;
+ 	}
+ 
+ 	private void clearScope() {
