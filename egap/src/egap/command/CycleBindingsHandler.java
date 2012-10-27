@@ -48,19 +48,30 @@ public class CycleBindingsHandler extends AbstractHandler {
 	private ICompilationUnit icompilationUnit;
 	private ITextSelection currentSelection;
 
+	private long findCycleTook;
+	private long findInjectionPointTook;
+	private long findBindingDefinitionsTook;
+
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
+
+		findCycleTook = 0;
+		findInjectionPointTook = 0;
+		findBindingDefinitionsTook = 0;
 
 		long now = System.currentTimeMillis();
 		try {
 			cycle();
+			long then = System.currentTimeMillis();
+			findCycleTook = then - now;
+			EgapPlugin.logInfo("jump to binding took " + findCycleTook
+					+ " (findBindingDefinitions = "
+					+ findBindingDefinitionsTook + ", findInjectionPoint = "
+					+ findInjectionPointTook + " ms)");
 		} catch (JavaModelException e) {
 			throw new RuntimeException(e);
 		} finally {
 			nullifyFields();
-			long then = System.currentTimeMillis();
-			long elapsed = then - now;
-			EgapPlugin.logInfo("cycle bindings took " + elapsed + " ms");
 		}
 
 		return null;
@@ -79,15 +90,22 @@ public class CycleBindingsHandler extends AbstractHandler {
 				return;
 			}
 		}
-
+		long now = System.currentTimeMillis();
 		IInjectionPoint injectionPoint = findInjectionPoint();
+		long then = System.currentTimeMillis();
+		findInjectionPointTook = then - now;
 
 		if (injectionPoint != null) {
+
+			long now2 = System.currentTimeMillis();
 			List<GuiceStatement> bindingDefinitions = findBindingDefinitions(injectionPoint);
+			long then2 = System.currentTimeMillis();
+			findBindingDefinitionsTook = then2 - now2;
+
 			if (!bindingDefinitions.isEmpty()) {
 				/*
-				 * We have an injection point and a binding definition, now we can create
-				 * a new navigation cycle!
+				 * We have an injection point and a binding definition, now we
+				 * can create a new navigation cycle!
 				 */
 				navigationCycle = new BindingNavigationCycle(
 						bindingDefinitions,
@@ -205,9 +223,16 @@ public class CycleBindingsHandler extends AbstractHandler {
 		if (binding instanceof IAnnotatedInjectionPoint) {
 			IAnnotatedInjectionPoint annotatedThing = (IAnnotatedInjectionPoint) binding;
 			GuiceAnnotation guiceAnnotation = annotatedThing.getGuiceAnnotation();
+			
+			long now = System.currentTimeMillis();
+			
 			projectResourcesToVisit = guiceIndex.getBindingsByTypeAndAnnotation(
 					typeBindingWithoutProvider,
 					guiceAnnotation);
+
+			long then = System.currentTimeMillis();
+			long elapsed = then - now;
+			System.out.println("getBindingsByTypeAndAnnotation took " + elapsed + " ms");
 		}
 		else {
 			/* We only have the type. */

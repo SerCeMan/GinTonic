@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
+import org.eclipse.jdt.core.dom.Annotation;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.ITypeBinding;
@@ -73,23 +74,16 @@ public class ASTNodeUtils {
 		guiceStatement.setLength(astNode.getLength());
 	}
 
-	public static MarkerAnnotationList getMarkerAnnotationList(
+	public static AnnotationList getAnnotationList(
 			List<ASTNode> modifiers) {
-		List<MarkerAnnotation> markerAnnotations = ListUtils.newArrayListWithCapacity(modifiers.size());
-		List<SingleMemberAnnotation> singleMemberAnnotations = ListUtils.newArrayListWithCapacity(modifiers.size());
+		List<Annotation> annotations = ListUtils.newArrayListWithCapacity(modifiers.size());
 
 		for (ASTNode modifier : modifiers) {
-			if (modifier instanceof MarkerAnnotation) {
-				markerAnnotations.add((MarkerAnnotation) modifier);
-			}
-			else if (modifier instanceof SingleMemberAnnotation) {
-				/* Names.named("jack") */
-				singleMemberAnnotations.add((SingleMemberAnnotation) modifier);
+			if (modifier instanceof Annotation) {
+				annotations.add((Annotation) modifier);
 			}
 		}
-		return new MarkerAnnotationList(
-				markerAnnotations,
-				singleMemberAnnotations);
+		return new AnnotationList(annotations);
 	}
 
 	private static final class FindMethodByName extends ASTVisitor {
@@ -252,7 +246,7 @@ public class ASTNodeUtils {
 
 			if (isProviderMethod) {
 				@SuppressWarnings("unchecked")
-				MarkerAnnotationList markerAnnotationList = getMarkerAnnotationList(singleVariableDeclaration.modifiers());
+				AnnotationList markerAnnotationList = getAnnotationList(singleVariableDeclaration.modifiers());
 				Type type = singleVariableDeclaration.getType();
 				GuiceAnnotation guiceAnnotation = markerAnnotationList.getGuiceAnnotation();
 				return new ProviderMethod(
@@ -272,7 +266,7 @@ public class ASTNodeUtils {
 			MethodDeclaration methodDeclaration = (MethodDeclaration) astNode;
 
 			List<ASTNode> modifiers = methodDeclaration.modifiers();
-			MarkerAnnotationList markerAnnotationList = ASTNodeUtils.getMarkerAnnotationList(modifiers);
+			AnnotationList markerAnnotationList = ASTNodeUtils.getAnnotationList(modifiers);
 			if (markerAnnotationList.containsProvidesAnnotation()) {
 				return true;
 			}

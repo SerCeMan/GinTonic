@@ -2,26 +2,22 @@ package egap.utils;
 
 import java.util.List;
 
+import org.eclipse.jdt.core.dom.Annotation;
 import org.eclipse.jdt.core.dom.IAnnotationBinding;
 import org.eclipse.jdt.core.dom.IMemberValuePairBinding;
 import org.eclipse.jdt.core.dom.ITypeBinding;
-import org.eclipse.jdt.core.dom.MarkerAnnotation;
-import org.eclipse.jdt.core.dom.SingleMemberAnnotation;
 
 import egap.guice.annotations.GuiceAnnotation;
 import egap.guice.annotations.GuiceClassAnnotation;
 import egap.guice.annotations.GuiceNamedAnnotation;
 
-public class MarkerAnnotationList {
+public class AnnotationList {
 
-	private List<MarkerAnnotation> markerAnnotations;
-	private final List<SingleMemberAnnotation> singleMemberAnnotations;
+	private final List<Annotation> annotations;
 
-	MarkerAnnotationList(List<MarkerAnnotation> markerAnnotations,
-			List<SingleMemberAnnotation> singleMemberAnnotations) {
+	AnnotationList(List<Annotation> annotations) {
 		super();
-		this.markerAnnotations = markerAnnotations;
-		this.singleMemberAnnotations = singleMemberAnnotations;
+		this.annotations = annotations;
 	}
 
 	/**
@@ -57,23 +53,23 @@ public class MarkerAnnotationList {
 	}
 	
 	public GuiceAnnotation getGuiceAnnotation() {
-		String bindingAnnotation = getBindingAnnotation();
-
-		if (bindingAnnotation != null) {
-			return new GuiceClassAnnotation(bindingAnnotation);
-		}
-
 		String namedAnnotationLiteralValue = getNamedAnnotationLiteralValue();
 		if (namedAnnotationLiteralValue != null) {
 			return new GuiceNamedAnnotation(namedAnnotationLiteralValue);
 		}
+		
+		String bindingAnnotation = getBindingAnnotation();
+		if (bindingAnnotation != null) {
+			return new GuiceClassAnnotation(bindingAnnotation);
+		}
+
 		return null;
 	}
 	
 	private boolean containsAnnotation(String annotationType) {
-		for (MarkerAnnotation markerAnnotation : markerAnnotations) {
-			boolean ofType = MarkerAnnotationUtils.isOfType(
-					markerAnnotation,
+		for (Annotation annotation : annotations) {
+			boolean ofType = isOfType(
+					annotation,
 					annotationType);
 			if (ofType) {
 				return true;
@@ -86,11 +82,11 @@ public class MarkerAnnotationList {
 	 * Returns the name of the binding annotation or null otherwise.
 	 */
 	private String getBindingAnnotation() {
-		for (MarkerAnnotation markerAnnotation : markerAnnotations) {
-			ITypeBinding typeBinding = markerAnnotation.resolveTypeBinding();
+		for (Annotation annotation : annotations) {
+			ITypeBinding typeBinding = annotation.resolveTypeBinding();
 			IAnnotationBinding[] annotations = typeBinding.getAnnotations();
-			for (IAnnotationBinding annotation : annotations) {
-				ITypeBinding annotationType = annotation.getAnnotationType();
+			for (IAnnotationBinding annotationBinding : annotations) {
+				ITypeBinding annotationType = annotationBinding.getAnnotationType();
 				if (ITypeBindingUtils.isGuiceBindingAnnotation(annotationType)) {
 					return typeBinding.getQualifiedName();
 				}
@@ -101,9 +97,9 @@ public class MarkerAnnotationList {
 	}
 
 	private String getNamedAnnotationLiteralValue() {
-		for (SingleMemberAnnotation singleMemberAnnotation : singleMemberAnnotations) {
-			IAnnotationBinding annotationBinding = singleMemberAnnotation.resolveAnnotationBinding();
-			ITypeBinding typeBinding = singleMemberAnnotation.resolveTypeBinding();
+		for (Annotation annotation : annotations) {
+			IAnnotationBinding annotationBinding = annotation.resolveAnnotationBinding();
+			ITypeBinding typeBinding = annotation.resolveTypeBinding();
 			if (ITypeBindingUtils.isGuiceNamedType(typeBinding)) {
 				IMemberValuePairBinding[] declaredMemberValuePairs = annotationBinding.getDeclaredMemberValuePairs();
 				IMemberValuePairBinding pairBinding = declaredMemberValuePairs[0];
@@ -113,6 +109,16 @@ public class MarkerAnnotationList {
 		}
 
 		return null;
+	}
+
+	private boolean isOfType(
+			Annotation markerAnnotation, String typeFullyQualified) {
+		ITypeBinding typeBinding = markerAnnotation.resolveTypeBinding();
+		String qualifiedName = typeBinding.getQualifiedName();
+		if (qualifiedName.equals(typeFullyQualified)) {
+			return true;
+		}
+		return false;
 	}
 
 }

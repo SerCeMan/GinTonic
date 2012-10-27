@@ -40,7 +40,7 @@ public class MethodDeclarationUtils {
 		for (MethodDeclaration constructor : constructors) {
 			@SuppressWarnings("unchecked")
 			List<ASTNode> modifiers = constructor.modifiers();
-			MarkerAnnotationList markerAnnotationList = ASTNodeUtils.getMarkerAnnotationList(modifiers);
+			AnnotationList markerAnnotationList = ASTNodeUtils.getAnnotationList(modifiers);
 			if (markerAnnotationList.containsInjectType()) {
 				return constructor;
 			}
@@ -65,7 +65,7 @@ public class MethodDeclarationUtils {
 			for (SingleVariableDeclaration singleVariableDeclaration : parameters) {
 				@SuppressWarnings("unchecked")
 				List<ASTNode> modifiers = singleVariableDeclaration.modifiers();
-				MarkerAnnotationList markerAnnotationList = ASTNodeUtils.getMarkerAnnotationList(modifiers);
+				AnnotationList markerAnnotationList = ASTNodeUtils.getAnnotationList(modifiers);
 
 				if (markerAnnotationList.containsAssistedAnnotation()) {
 					return constructor;

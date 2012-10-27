@@ -25,7 +25,7 @@ public class FieldDeclarationUtils {
 
 		List<ASTNode> modifiers = fieldDeclaration.modifiers();
 
-		MarkerAnnotationList annotationList = ASTNodeUtils.getMarkerAnnotationList(modifiers);
+		AnnotationList annotationList = ASTNodeUtils.getAnnotationList(modifiers);
 
 		if (annotationList.containsInjectType()) {
 			Type type = fieldDeclaration.getType();
@@ -48,7 +48,7 @@ public class FieldDeclarationUtils {
 					constructor,
 					fieldName);
 			if (variableDeclaration != null) {
-				annotationList = ASTNodeUtils.getMarkerAnnotationList(variableDeclaration.modifiers());
+				annotationList = ASTNodeUtils.getAnnotationList(variableDeclaration.modifiers());
 				Type type = variableDeclaration.getType();
 				GuiceAnnotation guiceAnnotation = annotationList.getGuiceAnnotation();
 				return new InjectionPoint(
@@ -69,7 +69,7 @@ public class FieldDeclarationUtils {
 				compilationUnit,
 				setterMethodName);
 		if (setter != null) {
-			annotationList = ASTNodeUtils.getMarkerAnnotationList(setter.modifiers());
+			annotationList = ASTNodeUtils.getAnnotationList(setter.modifiers());
 			if (annotationList.containsInjectType()) {
 				Type type = fieldDeclaration.getType();
 				GuiceAnnotation guiceAnnotation = annotationList.getGuiceAnnotation();

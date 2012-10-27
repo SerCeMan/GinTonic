@@ -32,7 +32,7 @@ import egap.guice.statements.SetBinderCreateStatement;
 import egap.utils.ASTNodeUtils;
 import egap.utils.ExpressionUtils;
 import egap.utils.ListUtils;
-import egap.utils.MarkerAnnotationList;
+import egap.utils.AnnotationList;
 import egap.utils.MethodInvocationUtils;
 import egap.utils.Preconditions;
 import egap.utils.SetUtils;
@@ -388,7 +388,7 @@ final class GuiceIndexerAstVisitor extends ASTVisitor {
 	@Override
 	public boolean visit(MethodDeclaration node) {
 		List<ASTNode> modifiers = node.modifiers();
-		MarkerAnnotationList markerAnnotationList = ASTNodeUtils.getMarkerAnnotationList(modifiers);
+		AnnotationList markerAnnotationList = ASTNodeUtils.getAnnotationList(modifiers);
 
 		if (markerAnnotationList.containsProvidesAnnotation()) {
 			ProviderBindingToMethodStatement providerBindingStatement = new ProviderBindingToMethodStatement();
