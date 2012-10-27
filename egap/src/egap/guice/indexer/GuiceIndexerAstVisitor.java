@@ -31,7 +31,6 @@ import egap.guice.statements.ProviderBindingToMethodStatement;
 import egap.guice.statements.SetBinderCreateStatement;
 import egap.utils.ASTNodeUtils;
 import egap.utils.ExpressionUtils;
-import egap.utils.ITypeBindingUtils;
 import egap.utils.ListUtils;
 import egap.utils.MarkerAnnotationList;
 import egap.utils.MethodInvocationUtils;
@@ -85,14 +84,7 @@ final class GuiceIndexerAstVisitor extends ASTVisitor {
 	public boolean visit(TypeDeclaration node) {
 		guiceModuleTypeBinding = node.resolveBinding();
 		Preconditions.checkNotNull(guiceModuleTypeBinding);
-		isGuiceModuleType = ITypeBindingUtils.isGuiceModuleType(guiceModuleTypeBinding);
-
-		if (isGuiceModuleType) {
-			return true;
-		}
-
-		/* Not a Guice module -- No need to further examine this type. */
-		return false;
+		return true;
 	}
 
 	private void clearScope() {

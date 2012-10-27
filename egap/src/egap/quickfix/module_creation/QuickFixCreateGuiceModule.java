@@ -71,7 +71,7 @@ public class QuickFixCreateGuiceModule extends AbstractEgapQuickFix {
 		ITypeBinding typeDeclBinding = typeDecl.resolveBinding();
 
 		/* Make sure the source class is not a guice module! */
-		boolean isGuiceModule = ITypeBindingUtils.isGuiceModuleType(typeDeclBinding);
+		boolean isGuiceModule = ITypeBindingUtils.isGuiceAbstractModuleType(typeDeclBinding);
 		if (isGuiceModule) {
 			return;
 		}

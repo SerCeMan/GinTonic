@@ -21,8 +21,8 @@ public class ITypeBindingUtils {
 		return kindOf != null;
 	}
 
-	public static boolean isGuiceModuleType(ITypeBinding typeBinding) {
-		return isKindOf(typeBinding, StringUtils.GUICE_MODULE);
+	public static boolean isGuiceAbstractModuleType(ITypeBinding typeBinding) {
+		return isKindOf(typeBinding, StringUtils.GUICE_ABSTRACT_MODULE);
 	}
 
 	public static boolean isGuiceProviderType(ITypeBinding typeBinding) {

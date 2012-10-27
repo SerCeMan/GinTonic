@@ -39,7 +39,7 @@ public class ASTNodeUtils {
 		if (node instanceof Name) {
 			Name name = (Name) node;
 			ITypeBinding guiceModuleSource = name.resolveTypeBinding();
-			boolean isGuiceModule = ITypeBindingUtils.isGuiceModuleType(guiceModuleSource);
+			boolean isGuiceModule = ITypeBindingUtils.isGuiceAbstractModuleType(guiceModuleSource);
 			if (isGuiceModule) {
 				return guiceModuleSource;
 			}
@@ -59,7 +59,7 @@ public class ASTNodeUtils {
 		if (node instanceof Name) {
 			Name name = (Name) node;
 			ITypeBinding guiceModuleSource = name.resolveTypeBinding();
-			boolean isGuiceModule = ITypeBindingUtils.isGuiceModuleType(guiceModuleSource);
+			boolean isGuiceModule = ITypeBindingUtils.isGuiceAbstractModuleType(guiceModuleSource);
 			if (!isGuiceModule) {
 				return guiceModuleSource;
 			}

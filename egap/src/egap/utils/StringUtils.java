@@ -18,7 +18,6 @@ public class StringUtils {
 	public static final String GUICE_ANNOTATION_ASSISTED = GUICE_BASE_PACKAGE
 	+ ".assistedinject.Assisted";
 	public static final String GUICE_ANNOTATION_INJECT = GUICE_BASE_PACKAGE + ".Inject";
-	public static final String GUICE_MODULE = GUICE_BASE_PACKAGE + ".Module";
 	public static final String GUICE_PROVIDER = GUICE_BASE_PACKAGE + ".Provider";
 	public static final String GUICE_BINDING_ANNOTATION = GUICE_BASE_PACKAGE
 	+ ".BindingAnnotation";
