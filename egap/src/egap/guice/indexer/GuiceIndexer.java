@@ -23,7 +23,7 @@ import egap.utils.ICompilationUnitUtils;
 
 public class GuiceIndexer {
 
-	/**
+/**
 	 * Analyzes the given file it is a Guice Module (see {@link ITypeBindingUtils#isGuiceModuleType(ITypeBinding)).
 	 * 
 	 * @return the {@link GuiceModule} or null if it is not a guice module.
@@ -36,30 +36,33 @@ public class GuiceIndexer {
 
 		String filename = file.getName();
 		/*
-		 * We have to reject non java files (like binary .class files). Note to the developer: 
-		 * If you remove this check the following call to
+		 * We have to reject non java files (like binary .class files). Note to
+		 * the developer: If you remove this check the following call to
 		 * 
-		 * <pre>
-		 * ICompilationUnit compilationUnit = (ICompilationUnit) JavaCore.create(file);
-		 * </pre>
+		 * <pre> ICompilationUnit compilationUnit = (ICompilationUnit)
+		 * JavaCore.create(file); </pre>
 		 * 
-		 * can fail with a ClassCastException. 
+		 * can fail with a ClassCastException.
 		 */
 		if (!filename.endsWith(ICompilationUnitUtils.JAVA_EXTENSION)) {
 			return null;
 		}
-		
+
 		try {
 			ICompilationUnit compilationUnit = (ICompilationUnit) JavaCore.create(file);
-			
+
 			if (compilationUnit != null) {
-				
+
 				try {
 					IType primaryType = compilationUnit.findPrimaryType();
 					if (primaryType != null) {
 						String superclassName = primaryType.getSuperclassName();
-						/* Parsing the AST takes long so make sure to check ICompilationUnit first. */
-						if(superclassName != null && (superclassName.equals("AbstractModule") || superclassName.equals("PrivateModule"))){
+						/*
+						 * Parsing the AST takes long so make sure to check
+						 * ICompilationUnit first.
+						 */
+						if (superclassName != null
+								&& (superclassName.equals("AbstractModule") || superclassName.equals("PrivateModule"))) {
 							GuiceModule guiceModule = parseGuiceModule(
 									compilationUnit,
 									project);
@@ -69,7 +72,7 @@ public class GuiceIndexer {
 				} catch (JavaModelException e) {
 					throw new RuntimeException(e);
 				}
-				
+
 			}
 		} catch (RuntimeException e) {
 			EgapPlugin.logException("Error analyzing " + filename, e);
@@ -90,10 +93,10 @@ public class GuiceIndexer {
 		 * works also with some errors (tested multiple times and sure it
 		 * depends on the type of the error).
 		 */
-		GuiceIndexerAstVisitor indexer = new GuiceIndexerAstVisitor();
+		GuiceIndexerAstVisitor astVisitor = new GuiceIndexerAstVisitor();
 
 		try {
-			cu.accept(indexer);
+			cu.accept(astVisitor);
 		} catch (Exception exception) {
 			String message = "Unable to analyze "
 					+ compilationUnit.getElementName() + "!";
@@ -101,38 +104,34 @@ public class GuiceIndexer {
 			return null;
 		}
 
-		if (indexer.isGuiceModuleType()) {
-			ITypeBinding guiceModuleAsTypeBinding = indexer.getGuiceModuleTypeBinding();
-			IPackageBinding packageBinding = guiceModuleAsTypeBinding.getPackage();
-			String[] packageFullyQualified = packageBinding.getNameComponents();
-			String guiceModuleName = guiceModuleAsTypeBinding.getName();
-			String projectName = project.getName();
-			List<String> srcFolderPath = ICompilationUnitUtils.getSrcFolderPathComponents(compilationUnit);
+		ITypeBinding guiceModuleAsTypeBinding = astVisitor.getGuiceModuleTypeBinding();
+		IPackageBinding packageBinding = guiceModuleAsTypeBinding.getPackage();
+		String[] packageFullyQualified = packageBinding.getNameComponents();
+		String guiceModuleName = guiceModuleAsTypeBinding.getName();
+		String projectName = project.getName();
+		List<String> srcFolderPath = ICompilationUnitUtils.getSrcFolderPathComponents(compilationUnit);
 
-			GuiceModule guiceModule = new GuiceModule();
-			guiceModule.setTypeName(guiceModuleName);
-			guiceModule.setPackage(Arrays.asList(packageFullyQualified));
-			guiceModule.setProjectName(projectName);
-			guiceModule.setSrcFolderPathComponents(srcFolderPath);
+		GuiceModule guiceModule = new GuiceModule();
+		guiceModule.setTypeName(guiceModuleName);
+		guiceModule.setPackage(Arrays.asList(packageFullyQualified));
+		guiceModule.setProjectName(projectName);
+		guiceModule.setSrcFolderPathComponents(srcFolderPath);
 
-			List<BindingStatement> bindingStatements = indexer.getBindingStatements();
-			for (BindingStatement bindingStatement : bindingStatements) {
-				copyInfo(guiceModule, bindingStatement);
-			}
-			List<InstallModuleStatement> installModuleStatements = indexer.getInstallModuleStatements();
-			for (InstallModuleStatement installModuleStatement : installModuleStatements) {
-				copyInfo(guiceModule, installModuleStatement);
-			}
-
-			guiceModule.setBindingStatements(bindingStatements);
-			guiceModule.setInstalledModules(installModuleStatements);
-
-			guiceModule.validate();
-
-			return guiceModule;
+		List<BindingStatement> bindingStatements = astVisitor.getBindingStatements();
+		for (BindingStatement bindingStatement : bindingStatements) {
+			copyInfo(guiceModule, bindingStatement);
+		}
+		List<InstallModuleStatement> installModuleStatements = astVisitor.getInstallModuleStatements();
+		for (InstallModuleStatement installModuleStatement : installModuleStatements) {
+			copyInfo(guiceModule, installModuleStatement);
 		}
 
-		return null;
+		guiceModule.setBindingStatements(bindingStatements);
+		guiceModule.setInstalledModules(installModuleStatements);
+
+		guiceModule.validate();
+
+		return guiceModule;
 	}
 
 	private void copyInfo(GuiceModule guiceModule, GuiceStatement statement) {

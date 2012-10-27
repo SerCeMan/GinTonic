@@ -59,7 +59,6 @@ final class GuiceIndexerAstVisitor extends ASTVisitor {
 	private String implType;
 	private String scopeType;
 	private boolean isEagerSingleton;
-	private boolean isGuiceModuleType;
 
 	public List<BindingStatement> getBindingStatements() {
 		return bindingStatements;
@@ -71,13 +70,6 @@ final class GuiceIndexerAstVisitor extends ASTVisitor {
 
 	public List<InstallModuleStatement> getInstallModuleStatements() {
 		return installModuleStatements;
-	}
-
-	/**
-	 * Returns true if it is a guice module type (it implements Module).
-	 */
-	public boolean isGuiceModuleType() {
-		return isGuiceModuleType;
 	}
 
 	@Override
