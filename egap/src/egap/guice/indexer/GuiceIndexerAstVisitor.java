@@ -43,7 +43,7 @@ import egap.utils.TypeUtils;
  * @author tmajunke
  */
 @SuppressWarnings("unchecked")
-final class GuiceIndexerAstVisitor extends ASTVisitor {
+public final class GuiceIndexerAstVisitor extends ASTVisitor {
 
 	/**
 	 * Note: Needed from outside.
@@ -408,7 +408,6 @@ final class GuiceIndexerAstVisitor extends ASTVisitor {
 			addBinding(providerBindingStatement);
 		}
 
-		/* We must check all methods to find the binding statements */
 		return true;
 	}
 
