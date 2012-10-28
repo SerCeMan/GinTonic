@@ -1,6 +1,7 @@
 package egap.guice.indexer;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
@@ -8,7 +9,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.IPackageBinding;
 import org.eclipse.jdt.core.dom.ITypeBinding;
@@ -20,10 +20,13 @@ import egap.guice.statements.GuiceStatement;
 import egap.guice.statements.InstallModuleStatement;
 import egap.utils.ASTParserUtils;
 import egap.utils.ICompilationUnitUtils;
+import egap.utils.SetUtils;
 
 public class GuiceIndexer {
-
-/**
+	
+	public static HashSet<String> supportedGuiceTypes = SetUtils.newHashSet("AbstractModule", "PrivateModule");
+	
+	/**
 	 * Analyzes the given file it is a Guice Module (see {@link ITypeBindingUtils#isGuiceModuleType(ITypeBinding)).
 	 * 
 	 * @return the {@link GuiceModule} or null if it is not a guice module.
@@ -50,31 +53,31 @@ public class GuiceIndexer {
 
 		try {
 			ICompilationUnit compilationUnit = (ICompilationUnit) JavaCore.create(file);
-
-			if (compilationUnit != null) {
-
-				try {
-					IType primaryType = compilationUnit.findPrimaryType();
-					if (primaryType != null) {
-						String superclassName = primaryType.getSuperclassName();
-						/*
-						 * Parsing the AST takes long so make sure to check
-						 * ICompilationUnit first.
-						 */
-						if (superclassName != null
-								&& (superclassName.equals("AbstractModule") || superclassName.equals("PrivateModule"))) {
-							GuiceModule guiceModule = parseGuiceModule(
-									compilationUnit,
-									project);
-							return guiceModule;
-						}
-					}
-				} catch (JavaModelException e) {
-					throw new RuntimeException(e);
-				}
-
+			if (compilationUnit == null) {
+				return null;
 			}
-		} catch (RuntimeException e) {
+
+			IType primaryType = compilationUnit.findPrimaryType();
+			if (primaryType == null) {
+				return null;
+			}
+
+			String superclassName = primaryType.getSuperclassName();
+			if (superclassName == null) {
+				return null;
+			}
+
+			/*
+			 * Parsing the AST takes long so make sure to check ICompilationUnit
+			 * first.
+			 */
+			if (supportedGuiceTypes.contains(superclassName)) {
+				GuiceModule guiceModule = parseGuiceModule(
+						compilationUnit,
+						project);
+				return guiceModule;
+			}
+		} catch (Exception e) {
 			EgapPlugin.logException("Error analyzing " + filename, e);
 		}
 		return null;
