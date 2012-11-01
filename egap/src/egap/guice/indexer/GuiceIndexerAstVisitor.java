@@ -49,7 +49,7 @@ public final class GuiceIndexerAstVisitor extends ASTVisitor {
 	 * Note: Needed from outside.
 	 */
 	private ITypeBinding guiceModuleTypeBinding;
-	private List<BindingStatement> bindingStatements = ListUtils.newArrayListWithCapacity(300);
+	private List<BindingStatement> bindingStatements = ListUtils.newArrayListWithCapacity(30);
 	private List<InstallModuleStatement> installModuleStatements = ListUtils.newArrayListWithCapacity(50);
 
 	/* Internals */
