@@ -101,8 +101,8 @@ public class GuiceIndexer {
 		try {
 			cu.accept(astVisitor);
 		} catch (Exception exception) {
-			String message = "Unable to analyze "
-					+ compilationUnit.getElementName() + "!";
+			String message = "Unable to analyze '"
+					+ compilationUnit.getElementName() + "'";
 			EgapPlugin.logException(message, exception);
 			return null;
 		}
