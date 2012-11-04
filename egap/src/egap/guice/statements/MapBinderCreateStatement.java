@@ -15,7 +15,7 @@ package egap.guice.statements;
  * 
  * @author tmajunke
  */
-public class MapBinderCreateStatement extends BindingStatement {
+public class MapBinderCreateStatement extends BindingDefinition {
 
 	private static final long serialVersionUID = 4460613372835297220L;
 

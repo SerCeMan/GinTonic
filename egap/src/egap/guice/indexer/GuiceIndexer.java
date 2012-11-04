@@ -15,7 +15,7 @@ import org.eclipse.jdt.core.dom.ITypeBinding;
 
 import egap.EgapPlugin;
 import egap.guice.GuiceModule;
-import egap.guice.statements.BindingStatement;
+import egap.guice.statements.BindingDefinition;
 import egap.guice.statements.GuiceStatement;
 import egap.guice.statements.InstallModuleStatement;
 import egap.utils.ASTParserUtils;
@@ -120,8 +120,8 @@ public class GuiceIndexer {
 		guiceModule.setProjectName(projectName);
 		guiceModule.setSrcFolderPathComponents(srcFolderPath);
 
-		List<BindingStatement> bindingStatements = astVisitor.getBindingStatements();
-		for (BindingStatement bindingStatement : bindingStatements) {
+		List<BindingDefinition> bindingStatements = astVisitor.getBindingStatements();
+		for (BindingDefinition bindingStatement : bindingStatements) {
 			copyInfo(guiceModule, bindingStatement);
 		}
 		List<InstallModuleStatement> installModuleStatements = astVisitor.getInstallModuleStatements();
@@ -129,7 +129,7 @@ public class GuiceIndexer {
 			copyInfo(guiceModule, installModuleStatement);
 		}
 
-		guiceModule.setBindingStatements(bindingStatements);
+		guiceModule.setBindingDefinitions(bindingStatements);
 		guiceModule.setInstalledModules(installModuleStatements);
 
 		guiceModule.validate();

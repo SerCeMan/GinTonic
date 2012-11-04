@@ -20,7 +20,7 @@ package egap.guice.statements;
  * 
  * @author tmajunke
  */
-public class ProviderBindingToMethodStatement extends BindingStatement{
+public class ProviderBindingToMethodStatement extends BindingDefinition{
 
 	private static final long serialVersionUID = -8535727988045135538L;
 	

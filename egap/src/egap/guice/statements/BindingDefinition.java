@@ -6,7 +6,7 @@ import egap.utils.StringUtils;
 /**
  * @author tmajunke
  */
-public class BindingStatement extends GuiceStatement {
+public class BindingDefinition extends GuiceStatement {
 
 	private static final long serialVersionUID = -8478037964657180287L;
 
@@ -22,20 +22,16 @@ public class BindingStatement extends GuiceStatement {
 		this.boundType = boundType;
 	}
 
-	public void setGuiceAnnotation(GuiceAnnotation guiceAnnotation) {
-		this.guiceAnnotation = guiceAnnotation;
-	}
-
-	public void setScopeType(String scopeType) {
-		this.scopeType = scopeType;
-	}
-
 	/**
-	 * Returns the bound type. The bound type is the type you declare with
-	 * @Inject.
+	 * Returns the bound type as fully qualified name. The bound type is the
+	 * type you declare with &#64;Inject.
 	 */
 	public String getBoundType() {
 		return boundType;
+	}
+
+	public void setGuiceAnnotation(GuiceAnnotation guiceAnnotation) {
+		this.guiceAnnotation = guiceAnnotation;
 	}
 
 	public boolean isEagerSingleton() {
@@ -48,10 +44,19 @@ public class BindingStatement extends GuiceStatement {
 
 	/**
 	 * Returns the fully qualified scope type or null if there is no scope.
-	 * Example: com.google.inject.Singleton as in Scopes.SINGLETON.
+	 *
+	 * <h1>Example:</h1>
+	 *
+	 * <pre>
+	 * Returns "com.google.inject.Singleton" for Scopes.SINGLETON.
+	 * </pre>
 	 */
 	public String getScopeType() {
 		return scopeType;
+	}
+
+	public void setScopeType(String scopeType) {
+		this.scopeType = scopeType;
 	}
 
 	/**
@@ -61,6 +66,9 @@ public class BindingStatement extends GuiceStatement {
 		return StringUtils.getSimpleName(scopeType);
 	}
 
+	/**
+	 * Returns the annotation of the binding definition or null if there is no.
+	 */
 	public GuiceAnnotation getGuiceAnnotation() {
 		return guiceAnnotation;
 	}

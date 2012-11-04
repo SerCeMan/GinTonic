@@ -17,7 +17,7 @@ import org.eclipse.jdt.ui.text.java.IJavaCompletionProposal;
 
 import egap.guice.GuiceIndex;
 import egap.guice.GuiceModule;
-import egap.guice.statements.BindingStatement;
+import egap.guice.statements.BindingDefinition;
 import egap.quickfix.AbstractEgapQuickFix;
 import egap.quickfix.navigate.ProposalNavigateToStatement;
 import egap.utils.ASTNodeUtils;
@@ -61,7 +61,7 @@ public class QuickFixAssistedInjectModel extends AbstractEgapQuickFix {
 
 			/* Does a binding exist? */
 			String fullyQualifiedName = modelType.getFullyQualifiedName();
-			BindingStatement bindStatement = guiceIndex.getAssistedBindingByModelType(fullyQualifiedName);
+			BindingDefinition bindStatement = guiceIndex.getAssistedBindingByModelType(fullyQualifiedName);
 
 			if (bindStatement != null) {
 				ProposalNavigateToStatement gotoGuiceStatementProposal = new ProposalNavigateToStatement(

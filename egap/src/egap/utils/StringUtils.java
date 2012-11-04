@@ -33,7 +33,7 @@ public class StringUtils {
 	public static final String GUICE_ABSTRACT_MODULE = "com.google.inject.AbstractModule";
 	public static final String GUICE_CONSTANT_BINDING_BUILDER = "com.google.inject.binder.ConstantBindingBuilder";
 	public static final String GUICE_CONSTANT_ANNOTATED_BINDING_BUILDER = "com.google.inject.binder.AnnotatedConstantBindingBuilder";
-	public static final String GUICE_SCOPE_SINGLETON_NAME = "com.google.inject.Singleton";
+	public static final String GUICE_SINGLETON_SCOPE = "com.google.inject.Singleton";
 //	public static final String GUICE_SCOPE_NO_SCOPE = "NO_SCOPE";
 	public static final String GUICE_NAMED = "com.google.inject.name.Named";
 	

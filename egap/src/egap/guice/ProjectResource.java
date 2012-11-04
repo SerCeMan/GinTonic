@@ -36,7 +36,7 @@ public class ProjectResource implements Serializable, IProjectResource {
 	public void setPackage(List<String> packageFullyQualified) {
 		this.packageNameComponents = packageFullyQualified;
 	}
-	
+
 	public void setTypeName(String typeName) {
 		this.typeName = typeName;
 	}
@@ -59,7 +59,7 @@ public class ProjectResource implements Serializable, IProjectResource {
 	public List<String> getPackage() {
 		return packageNameComponents;
 	}
-	
+
 	@Override
 	public String getPackageFullyQualified() {
 		return StringUtils.join('.', packageNameComponents);
@@ -154,7 +154,7 @@ public class ProjectResource implements Serializable, IProjectResource {
 			return false;
 		return true;
 	}
-	
-	
+
+
 
 }

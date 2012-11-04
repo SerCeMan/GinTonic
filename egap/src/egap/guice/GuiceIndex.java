@@ -25,7 +25,7 @@ import org.eclipse.jdt.core.dom.ITypeBinding;
 import egap.EgapPlugin;
 import egap.guice.annotations.GuiceAnnotation;
 import egap.guice.statements.AssistedBindingStatement;
-import egap.guice.statements.BindingStatement;
+import egap.guice.statements.BindingDefinition;
 import egap.guice.statements.GuiceStatement;
 import egap.guice.statements.JustInTimeBindingStatement;
 import egap.guice.statements.InstallModuleStatement;
@@ -278,13 +278,13 @@ public class GuiceIndex implements Serializable {
 		List<GuiceStatement> bindings = ListUtils.newArrayList();
 		for (GuiceModule guiceModule : guiceModules) {
 
-			List<BindingStatement> bindingStatements = guiceModule.getBindingStatements();
+			List<BindingDefinition> bindingStatements = guiceModule.getBindingDefinitions();
 
 			if (bindingStatements == null) {
 				continue;
 			}
 
-			for (BindingStatement bindingStatement : bindingStatements) {
+			for (BindingDefinition bindingStatement : bindingStatements) {
 				String bindingsBoundType = bindingStatement.getBoundType();
 				if (bindingsBoundType.equals(typeToFindQualifiedName)) {
 					bindings.add(bindingStatement);
@@ -297,7 +297,7 @@ public class GuiceIndex implements Serializable {
 	}
 
 	/**
-	 * Returns the {@link BindingStatement}s for the given bound type and
+	 * Returns the {@link BindingDefinition}s for the given bound type and
 	 * annotation type.
 	 * 
 	 * <h5>Just in time binding</h5>
@@ -321,7 +321,7 @@ public class GuiceIndex implements Serializable {
 	 *            annotation. Can be null.
 	 * @param packageToLimit if given then only the Guice modules in
 	 *            the same package are processed. Can be null.
-	 * @return the discovered {@link BindingStatement}. Can be empty but not
+	 * @return the discovered {@link BindingDefinition}. Can be empty but not
 	 *         null if we did not find a binding.
 	 */
 	public List<GuiceStatement> getBindingsByTypeAndAnnotationLimitToPackage(
@@ -346,13 +346,13 @@ public class GuiceIndex implements Serializable {
 				}
 			}
 
-			List<BindingStatement> bindingStatements = guiceModule.getBindingStatements();
+			List<BindingDefinition> bindingStatements = guiceModule.getBindingDefinitions();
 
 			if (bindingStatements == null) {
 				continue;
 			}
 
-			for (BindingStatement bindingStatement : bindingStatements) {
+			for (BindingDefinition bindingStatement : bindingStatements) {
 				String bindingsBoundType = bindingStatement.getBoundType();
 				if (!bindingsBoundType.equals(typeToFindQualifiedName)) {
 					continue;
@@ -464,11 +464,11 @@ public class GuiceIndex implements Serializable {
 	public AssistedBindingStatement getAssistedBindingByModelType(
 			String boundModelType) {
 		for (GuiceModule guiceModule : guiceModules) {
-			List<BindingStatement> bindingStatements = guiceModule.getBindingStatements();
+			List<BindingDefinition> bindingStatements = guiceModule.getBindingDefinitions();
 			if (bindingStatements == null) {
 				continue;
 			}
-			for (BindingStatement bindingStatement : bindingStatements) {
+			for (BindingDefinition bindingStatement : bindingStatements) {
 				if (bindingStatement instanceof AssistedBindingStatement) {
 					AssistedBindingStatement assistedBindingStatement = (AssistedBindingStatement) bindingStatement;
 					String modelType = assistedBindingStatement.getModelTypeName();
@@ -495,7 +495,7 @@ public class GuiceIndex implements Serializable {
 		statistic.nrOfGuiceModules = guiceModules.size();
 		Set<String> projectNames = SetUtils.newHashSet();
 		for (GuiceModule guiceModule : guiceModules) {
-			List<BindingStatement> bindingStatements = guiceModule.getBindingStatements();
+			List<BindingDefinition> bindingStatements = guiceModule.getBindingDefinitions();
 			if (bindingStatements == null) {
 				continue;
 			}

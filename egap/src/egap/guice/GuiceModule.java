@@ -3,7 +3,7 @@ package egap.guice;
 import java.util.List;
 
 
-import egap.guice.statements.BindingStatement;
+import egap.guice.statements.BindingDefinition;
 import egap.guice.statements.InstallModuleStatement;
 import egap.utils.Preconditions;
 
@@ -27,18 +27,18 @@ public class GuiceModule extends ProjectResource{
 	/**
 	 * The bindings found in the guice module.
 	 */
-	private List<BindingStatement> bindingStatements;
+	private List<BindingDefinition> bindingDefinitions;
 	
-	public List<BindingStatement> getBindingStatements() {
-		return bindingStatements;
+	public List<BindingDefinition> getBindingDefinitions() {
+		return bindingDefinitions;
 	}
 	
 	public void setInstalledModules(List<InstallModuleStatement> installedModules) {
 		this.installedModules = installedModules;
 	}
 
-	public void setBindingStatements(List<BindingStatement> bindingStatements) {
-		this.bindingStatements = bindingStatements;
+	public void setBindingDefinitions(List<BindingDefinition> bindingDefinitions) {
+		this.bindingDefinitions = bindingDefinitions;
 	}
 
 	/**
@@ -49,7 +49,7 @@ public class GuiceModule extends ProjectResource{
 	}
 
 	public void validate() {
-		for (BindingStatement bindingStatement : bindingStatements) {
+		for (BindingDefinition bindingStatement : bindingDefinitions) {
 			Preconditions.checkNotNull(bindingStatement.getBoundType());
 			/* Preconditions.checkNotNull(bindingStatement.getImplType()); */
 			Integer startPosition2 = bindingStatement.getStartPosition();

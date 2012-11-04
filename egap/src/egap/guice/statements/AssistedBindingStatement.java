@@ -15,7 +15,7 @@ package egap.guice.statements;
  * 
  * @author tmajunke
  */
-public class AssistedBindingStatement extends BindingStatement {
+public class AssistedBindingStatement extends BindingDefinition {
 
 	private static final long serialVersionUID = -1246112508071550296L;
 	

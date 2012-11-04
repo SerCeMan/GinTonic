@@ -38,10 +38,10 @@ public class AnnotationList {
 	
 	/**
 	 * Returns true if any of the annotations is of type
-	 * {@link StringUtils#GUICE_SCOPE_SINGLETON_NAME}, otherwise false.
+	 * {@link StringUtils#GUICE_SINGLETON_SCOPE}, otherwise false.
 	 */
 	public boolean containsSingletonScopeAnnotation() {
-		return containsAnnotation(StringUtils.GUICE_SCOPE_SINGLETON_NAME);
+		return containsAnnotation(StringUtils.GUICE_SINGLETON_SCOPE);
 	}
 	
 	/**

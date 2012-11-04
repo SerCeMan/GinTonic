@@ -20,7 +20,7 @@ import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 
 import egap.EgapPlugin;
 import egap.guice.annotations.GuiceAnnotation;
-import egap.guice.statements.BindingStatement;
+import egap.guice.statements.BindingDefinition;
 import egap.guice.statements.ConstantBindingStatement;
 import egap.guice.statements.InstallModuleStatement;
 import egap.guice.statements.InstanceBindingStatement;
@@ -49,18 +49,18 @@ public final class GuiceIndexerAstVisitor extends ASTVisitor {
 	 * Note: Needed from outside.
 	 */
 	private ITypeBinding guiceModuleTypeBinding;
-	private List<BindingStatement> bindingStatements = ListUtils.newArrayListWithCapacity(30);
+	private List<BindingDefinition> bindingStatements = ListUtils.newArrayListWithCapacity(30);
 	private List<InstallModuleStatement> installModuleStatements = ListUtils.newArrayListWithCapacity(50);
 
 	/* Internals */
-	private BindingStatement bindingStatement;
+	private BindingDefinition bindingStatement;
 	private GuiceAnnotation guiceAnnotation;
 	private String interfaceType;
 	private String implType;
 	private String scopeType;
 	private boolean isEagerSingleton;
 
-	public List<BindingStatement> getBindingStatements() {
+	public List<BindingDefinition> getBindingStatements() {
 		return bindingStatements;
 	}
 
@@ -88,7 +88,7 @@ public final class GuiceIndexerAstVisitor extends ASTVisitor {
 		bindingStatement = null;
 	}
 
-	private void addBinding(BindingStatement bindingStatement) {
+	private void addBinding(BindingDefinition bindingStatement) {
 		bindingStatements.add(bindingStatement);
 	}
 
@@ -103,12 +103,12 @@ public final class GuiceIndexerAstVisitor extends ASTVisitor {
 		String methodname = name.getIdentifier();
 
 		IMethodBinding methodBinding = methodInvocation.resolveMethodBinding();
-		
+
 		if (methodBinding == null) {
 			/* Maybe error! */
 			return false;
 		}
-		
+
 		ITypeBinding declaringClass = methodBinding.getDeclaringClass();
 		ITypeBinding declaringClassTypeDecl = declaringClass.getTypeDeclaration();
 
@@ -129,7 +129,7 @@ public final class GuiceIndexerAstVisitor extends ASTVisitor {
 
 				if (bindingStatement == null) {
 					/* e.g bind(X.class).in(Scopes.SINGLETON); */
-					bindingStatement = new BindingStatement();
+					bindingStatement = new BindingDefinition();
 				}
 
 				/*
@@ -240,14 +240,14 @@ public final class GuiceIndexerAstVisitor extends ASTVisitor {
 					String fullyQualifiedName = qualifiedName.getFullyQualifiedName();
 
 					if (fullyQualifiedName.equals("Scopes.SINGLETON")) {
-						scopeType = "Singleton";
+						scopeType = StringUtils.GUICE_SINGLETON_SCOPE;
 					}
 				}
 
 			}
 			else if (methodname.equals("asEagerSingleton")) {
 				isEagerSingleton = true;
-				scopeType = "SINGLETON";
+				scopeType = StringUtils.GUICE_SINGLETON_SCOPE;
 			}
 			else {
 				unsupportedMethod(
@@ -402,7 +402,7 @@ public final class GuiceIndexerAstVisitor extends ASTVisitor {
 			providerBindingStatement.setGuiceAnnotation(guiceAnnotation);
 
 			if(markerAnnotationList.containsSingletonScopeAnnotation()){
-				providerBindingStatement.setScopeType(StringUtils.GUICE_SCOPE_SINGLETON_NAME);
+				providerBindingStatement.setScopeType(StringUtils.GUICE_SINGLETON_SCOPE);
 			}
 
 			addBinding(providerBindingStatement);
