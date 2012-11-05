@@ -2,14 +2,14 @@ package egap.guice.statements;
 
 
 /**
- * 
+ *
  * <h5>Example using provider method:</h5>
- * 
+ *
  * <pre>
  * <code>
  * @Inject
  * private Provider<Customer> customerProvider;
- * 	
+ *
  * @SuppressWarnings("unused")
  * @Provides
  * private Customer provideCustomer() {
@@ -17,11 +17,11 @@ package egap.guice.statements;
  * }
  * </code>
  * </pre>
- * 
+ *
  * @author tmajunke
  */
-public class ProviderBindingToMethodStatement extends BindingDefinition{
+public class ProviderMethod extends BindingDefinition{
 
 	private static final long serialVersionUID = -8535727988045135538L;
-	
+
 }
