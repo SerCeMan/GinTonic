@@ -2,16 +2,18 @@ package egap.guice.statements;
 
 /**
  * A linked binding statement binds an interface to an implementation.
- * 
+ *
  * <h5>Example:</h5>
- * 
+ *
  * <pre>
  * <code>
  * bind(new TypeLiteral&lt;IPianoPlayer&lt;Bar&gt;&gt;() {
  * }).to(MaxThePianoPlayer.class);
  * </code>
  * </pre>
- * 
+ *
+ * @see http://code.google.com/p/google-guice/wiki/LinkedBindings
+ *
  * @author tmajunke
  */
 public class LinkedBindingStatement extends BindingDefinition {

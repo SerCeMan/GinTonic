@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Egap (Eclipse Guice Assistance Plugin)
 Bundle-SymbolicName: de.jaculon.egap;singleton:=true
-Bundle-Version: 1.0.125
+Bundle-Version: 1.0.134
 Bundle-Activator: egap.EgapPlugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
@@ -18,3 +18,24 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .
 Bundle-Vendor: Tim Majunke
+Export-Package: egap;uses:="org.eclipse.ui,org.eclipse.ui.plugin,org.osgi.framework",
+ egap.guice,
+ egap.guice.annotations,
+ egap.guice.indexer,
+ egap.guice.statements,
+ egap.icons,
+ egap.nature,
+ egap.preferences,
+ egap.project_builder,
+ egap.quickfix,
+ egap.quickfix.assisted_inject,
+ egap.quickfix.binding_creation,
+ egap.quickfix.module_creation,
+ egap.quickfix.module_installation,
+ egap.quickfix.navigate,
+ egap.quickfix.provider_conversion,
+ egap.refactor,
+ egap.source_builder,
+ egap.source_formatter,
+ egap.templates,
+ egap.utils

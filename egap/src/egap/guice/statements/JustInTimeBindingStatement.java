@@ -3,6 +3,8 @@ package egap.guice.statements;
 
 
 /**
+ * @see http://code.google.com/p/google-guice/wiki/JustInTimeBindings
+ *
  * @author tmajunke
  */
 public class JustInTimeBindingStatement extends GuiceStatement{
@@ -13,5 +15,5 @@ public class JustInTimeBindingStatement extends GuiceStatement{
 	public String getLabel() {
 		return "Implicit binding, goto to " + getTypeName();
 	}
-	
+
 }

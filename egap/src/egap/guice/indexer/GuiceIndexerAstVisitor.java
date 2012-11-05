@@ -55,7 +55,7 @@ public final class GuiceIndexerAstVisitor extends ASTVisitor {
 	/* Internals */
 	private BindingDefinition bindingStatement;
 	private GuiceAnnotation guiceAnnotation;
-	private String interfaceType;
+	private String boundType;
 	private String implType;
 	private String scopeType;
 	private boolean isEagerSingleton;
@@ -80,7 +80,7 @@ public final class GuiceIndexerAstVisitor extends ASTVisitor {
 	}
 
 	private void clearScope() {
-		interfaceType = null;
+		boundType = null;
 		implType = null;
 		guiceAnnotation = null;
 		scopeType = null;
@@ -125,7 +125,7 @@ public final class GuiceIndexerAstVisitor extends ASTVisitor {
 
 		if (declType.equals(StringUtils.GUICE_ABSTRACT_MODULE)) {
 			if (methodname.equals("bind")) {
-				interfaceType = ExpressionUtils.getQualifiedTypeName(firstArgument);
+				boundType = ExpressionUtils.getQualifiedTypeName(firstArgument);
 
 				if (bindingStatement == null) {
 					/* e.g bind(X.class).in(Scopes.SINGLETON); */
@@ -175,19 +175,23 @@ public final class GuiceIndexerAstVisitor extends ASTVisitor {
 			if (!isMultibinderInChain) {
 				if (methodname.equals("to")) {
 					bindingStatement = new LinkedBindingStatement();
+					implType = ExpressionUtils.getQualifiedTypeName(firstArgument);
 				}
 				else if (methodname.equals("toInstance")) {
 					bindingStatement = new InstanceBindingStatement();
+					implType = ExpressionUtils.getQualifiedTypeName(firstArgument);
 				}
 				else if (methodname.equals("toProvider")) {
-					bindingStatement = new ProviderBindingStatement();
+					ProviderBindingStatement providerBindingStatement = new ProviderBindingStatement();
+					String providerClassType = ExpressionUtils.getQualifiedTypeName(firstArgument);
+					providerBindingStatement.setProviderClassType(providerClassType);
+					bindingStatement = providerBindingStatement;
 				}
 				else {
 					unsupportedMethod(
 							StringUtils.GUICE_LINKED_BINDING_BUILDER,
 							methodname);
 				}
-				implType = ExpressionUtils.getQualifiedTypeName(firstArgument);
 			}
 		}
 
@@ -213,7 +217,7 @@ public final class GuiceIndexerAstVisitor extends ASTVisitor {
 				 * Special case in constants as impl and interface type are
 				 * equal
 				 */
-				interfaceType = implType;
+				boundType = implType;
 			}
 			/* By the way - no scopes for constants! */
 			else {
@@ -298,7 +302,7 @@ public final class GuiceIndexerAstVisitor extends ASTVisitor {
 	}
 
 	private void finishBindingStatement(MethodInvocation methodInvocation) {
-		bindingStatement.setBoundType(interfaceType);
+		bindingStatement.setBoundType(boundType);
 		if (implType != null) {
 			((LinkedBindingStatement) bindingStatement).setImplType(implType);
 		}
