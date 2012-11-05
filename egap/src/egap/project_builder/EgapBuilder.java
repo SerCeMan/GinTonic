@@ -20,7 +20,7 @@ import egap.guice.BuildState;
 import egap.guice.GuiceIndex;
 import egap.guice.GuiceIndexSerializer;
 import egap.guice.GuiceModule;
-import egap.guice.indexer.GuiceIndexer;
+import egap.guice.analyzer.GuiceAnalyzer;
 import egap.utils.DateUtils;
 import egap.utils.IPathUtils;
 import egap.utils.IProjectUtils;
@@ -34,7 +34,7 @@ public class EgapBuilder extends IncrementalProjectBuilder {
 
 	public static String ID = "egap.EgapBuilder";
 
-	private static GuiceIndexer guiceIndexer = new GuiceIndexer();
+	private static GuiceAnalyzer guiceIndexer = new GuiceAnalyzer();
 
 	public EgapBuilder() {
 		super();

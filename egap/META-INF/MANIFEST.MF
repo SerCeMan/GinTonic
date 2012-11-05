@@ -21,7 +21,7 @@ Bundle-Vendor: Tim Majunke
 Export-Package: egap;uses:="org.eclipse.ui,org.eclipse.ui.plugin,org.osgi.framework",
  egap.guice,
  egap.guice.annotations,
- egap.guice.indexer,
+ egap.guice.analyzer,
  egap.guice.statements,
  egap.icons,
  egap.nature,
