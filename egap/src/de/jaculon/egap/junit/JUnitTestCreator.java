@@ -4,7 +4,7 @@ import org.eclipse.jdt.core.ICompilationUnit;
 
 public class JUnitTestCreator {
 
-	public ICompilationUnit create(ICompilationUnit classUnderTest) {
+	public ICompilationUnit createTestFor(ICompilationUnit classUnderTest) {
 		return classUnderTest;
 	}
 

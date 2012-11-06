@@ -59,7 +59,7 @@ public class JUnitTestHandler {
 				jumpToCompilationUnitHandler.jumpTo(junitTest);
 			}
 			else {
-				jUnitTestCreator.create(junitTest);
+				jUnitTestCreator.createTestFor(icompilationUnit);
 			}
 
 		}
