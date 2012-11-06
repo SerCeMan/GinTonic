@@ -1,4 +1,4 @@
-<%@ jet package="egap.templates" imports="egap.quickfix.assisted_inject.ProposalCreateBindingForAssistedFactory" class="GuiceAssistedInjectFactoryBinding" %>
+<%@ jet package="de.jaculon.egap.templates" imports="de.jaculon.egap.quickfix.assisted_inject.ProposalCreateBindingForAssistedFactory" class="GuiceAssistedInjectFactoryBinding" %>
 
 
 <% ProposalCreateBindingForAssistedFactory proposal = (ProposalCreateBindingForAssistedFactory) argument; %>

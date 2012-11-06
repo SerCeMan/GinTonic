@@ -1,4 +1,4 @@
-<%@ jet package="egap.templates" class="ProviderMethodTemplate" imports="java.util.* egap.utils.StringUtils" %>
+<%@ jet package="de.jaculon.egap.templates" class="ProviderMethodTemplate" imports="java.util.* de.jaculon.egap.utils.StringUtils" %>
 <% Map<String, String> map = (Map<String, String>) argument; %> 
 
 @SuppressWarnings("unused")

@@ -1,4 +1,4 @@
-<%@ jet package="egap.templates" class="InstallModuleTemplate" %>
+<%@ jet package="de.jaculon.egap.templates" class="InstallModuleTemplate" %>
 <% String guiceModuleToInstall = (String) argument; %>
 
 install(new <%= guiceModuleToInstall %>());

@@ -1,4 +1,4 @@
-<%@ jet package="egap.templates" class="GuiceModuleTemplate" %>
+<%@ jet package="de.jaculon.egap.templates" class="GuiceModuleTemplate" %>
 import com.google.inject.AbstractModule;
 
 <% String moduleName = (String) argument; %>
