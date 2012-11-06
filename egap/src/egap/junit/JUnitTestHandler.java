@@ -14,28 +14,6 @@ public class JUnitTestHandler {
 
 	private JUnitTestCreator jUnitTestCreator;
 
-
-	private String testSuffix;
-	private String testPackagePrefix;
-	private String srcFolderForTests;
-	private String srcFolderForNormalClasses;
-
-	public void setTestSuffix(String testSuffix) {
-		this.testSuffix = testSuffix;
-	}
-
-	public void setTestPackagePrefix(String testPackagePrefix) {
-		this.testPackagePrefix = testPackagePrefix;
-	}
-
-	public void setSrcFolderForTests(String srcFolderForTests) {
-		this.srcFolderForTests = srcFolderForTests;
-	}
-
-	public void setSrcFolderForNormalClasses(String srcFolderForNormalClasses) {
-		this.srcFolderForNormalClasses = srcFolderForNormalClasses;
-	}
-
 	public void handle(){
 		ICompilationUnit icompilationUnit = getActiveICompilationUnitProvider.get();
 		if(icompilationUnit == null){
