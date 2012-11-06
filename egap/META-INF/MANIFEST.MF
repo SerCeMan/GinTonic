@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Egap (Eclipse Guice Assistance Plugin)
 Bundle-SymbolicName: de.jaculon.egap;singleton:=true
 Bundle-Version: 1.0.134
-Bundle-Activator: egap.EgapPlugin
+Bundle-Activator: de.jaculon.egap.EgapPlugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.jdt.core;bundle-version="3.5.0",
@@ -18,24 +18,25 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .
 Bundle-Vendor: Tim Majunke
-Export-Package: egap;uses:="org.eclipse.ui,org.eclipse.ui.plugin,org.osgi.framework",
- egap.guice,
- egap.guice.annotations,
- egap.guice.analyzer,
- egap.guice.statements,
- egap.icons,
- egap.nature,
- egap.preferences,
- egap.project_builder,
- egap.quickfix,
- egap.quickfix.assisted_inject,
- egap.quickfix.binding_creation,
- egap.quickfix.module_creation,
- egap.quickfix.module_installation,
- egap.quickfix.navigate,
- egap.quickfix.provider_conversion,
- egap.refactor,
- egap.source_builder,
- egap.source_formatter,
- egap.templates,
- egap.utils
+Export-Package: de.jaculon.egap;uses:="org.eclipse.ui,org.eclipse.ui.plugin,org.osgi.framework",
+ de.jaculon.egap.guice,
+ de.jaculon.egap.guice.analyzer,
+ de.jaculon.egap.guice.annotations,
+ de.jaculon.egap.guice.statements,
+ de.jaculon.egap.icons,
+ de.jaculon.egap.junit,
+ de.jaculon.egap.nature,
+ de.jaculon.egap.preferences,
+ de.jaculon.egap.project_builder,
+ de.jaculon.egap.quickfix,
+ de.jaculon.egap.quickfix.assisted_inject,
+ de.jaculon.egap.quickfix.binding_creation,
+ de.jaculon.egap.quickfix.module_creation,
+ de.jaculon.egap.quickfix.module_installation,
+ de.jaculon.egap.quickfix.navigate,
+ de.jaculon.egap.quickfix.provider_conversion,
+ de.jaculon.egap.refactor,
+ de.jaculon.egap.source_builder,
+ de.jaculon.egap.source_formatter,
+ de.jaculon.egap.templates,
+ de.jaculon.egap.utils
