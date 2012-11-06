@@ -66,61 +66,61 @@ import egap.utils.StringUtils;
  * Creates a new JUnit 5 Test for the currently active class. The test contains
  * the injections from the class-under-test as mocks and an initialize method,
  * which injects the mocks into the class-under-test.
- * 
+ *
  * <h5>Example:</h5>
- * 
+ *
  * Given the class RealBillingService
- * 
+ *
  * <pre>
  * class RealBillingService implements BillingService {
  * 	private CreditCardProcessor processor;
  * 	private TransactionLog transactionLog;
- * 
+ *
  * 	&#064;Inject
  * 	public void setProcessor(CreditCardProcessor processor) {
  * 		this.processor = processor;
  * 	}
- * 
+ *
  * 	&#064;Inject
  * 	public void setTransactionLog(TransactionLog transactionLog) {
  * 		this.transactionLog = transactionLog;
  * 	}
- * 
+ *
  * 	&#064;Override
  * 	public Receipt chargeOrder(PizzaOrder order, CreditCard creditCard) {
  * 		return null;
  * 	}
  * }
  * </pre>
- * 
+ *
  * the generated testcase will look like:
- * 
+ *
  * <pre>
  * &#064;RunWith(MockitoJUnitRunner.class)
  * public class RealBillingServiceTest {
- * 
+ *
  * 	private RealBillingService realBillingService;
- * 
+ *
  * 	&#064;Mock
  * 	private CreditCardProcessor creditCardProcessorMock;
- * 
+ *
  * 	&#064;Mock
  * 	private TransactionLog transactionLogMock;
- * 
+ *
  * 	&#064;Before
  * 	public void initialize() {
  * 		realBillingService = new RealBillingService();
  * 		realBillingService.setTransactionLog(transactionLogMock);
  * 		realBillingService.setCreditCardProcessor(creditCardProcessorMock);
  * 	}
- * 
+ *
  * 	&#064;Test
  * 	public void test() {
  * 	}
- * 
+ *
  * }
  * </pre>
- * 
+ *
  */
 public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 
@@ -187,9 +187,9 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 		else {
 			ProjectResource junitTest = createJUnitClassFor(javaClass);
 			IFile junitTestAsIFile = IProjectResourceUtils.getJavaFile(junitTest);
-			
+
 			/* TODO check other projects too. */
-			
+
 			if (junitTestAsIFile.exists()) {
 				IProjectResourceUtils.openEditorWithStatementDeclaration(junitTest);
 				return Action.JUMPED_TO_TEST;
@@ -199,9 +199,9 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 				createJUnitTest(
 						icompilationUnit,
 						junitTest);
-				
+
 				IProjectResourceUtils.openEditorWithStatementDeclaration(junitTest);
-				
+
 				return Action.CREATED_TEST;
 			} catch (CoreException e) {
 				EgapPlugin.logException(e);
@@ -221,7 +221,7 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void initializePreferences() {
 		IPreferenceStore store = EgapPlugin.getEgapPlugin().getPreferenceStore();
@@ -234,12 +234,12 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 
 	private void createJUnitTest(ICompilationUnit classUnderTest, ProjectResource junitTest)
 			throws JavaModelException {
-		
+
 		IJavaProject javaProject = classUnderTest.getJavaProject();
-		
+
 		StringBuffer sb = new StringBuffer(300);
 		JavaCodeBuilder codeGenerator = new JavaCodeBuilder(sb);
-		
+
 		String typeName = junitTest.getTypeName();
 
 		codeGenerator.append("@RunWith( MockitoJUnitRunner.class )");
@@ -292,12 +292,12 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 
 		List<InjectionPoint> injectionPoints = ICompilationUnitUtils.findInjectionPoints(
 				classUnderTest);
-		
+
 		CompilationUnit classUnderTestAsCompilationUnit = SharedASTProvider.getAST(
 				classUnderTest,
 				SharedASTProvider.WAIT_YES,
 				null);
-		
+
 		TypeDeclaration primaryTypeDeclaration = findPrimaryTypeDeclaration(classUnderTestAsCompilationUnit);
 
 		addClassUnderTestAsField(
@@ -324,14 +324,14 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 
 	/**
 	 * Creates a new empty test method:
-	 * 
+	 *
 	 * <pre>
 	 * &#064;Test
 	 * public void test() {
-	 * 
+	 *
 	 * }
 	 * </pre>
-	 * 
+	 *
 	 */
 	private void createTestMethod(AST ast, Refactorator refactorator) {
 		MethodDeclaration methodDecl = ast.newMethodDeclaration();
@@ -357,9 +357,9 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 	 * field access) we assume it to be the same as where the @Inject annotation
 	 * is applied to the class-under-test (see
 	 * {@link InjectionPoint#getInjectionIsAttachedTo()}).
-	 * 
+	 *
 	 * <h5>Example 1: The injections were attached to the constructor</h5>
-	 * 
+	 *
 	 * <pre>
 	 * &#064;Before
 	 * public void initialize() {
@@ -368,9 +368,9 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 	 * 			textBuilderFactoryMock);
 	 * }
 	 * </pre>
-	 * 
+	 *
 	 * <h5>Example 2: The injections were attached to the setter methods</h5>
-	 * 
+	 *
 	 * <pre>
 	 * &#064;Before
 	 * public void initialize() {
@@ -379,9 +379,9 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 	 * 	importJobTextRenderer.setTextBuilderFactory(textBuilderFactoryMock);
 	 * }
 	 * </pre>
-	 * 
+	 *
 	 * <h5>Example 3: The injections were attached to the field</h5>
-	 * 
+	 *
 	 * <pre>
 	 * &#064;Before
 	 * public void initialize() {
@@ -390,7 +390,7 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 	 * 	importJobTextRenderer.textBuilderFactory = textBuilderFactoryMock;
 	 * }
 	 * </pre>
-	 * 
+	 *
 	 */
 	@SuppressWarnings("unchecked")
 	private void createInitializerMethod(
@@ -478,7 +478,7 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 		refactorator.addImport("org.junit.Before");
 		refactorator.addMethodDeclaration(methodDecl);
 	}
-	
+
 	/**
 	 * classUnderTest = new ClassUnderTest(dependency1, dependency2);
 	 */
@@ -491,14 +491,14 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 		String classUnderTestVarName = StringUtils.uncapitalize(classUnderTestTypeNameSimple);
 		ClassInstanceCreation classInstanceCreation = ast.newClassInstanceCreation();
 		classInstanceCreation.setType(classUnderTestType);
-		
+
 		for (InjectionPoint guiceFieldDeclaration : injectionPoints) {
 			String variableNameOfMock = getMockName(guiceFieldDeclaration);
 			@SuppressWarnings("unchecked")
 			List<Expression> arguments = classInstanceCreation.arguments();
 			arguments.add(ast.newSimpleName(variableNameOfMock));
 		}
-		
+
 		Assignment assignment = ast.newAssignment();
 		assignment.setLeftHandSide(ast.newSimpleName(classUnderTestVarName));
 		assignment.setRightHandSide(classInstanceCreation);
@@ -559,11 +559,11 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 			variableDeclarationFragment.setName(ast.newSimpleName(getMockName(injectionPoint)));
 
 			FieldDeclarationUtils.removeAnnotations(fieldDeclarationUnparented);
-			
+
 			@SuppressWarnings("unchecked")
 			List<ASTNode> modifiers = fieldDeclarationUnparented.modifiers();
 			modifiers.add(ast.newModifier(ModifierKeyword.PRIVATE_KEYWORD));
-			
+
 			fieldDeclarationUnparented.setJavadoc(null);
 			FieldDeclarationUtils.addMarkerAnnotation(
 					fieldDeclarationUnparented,
@@ -627,17 +627,17 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 	 * with a {@link #testSuffix}, lies in a source folder named
 	 * {@link #srcFolderForTests} and the package is prefixed with
 	 * {@link #testPackagePrefix}.
-	 * 
+	 *
 	 * <h5>Example:</h5>
-	 * 
+	 *
 	 * Given the following class
-	 * 
+	 *
 	 * <pre>
 	 * src/some.package.AClass
 	 * </pre>
-	 * 
+	 *
 	 * we assume the test case to be
-	 * 
+	 *
 	 * <pre>
 	 * src-test/test.some.package.AClassTest
 	 * </pre>
@@ -655,24 +655,24 @@ public class CreateMockitoJUnitTestHandler extends AbstractHandler {
 			junitTestcasePackage.addFirst(testPackagePrefix);
 			junitTest.setPackage(junitTestcasePackage);
 		}
-		
+
 		junitTest.setTypeName(javaClass.getTypeName() + testSuffix);
 		return junitTest;
 	}
 
 	/**
 	 * Creates a class-under-test from a given junit class.
-	 * 
+	 *
 	 * <h5>Example:</h5>
-	 * 
+	 *
 	 * Given the following class
-	 * 
+	 *
 	 * <pre>
 	 * src/some.package.AClass
 	 * </pre>
-	 * 
+	 *
 	 * we assume the test case to be
-	 * 
+	 *
 	 * <pre>
 	 * src-test/test.some.package.AClassTest
 	 * </pre>
