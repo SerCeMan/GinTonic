@@ -3,6 +3,8 @@ package de.jaculon.egap.junit;
 import java.util.Arrays;
 import java.util.List;
 
+import de.jaculon.egap.utils.StringUtils;
+
 public class MySourceFolder {
 
 	private List<String> sourceFolderParts;
@@ -10,6 +12,15 @@ public class MySourceFolder {
 	public MySourceFolder(String... sourceFolderParts) {
 		super();
 		this.sourceFolderParts = Arrays.asList(sourceFolderParts);
+	}
+
+	public String getQualifiedName(){
+		return StringUtils.join('/', sourceFolderParts);
+	}
+
+	@Override
+	public String toString() {
+		return getQualifiedName();
 	}
 
 	@Override

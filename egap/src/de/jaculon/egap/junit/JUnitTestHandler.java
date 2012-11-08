@@ -6,7 +6,7 @@ public class JUnitTestHandler {
 
 	private GetActiveICompilationUnitProvider getActiveICompilationUnitProvider;
 	private JUnitTestCaseIdentifier jUnitTestCaseIdentifier;
-	private ClassUnderTestResolver classUnderTestResolver;
+	private ICompilationUnitResolver classUnderTestResolver;
 	private JUnitTestResolver jUnitTestResolver;
 	private JumpToCompilationUnitHandler jumpToCompilationUnitHandler;
 	private JUnitTestCreator jUnitTestCreator;
@@ -22,7 +22,7 @@ public class JUnitTestHandler {
 	}
 
 	public void setClassUnderTestResolver(
-			ClassUnderTestResolver classUnderTestResolver) {
+			ICompilationUnitResolver classUnderTestResolver) {
 		this.classUnderTestResolver = classUnderTestResolver;
 	}
 

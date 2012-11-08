@@ -1,15 +1,40 @@
 package de.jaculon.egap.junit;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+
+import de.jaculon.egap.utils.StringUtils;
 
 public class MyPackage {
 
 	private List<String> packageParts;
 
+	public MyPackage(){
+		this.packageParts = Collections.emptyList();
+	}
+
 	public MyPackage(String... packageParts) {
 		super();
 		this.packageParts = Arrays.asList(packageParts);
+	}
+
+	public MyPackage(List<String> packageParts) {
+		super();
+		this.packageParts = packageParts;
+	}
+
+	public String getQualifiedName(){
+		return StringUtils.join('.', packageParts);
+	}
+
+	public List<String> getPackageParts() {
+		return packageParts;
+	}
+
+	@Override
+	public String toString() {
+		return getQualifiedName();
 	}
 
 	@Override
