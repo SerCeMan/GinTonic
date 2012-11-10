@@ -10,7 +10,7 @@ public class MyPackage {
 
 	private List<String> packageParts;
 
-	public MyPackage(){
+	public MyPackage() {
 		this.packageParts = Collections.emptyList();
 	}
 
@@ -24,10 +24,31 @@ public class MyPackage {
 		this.packageParts = packageParts;
 	}
 
-	public String getQualifiedName(){
+	/**
+	 * Returns the qualified name of the package. The qualified name is empty
+	 * for an unnamed package.
+	 *
+	 * <h1>Example:</h1>
+	 * <pre>
+	 * "java.util"
+	 * "de.jaculon.egap"
+	 * </pre>
+	 *
+	 */
+	public String getQualifiedName() {
 		return StringUtils.join('.', packageParts);
 	}
 
+	/**
+	 * Returns the parts that make up the source folder:
+	 *
+	 * <h1>Example:</h1>
+	 *
+	 * <pre>
+	 * ["de","jaculon", "egap"]
+	 * ["java","util"]
+	 * </pre>
+	 */
 	public List<String> getPackageParts() {
 		return packageParts;
 	}
@@ -63,7 +84,5 @@ public class MyPackage {
 			return false;
 		return true;
 	}
-
-
 
 }

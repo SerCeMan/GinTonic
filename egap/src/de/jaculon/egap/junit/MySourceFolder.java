@@ -14,8 +14,32 @@ public class MySourceFolder {
 		this.sourceFolderParts = Arrays.asList(sourceFolderParts);
 	}
 
-	public String getQualifiedName(){
+	/**
+	 * Returns the qualified name of the source folder.
+	 *
+	 * <h1>Example:</h1>
+	 *
+	 * <pre>
+	 * "src"
+	 * "src/main/java"
+	 * </pre>
+	 */
+	public String getQualifiedName() {
 		return StringUtils.join('/', sourceFolderParts);
+	}
+
+	/**
+	 * Returns the parts that make up the source folder:
+	 *
+	 * <h1>Example:</h1>
+	 *
+	 * <pre>
+	 * ["src"]
+	 * ["src","main","java"]
+	 * </pre>
+	 */
+	public List<String> getSourceFolderParts() {
+		return sourceFolderParts;
 	}
 
 	@Override

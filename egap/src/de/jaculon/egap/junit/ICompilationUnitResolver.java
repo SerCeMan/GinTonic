@@ -10,7 +10,7 @@ public class ICompilationUnitResolver {
 	private IPackageResolver packageResolver;
 	private ITypeNameResolver iTypeNameResolver;
 	private ICompilationUnitHelper iCompilationUnitHelper;
-	private IPackageFragmentHelper iPackageFragmentHelper;
+	private MyPackageFragmentHelper myPackageHelper;
 
 	private List<MySourceFolder> srcFoldersToLookForMatchingCompilationUnit;
 
@@ -19,8 +19,8 @@ public class ICompilationUnitResolver {
 	}
 
 	public void setiPackageFragmentHelper(
-			IPackageFragmentHelper iPackageFragmentHelper) {
-		this.iPackageFragmentHelper = iPackageFragmentHelper;
+			MyPackageFragmentHelper iPackageFragmentHelper) {
+		this.myPackageHelper = iPackageFragmentHelper;
 	}
 
 	public void setiTypeNameResolver(ITypeNameResolver iTypeNameResolver) {
@@ -64,7 +64,7 @@ public class ICompilationUnitResolver {
 
 		String projectNameOfCompilationUnit = iCompilationUnitHelper.getJavaProjectName(junitTest);
 
-		MyPackage myPackage = iPackageFragmentHelper.getPackageFor(junitTest);
+		MyPackage myPackage = myPackageHelper.getPackageFor(junitTest);
 
 		List<MyPackage> packageParts = packageResolver.getPossiblePackagesFor(myPackage);
 		String primaryTypeName = iCompilationUnitHelper.getPrimaryTypeName(junitTest);

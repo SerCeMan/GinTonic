@@ -16,6 +16,10 @@ public class ClassUnderTestPackageResolver implements IPackageResolver {
 		this.testPackagePrefixes = Arrays.asList(testPackagePrefixes);
 	}
 
+	/**
+	 *
+	 *
+	 */
 	@Override
 	public List<MyPackage> getPossiblePackagesFor(MyPackage testPackage) {
 

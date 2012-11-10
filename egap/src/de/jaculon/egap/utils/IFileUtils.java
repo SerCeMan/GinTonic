@@ -32,7 +32,7 @@ public class IFileUtils {
 		IProject project = root.getProject(projectName);
 
 		String sourceFolder = StringUtils.join(PATH_SEPARATOR, srcFolderPathComponents)
-				+ PATH_SEPARATOR + StringUtils.join(PATH_SEPARATOR,packagePathComponents);
+				+ PATH_SEPARATOR + StringUtils.join(PATH_SEPARATOR, packagePathComponents);
 
 		IFolder folder = project.getFolder(sourceFolder);
 
