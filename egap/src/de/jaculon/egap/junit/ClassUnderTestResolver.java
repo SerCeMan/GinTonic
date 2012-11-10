@@ -3,7 +3,7 @@ package de.jaculon.egap.junit;
 import java.util.List;
 
 import de.jaculon.egap.helper.ICompilationUnitHelper;
-import de.jaculon.egap.helper.ProjectHelper;
+import de.jaculon.egap.helper.IProjectHelper;
 
 public class ClassUnderTestResolver extends ICompilationUnitResolver {
 
@@ -13,7 +13,7 @@ public class ClassUnderTestResolver extends ICompilationUnitResolver {
 		setiCompilationUnitHelper(new ICompilationUnitHelper());
 		setiTypeNameResolver(new ClassUnderTestTypeNameResolver(testSuffixes));
 		setFoldersToLookForMatchingCompilationUnit(srcFolders);
-		setOpenJavaProjectsResolver(new ProjectHelper());
+		setOpenJavaProjectsResolver(new IProjectHelper());
 		setPackageResolver(new ClassUnderTestPackageResolver(
 				testPackagePrefixes));
 		setiPackageFragmentHelper(new MyPackageHelper());

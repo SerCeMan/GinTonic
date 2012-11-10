@@ -34,7 +34,7 @@ public class IProjectUtils {
 	/**
 	 * Returns the source packages as {@link IPath}es of the project assuming
 	 * the project to be a Java project.
-	 * 
+	 *
 	 * @param project the project
 	 * @return the src folders as {@link IPath}es.
 	 * @throws CoreException
@@ -58,7 +58,7 @@ public class IProjectUtils {
 	/**
 	 * Adds the given nature to the projects natures if it does not yet exist.
 	 * Otherwise the nature is removed from the project.
-	 * 
+	 *
 	 * @param project the project
 	 * @param natureId the nature ID
 	 * @return true if the nature was added, otherwise false.
@@ -115,7 +115,7 @@ public class IProjectUtils {
 
 		return projectsWithNature;
 	}
-	
+
 	private static final class CollectFiles implements IResourceVisitor {
 
 		private List<IPath> sourceFolders;
@@ -136,9 +136,9 @@ public class IProjectUtils {
 				}
 				/* We must always descend into every folder, as otherwise
 				 * folders with more segments (like maven projects with
-				 * a src folder src/main/java) are not correctly 
+				 * a src folder src/main/java) are not correctly
 				 * scanned for files (Bug in Rev 3). */
-				return true; 
+				return true;
 			} else if (resource instanceof IFile) {
 				files.add((IFile) resource);
 			}

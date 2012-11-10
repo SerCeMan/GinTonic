@@ -39,4 +39,5 @@ Export-Package: de.jaculon.egap;uses:="org.eclipse.ui,org.eclipse.ui.plugin,org.
  de.jaculon.egap.source_builder,
  de.jaculon.egap.source_formatter,
  de.jaculon.egap.templates,
- de.jaculon.egap.utils
+ de.jaculon.egap.utils,
+  de.jaculon.egap.helper

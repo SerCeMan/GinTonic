@@ -7,11 +7,13 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 import de.jaculon.egap.junit.MyPackage;
 import de.jaculon.egap.junit.MySourceFolder;
 import de.jaculon.egap.utils.EclipseUtils;
+import de.jaculon.egap.utils.ICompilationUnitUtils;
 import de.jaculon.egap.utils.IFileUtils;
 
 public class ICompilationUnitHelper {
@@ -66,6 +68,15 @@ public class ICompilationUnitHelper {
 	 */
 	public String getPrimaryTypeName(ICompilationUnit icompilationUnit) {
 		return icompilationUnit.findPrimaryType().getElementName();
+	}
+
+	/**
+	 * Opens an editor for the given {@link ICompilationUnit}.
+	 *
+	 * @see IDE#openEditor(org.eclipse.ui.IWorkbenchPage, IFile)
+	 */
+	public void viewInEditor(ICompilationUnit iCompilationUnit) {
+		ICompilationUnitUtils.viewInEditor(iCompilationUnit);
 	}
 
 }

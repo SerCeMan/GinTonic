@@ -5,7 +5,7 @@ import java.util.List;
 import org.eclipse.jdt.core.ICompilationUnit;
 
 import de.jaculon.egap.helper.ICompilationUnitHelper;
-import de.jaculon.egap.helper.ProjectHelper;
+import de.jaculon.egap.helper.IProjectHelper;
 
 /**
  * An {@link ICompilationUnitResolver} tries to find a matching ICompilationUnit
@@ -18,7 +18,7 @@ import de.jaculon.egap.helper.ProjectHelper;
  */
 public class ICompilationUnitResolver {
 
-	private ProjectHelper openJavaProjectsResolver;
+	private IProjectHelper openJavaProjectsResolver;
 	private MyPackageResolver packageResolver;
 	private ITypeNameResolver typeNameResolver;
 	private ICompilationUnitHelper iCompilationUnitHelper;
@@ -54,7 +54,7 @@ public class ICompilationUnitResolver {
 	}
 
 	public void setOpenJavaProjectsResolver(
-			ProjectHelper openJavaProjectsResolver) {
+			IProjectHelper openJavaProjectsResolver) {
 		this.openJavaProjectsResolver = openJavaProjectsResolver;
 	}
 
