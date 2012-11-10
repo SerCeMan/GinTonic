@@ -3,6 +3,7 @@ package de.jaculon.egap.junit;
 import java.util.List;
 
 import de.jaculon.egap.helper.ICompilationUnitHelper;
+import de.jaculon.egap.helper.ProjectHelper;
 
 public class ClassUnderTestResolver extends ICompilationUnitResolver {
 

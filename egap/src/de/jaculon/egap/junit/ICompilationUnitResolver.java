@@ -5,6 +5,7 @@ import java.util.List;
 import org.eclipse.jdt.core.ICompilationUnit;
 
 import de.jaculon.egap.helper.ICompilationUnitHelper;
+import de.jaculon.egap.helper.ProjectHelper;
 
 /**
  * An {@link ICompilationUnitResolver} tries to find a matching ICompilationUnit

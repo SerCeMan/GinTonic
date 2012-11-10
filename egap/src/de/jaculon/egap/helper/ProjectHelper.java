@@ -1,4 +1,4 @@
-package de.jaculon.egap.junit;
+package de.jaculon.egap.helper;
 
 import java.util.List;
 
