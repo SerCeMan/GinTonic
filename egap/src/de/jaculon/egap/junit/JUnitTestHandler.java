@@ -2,9 +2,11 @@ package de.jaculon.egap.junit;
 
 import org.eclipse.jdt.core.ICompilationUnit;
 
+import de.jaculon.egap.helper.ICompilationUnitHelper;
+
 public class JUnitTestHandler {
 
-	private JUnitTestCaseIdentifier jUnitTestCaseIdentifier;
+	private JUnitTestIdentifier jUnitTestIdentifier;
 	private ICompilationUnitResolver classUnderTestResolver;
 	private JUnitTestResolver jUnitTestResolver;
 	private JumpToCompilationUnitHandler jumpToCompilationUnitHandler;
@@ -16,9 +18,9 @@ public class JUnitTestHandler {
 		this.iCompilationUnitHelper = iCompilationUnitHelper;
 	}
 
-	public void setjUnitTestCaseIdentifier(
-			JUnitTestCaseIdentifier jUnitTestCaseIdentifier) {
-		this.jUnitTestCaseIdentifier = jUnitTestCaseIdentifier;
+	public void setjUnitTestIdentifier(
+			JUnitTestIdentifier jUnitTestIdentifier) {
+		this.jUnitTestIdentifier = jUnitTestIdentifier;
 	}
 
 	public void setClassUnderTestResolver(
@@ -45,7 +47,7 @@ public class JUnitTestHandler {
 			return;
 		}
 
-		boolean isTestCase = jUnitTestCaseIdentifier.isTestCase(icompilationUnit);
+		boolean isTestCase = jUnitTestIdentifier.isTestCase(icompilationUnit);
 
 		if (isTestCase) {
 			ICompilationUnit classUnderTest = classUnderTestResolver.resolve(icompilationUnit);

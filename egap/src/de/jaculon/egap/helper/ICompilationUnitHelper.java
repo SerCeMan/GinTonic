@@ -1,4 +1,4 @@
-package de.jaculon.egap.junit;
+package de.jaculon.egap.helper;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jdt.core.ICompilationUnit;
@@ -9,6 +9,8 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.texteditor.ITextEditor;
 
+import de.jaculon.egap.junit.MyPackage;
+import de.jaculon.egap.junit.MySourceFolder;
 import de.jaculon.egap.utils.EclipseUtils;
 import de.jaculon.egap.utils.IFileUtils;
 

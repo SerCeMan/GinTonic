@@ -5,7 +5,7 @@ import java.util.List;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IType;
 
-public class JUnitTestCaseIdentifier {
+public class JUnitTestIdentifier {
 
 	private List<String> testSuffixes;
 

@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.eclipse.jdt.core.ICompilationUnit;
 
+import de.jaculon.egap.helper.ICompilationUnitHelper;
+
 /**
  * An {@link ICompilationUnitResolver} tries to find a matching ICompilationUnit
  * for a given ICompilationUnit.
@@ -15,7 +17,7 @@ import org.eclipse.jdt.core.ICompilationUnit;
  */
 public class ICompilationUnitResolver {
 
-	private OpenJavaProjectsResolver openJavaProjectsResolver;
+	private ProjectHelper openJavaProjectsResolver;
 	private MyPackageResolver packageResolver;
 	private ITypeNameResolver typeNameResolver;
 	private ICompilationUnitHelper iCompilationUnitHelper;
@@ -23,7 +25,7 @@ public class ICompilationUnitResolver {
 
 	private List<MySourceFolder> srcFoldersToLookForMatchingCompilationUnit;
 
-	public ICompilationUnitResolver() {
+	protected ICompilationUnitResolver() {
 		super();
 	}
 
@@ -51,7 +53,7 @@ public class ICompilationUnitResolver {
 	}
 
 	public void setOpenJavaProjectsResolver(
-			OpenJavaProjectsResolver openJavaProjectsResolver) {
+			ProjectHelper openJavaProjectsResolver) {
 		this.openJavaProjectsResolver = openJavaProjectsResolver;
 	}
 
@@ -88,7 +90,7 @@ public class ICompilationUnitResolver {
 			return resolvedCompilationUnit;
 		}
 
-		List<String> openJavaProjects = openJavaProjectsResolver.resolve(projectNameOfCompilationUnit);
+		List<String> openJavaProjects = openJavaProjectsResolver.findOpenJavaProjects(projectNameOfCompilationUnit);
 		for (String openJavaProject : openJavaProjects) {
 			resolvedCompilationUnit = doResolve(
 					openJavaProject,

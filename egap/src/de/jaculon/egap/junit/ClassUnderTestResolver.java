@@ -2,6 +2,8 @@ package de.jaculon.egap.junit;
 
 import java.util.List;
 
+import de.jaculon.egap.helper.ICompilationUnitHelper;
+
 public class ClassUnderTestResolver extends ICompilationUnitResolver {
 
 	public ClassUnderTestResolver(List<MySourceFolder> srcFolders,
@@ -10,7 +12,7 @@ public class ClassUnderTestResolver extends ICompilationUnitResolver {
 		setiCompilationUnitHelper(new ICompilationUnitHelper());
 		setiTypeNameResolver(new ClassUnderTestTypeNameResolver(testSuffixes));
 		setFoldersToLookForMatchingCompilationUnit(srcFolders);
-		setOpenJavaProjectsResolver(new OpenJavaProjectsResolver());
+		setOpenJavaProjectsResolver(new ProjectHelper());
 		setPackageResolver(new ClassUnderTestPackageResolver(
 				testPackagePrefixes));
 		setiPackageFragmentHelper(new MyPackageHelper());
