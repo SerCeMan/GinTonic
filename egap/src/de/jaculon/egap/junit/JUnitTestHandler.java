@@ -4,16 +4,16 @@ import org.eclipse.jdt.core.ICompilationUnit;
 
 public class JUnitTestHandler {
 
-	private GetActiveICompilationUnitProvider getActiveICompilationUnitProvider;
 	private JUnitTestCaseIdentifier jUnitTestCaseIdentifier;
 	private ICompilationUnitResolver classUnderTestResolver;
 	private JUnitTestResolver jUnitTestResolver;
 	private JumpToCompilationUnitHandler jumpToCompilationUnitHandler;
 	private JUnitTestCreator jUnitTestCreator;
+	private ICompilationUnitHelper iCompilationUnitHelper;
 
-	public void setGetActiveICompilationUnitProvider(
-			GetActiveICompilationUnitProvider getActiveICompilationUnitProvider) {
-		this.getActiveICompilationUnitProvider = getActiveICompilationUnitProvider;
+	public void setiCompilationUnitHelper(
+			ICompilationUnitHelper iCompilationUnitHelper) {
+		this.iCompilationUnitHelper = iCompilationUnitHelper;
 	}
 
 	public void setjUnitTestCaseIdentifier(
@@ -40,7 +40,7 @@ public class JUnitTestHandler {
 	}
 
 	public void handle() {
-		ICompilationUnit icompilationUnit = getActiveICompilationUnitProvider.get();
+		ICompilationUnit icompilationUnit = iCompilationUnitHelper.getActiveICompilationUnit();
 		if (icompilationUnit == null) {
 			return;
 		}

@@ -17,7 +17,7 @@ public class ICompilationUnitResolver {
 
 	private OpenJavaProjectsResolver openJavaProjectsResolver;
 	private MyPackageResolver packageResolver;
-	private TypeNameResolver typeNameResolver;
+	private ITypeNameResolver typeNameResolver;
 	private ICompilationUnitHelper iCompilationUnitHelper;
 	private MyPackageHelper myPackageHelper;
 
@@ -32,7 +32,7 @@ public class ICompilationUnitResolver {
 		this.myPackageHelper = iPackageFragmentHelper;
 	}
 
-	public void setiTypeNameResolver(TypeNameResolver iTypeNameResolver) {
+	public void setiTypeNameResolver(ITypeNameResolver iTypeNameResolver) {
 		this.typeNameResolver = iTypeNameResolver;
 	}
 
