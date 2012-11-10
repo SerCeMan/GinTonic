@@ -13,7 +13,7 @@ public class ClassUnderTestResolver extends ICompilationUnitResolver {
 		setOpenJavaProjectsResolver(new OpenJavaProjectsResolver());
 		setPackageResolver(new ClassUnderTestPackageResolver(
 				testPackagePrefixes));
-		setiPackageFragmentHelper(new MyPackageFragmentHelper());
+		setiPackageFragmentHelper(new MyPackageHelper());
 	}
 
 }

@@ -4,13 +4,22 @@ import java.util.List;
 
 import org.eclipse.jdt.core.ICompilationUnit;
 
+/**
+ * An {@link ICompilationUnitResolver} tries to find a matching ICompilationUnit
+ * for a given ICompilationUnit.
+ *
+ * A typical usage is to find a junit test class for a classUnderTest.
+ *
+ *
+ * @author tmajunke
+ */
 public class ICompilationUnitResolver {
 
 	private OpenJavaProjectsResolver openJavaProjectsResolver;
-	private IPackageResolver packageResolver;
-	private ITypeNameResolver iTypeNameResolver;
+	private MyPackageResolver packageResolver;
+	private TypeNameResolver typeNameResolver;
 	private ICompilationUnitHelper iCompilationUnitHelper;
-	private MyPackageFragmentHelper myPackageHelper;
+	private MyPackageHelper myPackageHelper;
 
 	private List<MySourceFolder> srcFoldersToLookForMatchingCompilationUnit;
 
@@ -19,12 +28,12 @@ public class ICompilationUnitResolver {
 	}
 
 	public void setiPackageFragmentHelper(
-			MyPackageFragmentHelper iPackageFragmentHelper) {
+			MyPackageHelper iPackageFragmentHelper) {
 		this.myPackageHelper = iPackageFragmentHelper;
 	}
 
-	public void setiTypeNameResolver(ITypeNameResolver iTypeNameResolver) {
-		this.iTypeNameResolver = iTypeNameResolver;
+	public void setiTypeNameResolver(TypeNameResolver iTypeNameResolver) {
+		this.typeNameResolver = iTypeNameResolver;
 	}
 
 	public void setFoldersToLookForMatchingCompilationUnit(
@@ -32,7 +41,7 @@ public class ICompilationUnitResolver {
 		this.srcFoldersToLookForMatchingCompilationUnit = foldersToLookForMatchingCompilationUnit;
 	}
 
-	public void setPackageResolver(IPackageResolver packageResolver) {
+	public void setPackageResolver(MyPackageResolver packageResolver) {
 		this.packageResolver = packageResolver;
 	}
 
@@ -60,34 +69,34 @@ public class ICompilationUnitResolver {
 	 *
 	 * </ol>
 	 */
-	public ICompilationUnit resolve(ICompilationUnit junitTest) {
+	public ICompilationUnit resolve(ICompilationUnit iCompilationUnit) {
 
-		String projectNameOfCompilationUnit = iCompilationUnitHelper.getJavaProjectName(junitTest);
+		String projectNameOfCompilationUnit = iCompilationUnitHelper.getJavaProjectName(iCompilationUnit);
 
-		MyPackage myPackage = myPackageHelper.getPackageFor(junitTest);
+		MyPackage myPackage = myPackageHelper.getPackageFor(iCompilationUnit);
 
 		List<MyPackage> packageParts = packageResolver.getPossiblePackagesFor(myPackage);
-		String primaryTypeName = iCompilationUnitHelper.getPrimaryTypeName(junitTest);
-		List<String> possibleClassUnderTestTypeNames = iTypeNameResolver.getPossibleTypeNamesFor(primaryTypeName);
+		String primaryTypeName = iCompilationUnitHelper.getPrimaryTypeName(iCompilationUnit);
+		List<String> possibleClassUnderTestTypeNames = typeNameResolver.getPossibleTypeNamesFor(primaryTypeName);
 
-		ICompilationUnit compilationUnit = doResolve(
+		ICompilationUnit resolvedCompilationUnit = doResolve(
 				projectNameOfCompilationUnit,
 				packageParts,
 				possibleClassUnderTestTypeNames);
 
-		if (compilationUnit != null) {
-			return compilationUnit;
+		if (resolvedCompilationUnit != null) {
+			return resolvedCompilationUnit;
 		}
 
 		List<String> openJavaProjects = openJavaProjectsResolver.resolve(projectNameOfCompilationUnit);
 		for (String openJavaProject : openJavaProjects) {
-			compilationUnit = doResolve(
+			resolvedCompilationUnit = doResolve(
 					openJavaProject,
 					packageParts,
 					possibleClassUnderTestTypeNames);
 
-			if (compilationUnit != null) {
-				return compilationUnit;
+			if (resolvedCompilationUnit != null) {
+				return resolvedCompilationUnit;
 			}
 		}
 
@@ -95,8 +104,7 @@ public class ICompilationUnitResolver {
 	}
 
 	private ICompilationUnit doResolve(String projectName,
-			List<MyPackage> myPackages,
-			List<String> possibleTypeNames) {
+			List<MyPackage> myPackages, List<String> possibleTypeNames) {
 		for (MySourceFolder srcFolder : srcFoldersToLookForMatchingCompilationUnit) {
 			for (MyPackage myPackage : myPackages) {
 				for (String classUnderTestTypeName : possibleTypeNames) {

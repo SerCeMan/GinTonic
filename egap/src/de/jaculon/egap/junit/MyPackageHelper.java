@@ -4,7 +4,7 @@ import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IType;
 
-public class MyPackageFragmentHelper {
+public class MyPackageHelper {
 
 	/**
 	 * Returns the package of the given ICompilationUnit.

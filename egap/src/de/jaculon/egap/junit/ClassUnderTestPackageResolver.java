@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class ClassUnderTestPackageResolver implements IPackageResolver {
+public class ClassUnderTestPackageResolver implements MyPackageResolver {
 
 	private final List<MyPackage> testPackagePrefixes;
 
@@ -12,13 +12,37 @@ public class ClassUnderTestPackageResolver implements IPackageResolver {
 		this.testPackagePrefixes = testPackagePrefixes;
 	}
 
+	/**
+	 * <h1>Example:</h1>
+	 *
+	 * <pre>
+	 * classUnderTestPackageResolver = new ClassUnderTestPackageResolver(
+	 * 				new MyPackage("test"),
+	 * 				new MyPackage("test", "de"));
+	 *
+	 * Means: All of my tests are located in a package that either starts with
+	 * "test" or "test.de".
+	 * </pre>
+	 *
+	 */
 	public ClassUnderTestPackageResolver(MyPackage... testPackagePrefixes) {
 		this.testPackagePrefixes = Arrays.asList(testPackagePrefixes);
 	}
 
 	/**
+	 * Returns all possible packages for the given test package to look for the
+	 * classUnderTest.
 	 *
+	 * This implementation returns all permutations that can be created by
+	 * subtracting the testPackagePrefixes from the given package.
 	 *
+	 * <h1>Example:</h1>
+	 *
+	 * <pre>
+	 * resolver = new ClassUnderTestPackageResolver("test") // all my tests are in a package starting with test
+	 * $ resolver.getPossiblePackagesFor("test", "de", "gqhnet")
+	 * >> "de", "gqhnet"
+	 * </pre>
 	 */
 	@Override
 	public List<MyPackage> getPossiblePackagesFor(MyPackage testPackage) {
@@ -34,7 +58,7 @@ public class ClassUnderTestPackageResolver implements IPackageResolver {
 
 			int nrOfMatches = 0;
 			for (int i = 0; i < packageParts.size(); i++) {
-				if(i == maxIndex){
+				if (i == maxIndex) {
 					break;
 				}
 				String packagePart = packageParts.get(i);

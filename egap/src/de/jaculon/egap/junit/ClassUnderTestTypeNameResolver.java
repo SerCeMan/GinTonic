@@ -3,7 +3,7 @@ package de.jaculon.egap.junit;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ClassUnderTestTypeNameResolver implements ITypeNameResolver {
+public class ClassUnderTestTypeNameResolver implements TypeNameResolver {
 
 	private final List<String> testSuffixes;
 
