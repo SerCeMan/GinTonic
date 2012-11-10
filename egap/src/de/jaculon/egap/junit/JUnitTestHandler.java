@@ -44,20 +44,27 @@ public class JUnitTestHandler {
 		boolean isTestCase = jUnitTestIdentifier.isTestCase(icompilationUnit);
 
 		if (isTestCase) {
-			ICompilationUnit classUnderTest = classUnderTestResolver.resolve(icompilationUnit);
-			if (classUnderTest != null) {
-				iCompilationUnitHelper.viewInEditor(classUnderTest);
-			}
+			jumpToClassUnderTest(icompilationUnit);
 		}
-		else { /* class-under-test */
-			ICompilationUnit junitTest = jUnitTestResolver.resolve(icompilationUnit);
-			if (junitTest != null) {
-				iCompilationUnitHelper.viewInEditor(junitTest);
-			}
-			else {
-				jUnitTestCreator.createTestFor(icompilationUnit);
-			}
+		else {
+			jumpToOrCreateJUnitTest(icompilationUnit);
+		}
+	}
 
+	private void jumpToOrCreateJUnitTest(ICompilationUnit icompilationUnit) {
+		ICompilationUnit junitTest = jUnitTestResolver.resolve(icompilationUnit);
+		if (junitTest != null) {
+			iCompilationUnitHelper.viewInEditor(junitTest);
+		}
+		else {
+			jUnitTestCreator.createTestFor(icompilationUnit);
+		}
+	}
+
+	private void jumpToClassUnderTest(ICompilationUnit icompilationUnit) {
+		ICompilationUnit classUnderTest = classUnderTestResolver.resolve(icompilationUnit);
+		if (classUnderTest != null) {
+			iCompilationUnitHelper.viewInEditor(classUnderTest);
 		}
 	}
 

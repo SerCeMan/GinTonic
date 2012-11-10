@@ -5,8 +5,8 @@ import java.util.List;
 public interface ITypeNameResolver {
 
 	/**
-	 * Returns all possible names for the given type.
+	 * Returns a list of type names for the given type name.
 	 */
-	public List<String> getPossibleTypeNamesFor(String typeName);
+	public List<String> getTypeNamesFor(String typeName);
 
 }

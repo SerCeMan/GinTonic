@@ -7,16 +7,17 @@ import de.jaculon.egap.helper.IProjectHelper;
 
 public class ClassUnderTestResolver extends ICompilationUnitResolver {
 
-	public ClassUnderTestResolver(List<MySourceFolder> srcFolders,
+	public ClassUnderTestResolver(List<MySourceFolder> srcFoldersToLookInto,
 			List<String> testSuffixes,
 			List<MyPackage> testPackagePrefixes) {
 		setiCompilationUnitHelper(new ICompilationUnitHelper());
-		setiTypeNameResolver(new ClassUnderTestTypeNameResolver(testSuffixes));
-		setFoldersToLookForMatchingCompilationUnit(srcFolders);
 		setOpenJavaProjectsResolver(new IProjectHelper());
+		setMyPackageHelper(new MyPackageHelper());
+
+		setiTypeNameResolver(new ReplaceSuffixTypeNameResolver(testSuffixes));
+		setFoldersToLookForMatchingCompilationUnit(srcFoldersToLookInto);
 		setPackageResolver(new ClassUnderTestPackageResolver(
 				testPackagePrefixes));
-		setiPackageFragmentHelper(new MyPackageHelper());
 	}
 
 }

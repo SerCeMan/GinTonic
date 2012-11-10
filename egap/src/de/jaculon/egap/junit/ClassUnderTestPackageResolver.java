@@ -16,12 +16,15 @@ public class ClassUnderTestPackageResolver implements MyPackageResolver {
 	 * <h1>Example:</h1>
 	 *
 	 * <pre>
-	 * classUnderTestPackageResolver = new ClassUnderTestPackageResolver(
+	 * $ classUnderTestPackageResolver = new ClassUnderTestPackageResolver(
 	 * 				new MyPackage("test"),
 	 * 				new MyPackage("test", "de"));
 	 *
 	 * Means: All of my tests are located in a package that either starts with
 	 * "test" or "test.de".
+	 *
+	 * $ classUnderTestPackageResolver.resolve(new MyPackage("test", "a", "package"))
+	 * >> ["a", "package"]
 	 * </pre>
 	 *
 	 */

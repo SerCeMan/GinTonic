@@ -1,22 +1,26 @@
 package de.jaculon.egap.junit;
 
-import org.eclipse.jdt.core.ICompilationUnit;
+import java.util.List;
 
-public class JUnitTestResolver {
+import de.jaculon.egap.helper.ICompilationUnitHelper;
+import de.jaculon.egap.helper.IProjectHelper;
 
-	private String testSuffix;
-	private String testPackagePrefix;
+public class JUnitTestResolver extends ICompilationUnitResolver {
 
-	public void setTestSuffix(String testSuffix) {
-		this.testSuffix = testSuffix;
-	}
+	public JUnitTestResolver(List<MySourceFolder> srcFoldersToLookInto,
+			List<String> testSuffixes,
+			List<MyPackage> testPackagePrefixes) {
+		setiCompilationUnitHelper(new ICompilationUnitHelper());
+		setOpenJavaProjectsResolver(new IProjectHelper());
+		setMyPackageHelper(new MyPackageHelper());
 
-	public void setTestPackagePrefix(String testPackagePrefix) {
-		this.testPackagePrefix = testPackagePrefix;
-	}
+		setiTypeNameResolver(new AppendSuffixTypeNameResolver(testSuffixes));
 
-	public ICompilationUnit resolve(ICompilationUnit icompilationUnit) {
-		return icompilationUnit;
+		setFoldersToLookForMatchingCompilationUnit(srcFoldersToLookInto);
+
+		setPackageResolver(new ClassUnderTestPackageResolver(
+				testPackagePrefixes));
+
 	}
 
 }

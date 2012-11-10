@@ -30,7 +30,7 @@ public class ICompilationUnitResolver {
 		super();
 	}
 
-	public void setiPackageFragmentHelper(
+	public void setMyPackageHelper(
 			MyPackageHelper iPackageFragmentHelper) {
 		this.myPackageHelper = iPackageFragmentHelper;
 	}
@@ -80,7 +80,7 @@ public class ICompilationUnitResolver {
 
 		List<MyPackage> packageParts = packageResolver.getPossiblePackagesFor(myPackage);
 		String primaryTypeName = iCompilationUnitHelper.getPrimaryTypeName(iCompilationUnit);
-		List<String> possibleClassUnderTestTypeNames = typeNameResolver.getPossibleTypeNamesFor(primaryTypeName);
+		List<String> possibleClassUnderTestTypeNames = typeNameResolver.getTypeNamesFor(primaryTypeName);
 
 		ICompilationUnit resolvedCompilationUnit = doResolve(
 				projectNameOfCompilationUnit,
