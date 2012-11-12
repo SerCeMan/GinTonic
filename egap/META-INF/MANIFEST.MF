@@ -19,6 +19,7 @@ Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .
 Bundle-Vendor: Tim Majunke
 Export-Package: de.jaculon.egap;uses:="org.eclipse.ui,org.eclipse.ui.plugin,org.osgi.framework",
+ de.jaculon.egap.command,
  de.jaculon.egap.guice,
  de.jaculon.egap.guice.analyzer,
  de.jaculon.egap.guice.annotations,

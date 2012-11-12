@@ -2,17 +2,19 @@ package de.jaculon.egap.command;
 
 import java.util.List;
 
+import de.jaculon.egap.helper.IProjectResourceHelper;
 import de.jaculon.egap.utils.IProjectResource;
-import de.jaculon.egap.utils.IProjectResourceUtils;
 
 
 /**
  * A {@link NavigationCycle} can be used to jump from one project resource to
  * another. Jump means that the target resource is opened in an eclipse editor.
- * 
+ *
  * @author tmajunke
  */
 public class NavigationCycle {
+
+	private IProjectResourceHelper iProjectResourceHelper = new IProjectResourceHelper();
 
 	/**
 	 * The project resources that we can jump to.
@@ -24,6 +26,11 @@ public class NavigationCycle {
 	 */
 	private int index = 0;
 
+	public void setiProjectResourceHelper(
+			IProjectResourceHelper iProjectResourceHelper) {
+		this.iProjectResourceHelper = iProjectResourceHelper;
+	}
+
 	public void setProjectResources(List<IProjectResource> projectResources) {
 		this.projectResources = projectResources;
 	}
@@ -31,7 +38,7 @@ public class NavigationCycle {
 	/**
 	 * Jumps to the given project resource if the resource is contained in this
 	 * navigation cycle.
-	 * 
+	 *
 	 * @param projectResource the projectResource. May not be null.
 	 * @return true, if the resource has been contained in this navigation
 	 *         cycle. Otherwise false.
@@ -58,7 +65,7 @@ public class NavigationCycle {
 	private void jumpTo(int indexToJumpTo) {
 		int i = checkIndex(indexToJumpTo);
 		IProjectResource jumpTarget = projectResources.get(i);
-		IProjectResourceUtils.openEditorWithStatementDeclaration(jumpTarget);
+		iProjectResourceHelper.openEditorWithStatementDeclaration(jumpTarget);
 	}
 
 	private int checkIndex(int i) {
@@ -73,7 +80,7 @@ public class NavigationCycle {
 	/**
 	 * Returns true if the given projectResource is contained in this navigation
 	 * cycle, otherwise false.
-	 * 
+	 *
 	 * @param projectResource the projectResource
 	 * @return true if the given projectResource is contained in this navigation
 	 *         cycle, otherwise false.
