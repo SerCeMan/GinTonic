@@ -2,8 +2,8 @@ package de.jaculon.egap.command;
 
 import java.util.List;
 
-import de.jaculon.egap.helper.IProjectResourceHelper;
 import de.jaculon.egap.utils.IProjectResource;
+import de.jaculon.egap.utils.IProjectResourceUtils;
 
 
 /**
@@ -14,8 +14,6 @@ import de.jaculon.egap.utils.IProjectResource;
  */
 public class NavigationCycle {
 
-	private IProjectResourceHelper iProjectResourceHelper = new IProjectResourceHelper();
-
 	/**
 	 * The project resources that we can jump to.
 	 */
@@ -25,11 +23,6 @@ public class NavigationCycle {
 	 * The index so we know where to jump next.
 	 */
 	private int index = 0;
-
-	public void setiProjectResourceHelper(
-			IProjectResourceHelper iProjectResourceHelper) {
-		this.iProjectResourceHelper = iProjectResourceHelper;
-	}
 
 	public void setProjectResources(List<IProjectResource> projectResources) {
 		this.projectResources = projectResources;
@@ -46,7 +39,8 @@ public class NavigationCycle {
 	public boolean jumpTo(IProjectResource projectResource) {
 		Integer resourceIndex = getResourceIndexFor(projectResource);
 		if (resourceIndex != null) {
-			jumpTo(resourceIndex + 1);
+			this.index = resourceIndex;
+			jumpToCurrent();
 			return true;
 		}
 		return false;
@@ -58,23 +52,18 @@ public class NavigationCycle {
 	 * the project resources).
 	 */
 	public void jumpToNext() {
-		index = checkIndex(index++);
-		jumpTo(index);
+		increaseIndex();
+		jumpToCurrent();
 	}
 
-	private void jumpTo(int indexToJumpTo) {
-		int i = checkIndex(indexToJumpTo);
-		IProjectResource jumpTarget = projectResources.get(i);
-		iProjectResourceHelper.openEditorWithStatementDeclaration(jumpTarget);
+	private void jumpToCurrent() {
+		IProjectResource jumpTarget = projectResources.get(index);
+		IProjectResourceUtils.openEditorWithStatementDeclaration(jumpTarget);
 	}
 
-	private int checkIndex(int i) {
+	private void increaseIndex() {
 		int size = projectResources.size();
-		if (i < size) {
-			return i;
-		}
-		int n = (i % size);
-		return n;
+		this.index = (index + 1) % size;
 	}
 
 	/**

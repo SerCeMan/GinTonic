@@ -37,7 +37,7 @@ import de.jaculon.egap.utils.ITypeBindingUtils;
 
 /**
  * Jumps from a binding to its binding definition(s).
- * 
+ *
  * @author tmajunke
  */
 public class CycleBindingsHandler extends AbstractHandler {
@@ -153,7 +153,7 @@ public class CycleBindingsHandler extends AbstractHandler {
 
 	/**
 	 * Returns the injection point based upon the currently selected ast node.
-	 * 
+	 *
 	 * @return the injection point based upon the current selection or null if
 	 *         the current selected ast node is not a guice binding.
 	 * @throws JavaModelException
@@ -166,25 +166,25 @@ public class CycleBindingsHandler extends AbstractHandler {
 		/**
 		 * Here we can perform a quick check on the IJavaElement if the
 		 * currently selected element is a binding. Trying to avoid the parsing.
-		 * 
+		 *
 		 * <pre>
 		 * IJavaElement.FIELD
 		 * @Inject
 		 * private IPianoPlayer<Bar> jackThePianoPlayer;
-		 *                                   
-		 * IJavaElement.METHOD                           
+		 *
+		 * IJavaElement.METHOD
 		 * @Provides
 		 * private Customer provideCustomer(@Seed Long seed) {
-		 * 
+		 *
 		 * IJavaElement.METHOD
 		 * @Inject
 		 * public void setServableDrinks(Set<Drink> servableDrinks) {
 		 *   this.servableDrinks = servableDrinks;
 		 * }
-		 * 
+		 *
 		 * <pre>
-		 * 
-		 * 
+		 *
+		 *
 		 */
 		if (!(elementType == IJavaElement.FIELD || elementType == IJavaElement.METHOD)) {
 			return null;
@@ -224,9 +224,9 @@ public class CycleBindingsHandler extends AbstractHandler {
 		if (binding instanceof IAnnotatedInjectionPoint) {
 			IAnnotatedInjectionPoint annotatedThing = (IAnnotatedInjectionPoint) binding;
 			GuiceAnnotation guiceAnnotation = annotatedThing.getGuiceAnnotation();
-			
+
 			long now = System.currentTimeMillis();
-			
+
 			projectResourcesToVisit = guiceIndex.getBindingsByTypeAndAnnotation(
 					typeBindingWithoutProvider,
 					guiceAnnotation);
