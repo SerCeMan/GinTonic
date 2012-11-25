@@ -232,10 +232,10 @@ public class ASTNodeUtils {
 			return injectionPoint;
 		}
 
-		ProviderMethod guicyProviderMethodVar = getProviderMethod(
+		ProviderMethod providerMethod = getProviderMethod(
 				name);
 
-		return guicyProviderMethodVar;
+		return providerMethod;
 	}
 
 	public static ProviderMethod getProviderMethod(
