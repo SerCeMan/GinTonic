@@ -46,6 +46,8 @@ public class EgapPlugin extends AbstractUIPlugin implements IStartup {
 
 	private List<EgapQuickFix> quickfixes = ListUtils.newArrayList();
 
+	public static String ID = "de.jaculon.egap.EgapBuilder";
+
 	public EgapPlugin() {
 		egapPlugin = this;
 	}

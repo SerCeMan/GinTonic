@@ -27,17 +27,15 @@ import de.jaculon.egap.utils.IProjectUtils;
 
 
 /**
- * The {@link EgapBuilder} creates and updates the the {@link GuiceIndex}.
- * 
+ * The {@link EgapProjectBuilder} creates and updates the the {@link GuiceIndex}.
+ *
  * @author tmajunke
  */
-public class EgapBuilder extends IncrementalProjectBuilder {
-
-	public static String ID = "de.jaculon.egap.EgapBuilder";
+public class EgapProjectBuilder extends IncrementalProjectBuilder {
 
 	private static GuiceAnalyzer guiceIndexer = new GuiceAnalyzer();
 
-	public EgapBuilder() {
+	public EgapProjectBuilder() {
 		super();
 	}
 
@@ -143,7 +141,7 @@ public class EgapBuilder extends IncrementalProjectBuilder {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see
 		 * org.eclipse.core.resources.IResourceDeltaVisitor#visit(org.eclipse
 		 * .core.resources.IResourceDelta)

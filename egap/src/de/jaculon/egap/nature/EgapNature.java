@@ -8,7 +8,6 @@ import org.eclipse.core.runtime.CoreException;
 
 import de.jaculon.egap.EgapPlugin;
 import de.jaculon.egap.guice.GuiceIndex;
-import de.jaculon.egap.project_builder.EgapBuilder;
 
 
 public class EgapNature implements IProjectNature {
@@ -25,7 +24,7 @@ public class EgapNature implements IProjectNature {
 		ICommand[] commands = desc.getBuildSpec();
 
 		for (int i = 0; i < commands.length; ++i) {
-			if (commands[i].getBuilderName().equals(EgapBuilder.ID)) {
+			if (commands[i].getBuilderName().equals(EgapPlugin.ID)) {
 				return;
 			}
 		}
@@ -33,7 +32,7 @@ public class EgapNature implements IProjectNature {
 		ICommand[] newCommands = new ICommand[commands.length + 1];
 		System.arraycopy(commands, 0, newCommands, 0, commands.length);
 		ICommand command = desc.newCommand();
-		command.setBuilderName(EgapBuilder.ID);
+		command.setBuilderName(EgapPlugin.ID);
 		newCommands[newCommands.length - 1] = command;
 		desc.setBuildSpec(newCommands);
 		project.setDescription(desc, null);

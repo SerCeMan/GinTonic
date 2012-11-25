@@ -29,7 +29,7 @@ import de.jaculon.egap.guice.statements.BindingDefinition;
 import de.jaculon.egap.guice.statements.GuiceStatement;
 import de.jaculon.egap.guice.statements.InstallModuleStatement;
 import de.jaculon.egap.guice.statements.JustInTimeBindingStatement;
-import de.jaculon.egap.project_builder.EgapBuilder;
+import de.jaculon.egap.project_builder.EgapProjectBuilder;
 import de.jaculon.egap.utils.ICompilationUnitUtils;
 import de.jaculon.egap.utils.IPackageFragmentUtils;
 import de.jaculon.egap.utils.IProjectUtils;
@@ -42,7 +42,7 @@ import de.jaculon.egap.utils.StringUtils;
 
 /**
  * The guice index holds the informations about the guice modules as collected
- * during the build process ({@link EgapBuilder}), so they can be accessed
+ * during the build process ({@link EgapProjectBuilder}), so they can be accessed
  * faster (e.g by the quickfixes).
  * 
  * @author tmajunke
@@ -111,7 +111,7 @@ public class GuiceIndex implements Serializable {
 							IProject iProject = project.getProject();
 							iProject.build(
 									IncrementalProjectBuilder.FULL_BUILD,
-									EgapBuilder.ID,
+									EgapPlugin.ID,
 									null,
 									progressMonitor);
 						}
