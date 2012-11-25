@@ -19,31 +19,31 @@ import de.jaculon.egap.utils.ITypeBindingUtils;
 
 /**
  * Enables us to jump from an injection point to its binding definition.
- * 
+ *
  * <h5>Example:</h5>
- * 
+ *
  * <pre>
  * <code>
  * class Person{}
- * 
+ *
  * class PersonModule{
  *   public void configure(){
  *   	bind(Person.class).in(Scopes.SINGLETON);
  *   }
  * }
- * 
+ *
  * class Barmixer{
  *  @Inject
  * 	private Person person;
  * }
- * 
+ *
  * </code>
  * </pre>
- * 
+ *
  * The quick fix enables us to jump from person (the injection point) to the
  * binding statement in PersonModule.
- * 
- * 
+ *
+ *
  * @author tmajunke
  */
 public class QuickfixNavigateTo extends AbstractEgapQuickFix {
@@ -51,28 +51,28 @@ public class QuickfixNavigateTo extends AbstractEgapQuickFix {
 	@Override
 	public void addProposals(IInvocationContext context,
 			List<IJavaCompletionProposal> proposals) throws CoreException {
-		IInjectionPoint guiceTypeInfo = ASTNodeUtils.getInjectionPoint(
+		IInjectionPoint injectionPoint = ASTNodeUtils.getInjectionPoint(
 				context.getCoveringNode(),
 				context.getASTRoot());
 
-		if (guiceTypeInfo != null) {
+		if (injectionPoint != null) {
 			addGotoProposalFrom(
-					guiceTypeInfo,
+					injectionPoint,
 					proposals);
 		}
 
 	}
 
-	private void addGotoProposalFrom(IInjectionPoint guiceTypeInfo,
+	private void addGotoProposalFrom(IInjectionPoint injectionPoint,
 			List<IJavaCompletionProposal> proposals) {
 		GuiceIndex guiceIndex = GuiceIndex.get();
-		ITypeBinding typeBinding = guiceTypeInfo.getTargetTypeBinding();
+		ITypeBinding typeBinding = injectionPoint.getTargetTypeBinding();
 		ITypeBinding typeBindingWithoutProvider = ITypeBindingUtils.removeSurroundingProvider(typeBinding);
-		
+
 		List<GuiceStatement> bindingStatements = null;
-		
-		if (guiceTypeInfo instanceof IAnnotatedInjectionPoint) {
-			IAnnotatedInjectionPoint annotatedThing = (IAnnotatedInjectionPoint) guiceTypeInfo;
+
+		if (injectionPoint instanceof IAnnotatedInjectionPoint) {
+			IAnnotatedInjectionPoint annotatedThing = (IAnnotatedInjectionPoint) injectionPoint;
 			GuiceAnnotation guiceAnnotation = annotatedThing.getGuiceAnnotation();
 			bindingStatements = guiceIndex.getBindingsByTypeAndAnnotation(
 					typeBindingWithoutProvider,
@@ -82,7 +82,7 @@ public class QuickfixNavigateTo extends AbstractEgapQuickFix {
 			bindingStatements = guiceIndex.getBindingsByType(
 					typeBindingWithoutProvider);
 		}
-		
+
 		createProposalForEachBinding(proposals, bindingStatements);
 
 	}
