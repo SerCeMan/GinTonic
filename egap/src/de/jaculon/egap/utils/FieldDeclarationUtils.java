@@ -1,20 +1,18 @@
 package de.jaculon.egap.utils;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
-import org.eclipse.jdt.core.dom.MarkerAnnotation;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.Modifier;
-import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.Type;
 
 import de.jaculon.egap.guice.annotations.GuiceAnnotation;
+import de.jaculon.egap.guice.injection_point.InjectionIsAttachedTo;
+import de.jaculon.egap.guice.injection_point.InjectionPoint;
 
 
 public class FieldDeclarationUtils {
@@ -62,7 +60,7 @@ public class FieldDeclarationUtils {
 		}
 
 		/*
-		 * Check if a guicified setter method exists. 
+		 * Check if a guicified setter method exists.
 		 */
 		String setterMethodName = "set" + StringUtils.capitalize(fieldName);
 
@@ -87,7 +85,7 @@ public class FieldDeclarationUtils {
 
 	/**
 	 * Returns true if the field declaration is static.
-	 * 
+	 *
 	 * @param fieldDeclaration the field declaration
 	 */
 	public static boolean isStatic(FieldDeclaration fieldDeclaration) {
@@ -102,44 +100,6 @@ public class FieldDeclarationUtils {
 			}
 		}
 		return false;
-	}
-
-	/**
-	 * Deletes all annotations from the given field declaration.
-	 * 
-	 * @param fieldDeclaration the field declaration
-	 */
-	public static void removeAnnotations(FieldDeclaration fieldDeclaration) {
-		@SuppressWarnings("unchecked")
-		List<ASTNode> modifiers = fieldDeclaration.modifiers();
-		List<ASTNode> annotationsToDelete = new ArrayList<ASTNode>(
-				modifiers.size());
-		for (ASTNode astNode : modifiers) {
-			annotationsToDelete.add(astNode);
-
-			/*
-			 * astNode.delete(); doesnt work here. We have to collect the
-			 * annotations first and then delete them!
-			 */
-		}
-		for (ASTNode astNode : annotationsToDelete) {
-			astNode.delete();
-		}
-	}
-
-	/**
-	 * Adds the annotation to the field declaration.
-	 */
-	public static void addMarkerAnnotation(FieldDeclaration fieldDeclaration,
-			String annotationUnqualifiedName) {
-		AST ast = fieldDeclaration.getAST();
-		MarkerAnnotation annotation = ast.newMarkerAnnotation();
-		SimpleName name = ast.newSimpleName(annotationUnqualifiedName);
-		annotation.setTypeName(name);
-
-		@SuppressWarnings("unchecked")
-		List<ASTNode> modifiers = fieldDeclaration.modifiers();
-		modifiers.add(0, annotation);
 	}
 
 }

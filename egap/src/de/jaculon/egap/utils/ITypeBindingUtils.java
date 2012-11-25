@@ -10,7 +10,7 @@ public class ITypeBindingUtils {
 	/**
 	 * Examines the given type binding if it is an instance of the type.
 	 * Processes parent class- and interface check.
-	 * 
+	 *
 	 * @param typeBinding the type binding
 	 * @param fullyQualifiedTypeName the fully qualified name to search for. May
 	 *            be a class or an interface.
@@ -34,7 +34,7 @@ public class ITypeBindingUtils {
 	public static boolean isGuiceNamedType(ITypeBinding typeBinding) {
 		return isKindOf(typeBinding, GuiceConstants.GUICE_NAMED);
 	}
-	
+
 	public static boolean isGuiceBindingAnnotation(ITypeBinding typeBinding) {
 		String qualifiedName = typeBinding.getQualifiedName();
 		return qualifiedName.equals(
@@ -61,7 +61,7 @@ public class ITypeBindingUtils {
 	 * Examines the given type binding if it is an instance of the type and if
 	 * it is then the {@link ITypeBinding} is returned. Processes the super
 	 * classes and the interfaces to check for type equality.
-	 * 
+	 *
 	 * @param typeBinding the type binding
 	 * @param fullyQualifiedTypeName the fully qualified name to search for. May
 	 *            be a class or an interface.
@@ -74,9 +74,9 @@ public class ITypeBindingUtils {
 		if (typeBinding == null) {
 			return null;
 		}
-		
+
 		ITypeBinding typeBindingToGetKindOf = typeBinding;
-		
+
 		if (typeBindingToGetKindOf.isParameterizedType()) {
 			typeBindingToGetKindOf = typeBindingToGetKindOf.getErasure();
 		}

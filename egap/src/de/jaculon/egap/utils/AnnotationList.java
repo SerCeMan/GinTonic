@@ -17,7 +17,7 @@ public class AnnotationList {
 
 	private final List<Annotation> annotations;
 
-	AnnotationList(List<Annotation> annotations) {
+	public AnnotationList(List<Annotation> annotations) {
 		super();
 		this.annotations = annotations;
 	}
@@ -29,7 +29,7 @@ public class AnnotationList {
 	public boolean containsAssistedAnnotation() {
 		return containsAnnotation(GuiceConstants.GUICE_ANNOTATION_ASSISTED);
 	}
-	
+
 	/**
 	 * Returns true if any of the annotations is of type
 	 * {@link GuiceConstants#GUICE_ANNOTATION_INJECT}, otherwise false.
@@ -37,7 +37,7 @@ public class AnnotationList {
 	public boolean containsInjectType() {
 		return containsAnnotation(GuiceConstants.GUICE_ANNOTATION_INJECT);
 	}
-	
+
 	/**
 	 * Returns true if any of the annotations is of type
 	 * {@link GuiceConstants#GUICE_SINGLETON_SCOPE}, otherwise false.
@@ -45,7 +45,7 @@ public class AnnotationList {
 	public boolean containsSingletonScopeAnnotation() {
 		return containsAnnotation(GuiceConstants.GUICE_SINGLETON_SCOPE);
 	}
-	
+
 	/**
 	 * Returns true if any of the annotations is of type
 	 * {@link GuiceConstants#GUICE_PROVIDES}, otherwise false.
@@ -53,13 +53,13 @@ public class AnnotationList {
 	public boolean containsProvidesAnnotation() {
 		return containsAnnotation(GuiceConstants.GUICE_PROVIDES);
 	}
-	
+
 	public GuiceAnnotation getGuiceAnnotation() {
 		String namedAnnotationLiteralValue = getNamedAnnotationLiteralValue();
 		if (namedAnnotationLiteralValue != null) {
 			return new GuiceNamedAnnotation(namedAnnotationLiteralValue);
 		}
-		
+
 		String bindingAnnotation = getBindingAnnotation();
 		if (bindingAnnotation != null) {
 			return new GuiceClassAnnotation(bindingAnnotation);
@@ -67,7 +67,7 @@ public class AnnotationList {
 
 		return null;
 	}
-	
+
 	private boolean containsAnnotation(String annotationType) {
 		for (Annotation annotation : annotations) {
 			boolean ofType = isOfType(

@@ -57,24 +57,6 @@ public class StringUtils {
 		return result.toString();
 	}
 
-	public static String uncapitalize(String name) {
-		StringBuilder result = new StringBuilder(name.length());
-		char upperCase = Character.toLowerCase(name.charAt(0));
-		result.append(upperCase);
-		result.append(name.substring(1));
-		return result.toString();
-	}
-
-	/**
-	 * Returns the setter method name for the given property name.
-	 *
-	 * @param name the name of the property
-	 * @return the setter method name
-	 */
-	public static String toSetterMethodname(String name) {
-		return "set" + capitalize(name);
-	}
-
 	/**
 	 * Translates primitives like int, double, etc to the fully qualified
 	 * wrapper class name(eg. for the primitive "int" you get

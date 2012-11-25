@@ -1,4 +1,4 @@
-package de.jaculon.egap.command;
+package de.jaculon.egap.navigate;
 
 import java.util.List;
 
@@ -12,7 +12,7 @@ import de.jaculon.egap.utils.IProjectResourceUtils;
  *
  * @author tmajunke
  */
-public class NavigationCycle {
+public class NavigationCycle{
 
 	/**
 	 * The project resources that we can jump to.

@@ -24,9 +24,9 @@ import org.eclipse.jdt.core.dom.ITypeBinding;
 
 import de.jaculon.egap.EgapPlugin;
 import de.jaculon.egap.guice.annotations.GuiceAnnotation;
+import de.jaculon.egap.guice.injection_point.IInjectionPoint;
 import de.jaculon.egap.guice.statements.AssistedBindingStatement;
 import de.jaculon.egap.guice.statements.BindingDefinition;
-import de.jaculon.egap.guice.statements.GuiceStatement;
 import de.jaculon.egap.guice.statements.InstallModuleStatement;
 import de.jaculon.egap.guice.statements.JustInTimeBindingStatement;
 import de.jaculon.egap.project_builder.EgapProjectBuilder;
@@ -39,12 +39,11 @@ import de.jaculon.egap.utils.Preconditions;
 import de.jaculon.egap.utils.SetUtils;
 import de.jaculon.egap.utils.StringUtils;
 
-
 /**
  * The guice index holds the informations about the guice modules as collected
- * during the build process ({@link EgapProjectBuilder}), so they can be accessed
- * faster (e.g by the quickfixes).
- * 
+ * during the build process ({@link EgapProjectBuilder}), so they can be
+ * accessed faster (e.g by the quickfixes).
+ *
  * @author tmajunke
  */
 public class GuiceIndex implements Serializable {
@@ -53,14 +52,15 @@ public class GuiceIndex implements Serializable {
 
 	private static GuiceIndex instance;
 
-	private BuildState buildState = BuildState.INITIAL;
+	private GuiceIndexState buildState = GuiceIndexState.INITIAL;
 
 	private boolean fromDisc;
 
 	/**
 	 * The guice modules.
 	 */
-	private ArrayList<GuiceModule> guiceModules = new ArrayList<GuiceModule>(100);
+	private ArrayList<GuiceModule> guiceModules = new ArrayList<GuiceModule>(
+			100);
 
 	private GuiceIndex() {
 		super();
@@ -86,11 +86,11 @@ public class GuiceIndex implements Serializable {
 		this.fromDisc = fromDisc;
 	}
 
-	public BuildState getBuildState() {
+	public GuiceIndexState getBuildState() {
 		return buildState;
 	}
 
-	public void setBuildState(BuildState buildState) {
+	public void setBuildState(GuiceIndexState buildState) {
 		this.buildState = buildState;
 	}
 
@@ -158,7 +158,7 @@ public class GuiceIndex implements Serializable {
 					+ " to Guice index " + getIndexInfoShort() + ".");
 		}
 	}
-	
+
 	/**
 	 * Removes all modules of the given project from the index.
 	 */
@@ -175,7 +175,7 @@ public class GuiceIndex implements Serializable {
 			removeGuiceModule(guiceModule.getTypeNameFullyQualified(), false);
 		}
 	}
-	
+
 	public void removeGuiceModule(String nameFullyQualified, boolean log) {
 		for (int i = 0; i < guiceModules.size(); i++) {
 			GuiceModule guiceModule = guiceModules.get(i);
@@ -210,7 +210,7 @@ public class GuiceIndex implements Serializable {
 	 * Returns the guice modules of the given package and the parent packages as
 	 * indicated by the parameter depth. Returns an empty list if no modules
 	 * were found.
-	 * 
+	 *
 	 * @param depth the number of parent packages to include (0 = the empty list
 	 *            is returned, 1 means the modules in the given package, 2 means
 	 *            the modules in the given package and the parent package, 3...
@@ -266,66 +266,57 @@ public class GuiceIndex implements Serializable {
 		return guiceModulesInGivenPackages;
 	}
 
-	public List<GuiceStatement> getBindingsByType(ITypeBinding typeToFind) {
+	public List<BindingDefinition> getBindingDefinitionsFor(
+			IInjectionPoint injectionPoint) {
+		List<BindingDefinition> projectResourcesToVisit;
+		ITypeBinding typeBinding = injectionPoint.getTargetTypeBinding();
+		ITypeBinding typeBindingWithoutProvider = ITypeBindingUtils.removeSurroundingProvider(typeBinding);
 
-		String typeToFindQualifiedName = typeToFind.getQualifiedName();
+		GuiceAnnotation guiceAnnotation = injectionPoint.getGuiceAnnotation();
 
-		/*
-		 * We only store the wrappers instead of primitives, so maybe we must
-		 * replace the primitive type by the wrapper type.
-		 */
-		typeToFindQualifiedName = StringUtils.translatePrimitiveToWrapper(typeToFindQualifiedName);
+		long now = System.currentTimeMillis();
 
-		List<GuiceStatement> bindings = ListUtils.newArrayList();
-		for (GuiceModule guiceModule : guiceModules) {
+		projectResourcesToVisit = getBindingsByTypeAndAnnotation(
+				typeBindingWithoutProvider,
+				guiceAnnotation);
 
-			List<BindingDefinition> bindingStatements = guiceModule.getBindingDefinitions();
+		long then = System.currentTimeMillis();
+		long elapsed = then - now;
+		System.out.println("getBindingsForInjectionPoint took " + elapsed
+				+ " ms");
 
-			if (bindingStatements == null) {
-				continue;
-			}
-
-			for (BindingDefinition bindingStatement : bindingStatements) {
-				String bindingsBoundType = bindingStatement.getBoundType();
-				if (bindingsBoundType.equals(typeToFindQualifiedName)) {
-					bindings.add(bindingStatement);
-				}
-			}
-
-		}
-
-		return bindings;
+		return projectResourcesToVisit;
 	}
 
 	/**
 	 * Returns the {@link BindingDefinition}s for the given bound type and
 	 * annotation type.
-	 * 
+	 *
 	 * <h5>Just in time binding</h5>
-	 * 
+	 *
 	 * If we could not find an explicit binding then we check the type. If it is
-	 * a concrete class the we return a just in time binding. In all other cases we
-	 * return null.
-	 * 
+	 * a concrete class the we return a just in time binding. In all other cases
+	 * we return null.
+	 *
 	 * <h5>MapBinder Statements</h5>
-	 * 
+	 *
 	 * If the type to find is a {@link Map}, then we also check if we can find a
 	 * suitable MapBinder statement.
-	 * 
+	 *
 	 * @param typeToFind the bound type. Cannot be null. Primitives (like "int")
 	 *            values are allowed. Provider types are not allowed( e.g
 	 *            instead of asking for "Provider&lt;Date&gt;" you must ask for
 	 *            "Date").
-	 * 
+	 *
 	 * @param annotationTypeToFind the annotationType. Can be null.
 	 * @param namedAnnotationLiteralValueToFind the literal value of the named
 	 *            annotation. Can be null.
-	 * @param packageToLimit if given then only the Guice modules in
-	 *            the same package are processed. Can be null.
+	 * @param packageToLimit if given then only the Guice modules in the same
+	 *            package are processed. Can be null.
 	 * @return the discovered {@link BindingDefinition}. Can be empty but not
 	 *         null if we did not find a binding.
 	 */
-	public List<GuiceStatement> getBindingsByTypeAndAnnotationLimitToPackage(
+	public List<BindingDefinition> getBindingsByTypeAndAnnotationLimitToPackage(
 			ITypeBinding typeToFind, GuiceAnnotation guiceAnnotationToFind,
 			Set<String> packageToLimit) {
 		String typeToFindQualifiedName = typeToFind.getQualifiedName();
@@ -336,7 +327,7 @@ public class GuiceIndex implements Serializable {
 		 */
 		typeToFindQualifiedName = StringUtils.translatePrimitiveToWrapper(typeToFindQualifiedName);
 
-		List<GuiceStatement> bindings = ListUtils.newArrayList();
+		List<BindingDefinition> bindings = ListUtils.newArrayList();
 		for (GuiceModule guiceModule : guiceModules) {
 
 			if (packageToLimit != null) {
@@ -383,16 +374,16 @@ public class GuiceIndex implements Serializable {
 	private void checkForJustInTimeBindings(
 			GuiceAnnotation guiceAnnotationToFind,
 			ITypeBinding typeBindingOfInterfaceType,
-			List<GuiceStatement> bindings) {
+			List<BindingDefinition> bindings) {
 		if (bindings.isEmpty() && guiceAnnotationToFind == null) {
 
 			/*
 			 * No implicit binding if the injected type is parameterized!
-			 * 
+			 *
 			 * Example:
-			 * 
+			 *
 			 * @Inject private ModulSpez<T> modulSpez;
-			 * 
+			 *
 			 * @Inject private DatendateiParser<M15N1OV14>
 			 * m15n1oDatendateiParser;
 			 */
@@ -450,11 +441,11 @@ public class GuiceIndex implements Serializable {
 	/**
 	 * Synonym for getBindingsByTypeAndAnnotationLimitToPackage(typeToFind,
 	 * guiceAnnotationToFind, null);
-	 * 
+	 *
 	 * @see #getBindingsByTypeAndAnnotationLimitToPackage(ITypeBinding,
 	 *      GuiceAnnotation, Set)
 	 */
-	public List<GuiceStatement> getBindingsByTypeAndAnnotation(
+	public List<BindingDefinition> getBindingsByTypeAndAnnotation(
 			ITypeBinding typeToFind, GuiceAnnotation guiceAnnotationToFind) {
 		return getBindingsByTypeAndAnnotationLimitToPackage(
 				typeToFind,

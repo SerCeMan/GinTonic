@@ -12,13 +12,10 @@ import org.eclipse.jdt.core.dom.MarkerAnnotation;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.Name;
 import org.eclipse.jdt.core.dom.SimpleName;
-import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
-import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 
 import de.jaculon.egap.guice.GuiceConstants;
-import de.jaculon.egap.guice.annotations.GuiceAnnotation;
 import de.jaculon.egap.guice.statements.GuiceStatement;
 
 
@@ -193,70 +190,6 @@ public class ASTNodeUtils {
 		if (methodByName.size() > 0) {
 			MethodDeclaration methodDeclaration = methodByName.get(0);
 			return methodDeclaration;
-		}
-		return null;
-	}
-
-	public static InjectionPoint getGuiceFieldDeclarationIfFieldDeclaration(
-			ASTNode astNode, CompilationUnit astRoot) {
-		if (!(astNode instanceof Name)) {
-			return null;
-		}
-		Name name = (Name) astNode;
-		final String variableName = name.getFullyQualifiedName();
-
-		FieldDeclaration fieldDeclaration = ASTNodeUtils.getFieldDeclaration(name);
-		if (fieldDeclaration != null) {
-			InjectionPoint guiceFieldDeclaration = FieldDeclarationUtils.getTypeIfAnnotatedWithInject(
-					fieldDeclaration,
-					astRoot,
-					variableName);
-
-			return guiceFieldDeclaration;
-		}
-		return null;
-	}
-
-	public static IInjectionPoint getInjectionPoint(
-			ASTNode astNode, CompilationUnit compilationUnit) {
-
-		if (!(astNode instanceof Name)) {
-			return null;
-		}
-
-		Name name = (Name) astNode;
-		IInjectionPoint injectionPoint = getGuiceFieldDeclarationIfFieldDeclaration(
-				name,
-				compilationUnit);
-		if (injectionPoint != null) {
-			return injectionPoint;
-		}
-
-		ProviderMethod providerMethod = getProviderMethod(
-				name);
-
-		return providerMethod;
-	}
-
-	public static ProviderMethod getProviderMethod(
-			Name name) {
-		ASTNode parentNode = name.getParent();
-		if (parentNode instanceof SingleVariableDeclaration) {
-			SingleVariableDeclaration singleVariableDeclaration = (SingleVariableDeclaration) parentNode;
-			boolean isProviderMethod = ASTNodeUtils.isProviderMethod(singleVariableDeclaration.getParent());
-
-			if (isProviderMethod) {
-				@SuppressWarnings("unchecked")
-				AnnotationList markerAnnotationList = getAnnotationList(singleVariableDeclaration.modifiers());
-				Type type = singleVariableDeclaration.getType();
-				GuiceAnnotation guiceAnnotation = markerAnnotationList.getGuiceAnnotation();
-				return new ProviderMethod(
-						type.resolveBinding(),
-						guiceAnnotation,
-						name.getFullyQualifiedName());
-			}
-			return null;
-
 		}
 		return null;
 	}

@@ -19,7 +19,6 @@ import de.jaculon.egap.guice.GuiceIndex;
 import de.jaculon.egap.guice.GuiceModule;
 import de.jaculon.egap.guice.statements.BindingDefinition;
 import de.jaculon.egap.quickfix.AbstractEgapQuickFix;
-import de.jaculon.egap.quickfix.navigate.ProposalNavigateToStatement;
 import de.jaculon.egap.utils.ASTNodeUtils;
 import de.jaculon.egap.utils.ICompilationUnitUtils;
 import de.jaculon.egap.utils.MethodDeclarationUtils;
@@ -29,7 +28,7 @@ import de.jaculon.egap.utils.MethodDeclarationUtils;
  * @author tmajunke
  */
 public class QuickFixAssistedInjectModel extends AbstractEgapQuickFix {
-	
+
 	@Override
 	public void addProposals(IInvocationContext context,
 			List<IJavaCompletionProposal> proposals) throws CoreException {
@@ -39,7 +38,7 @@ public class QuickFixAssistedInjectModel extends AbstractEgapQuickFix {
 		if(typeDeclaration == null){
 			return;
 		}
-		
+
 		MethodDeclaration constructorWithAssistedAnnotation = MethodDeclarationUtils.getConstructorAnnotatedWithAssisted(typeDeclaration);
 		if (constructorWithAssistedAnnotation == null) {
 			return;
@@ -53,10 +52,10 @@ public class QuickFixAssistedInjectModel extends AbstractEgapQuickFix {
 		 */
 		String modelTypeName = modelType.getElementName();
 		String factoryTypeName = modelTypeName + "Factory";
-		
+
 		ICompilationUnit factory = modelPackage.getCompilationUnit(factoryTypeName
 				+ ICompilationUnitUtils.JAVA_EXTENSION);
-		
+
 		if (factory.exists()) {
 			GuiceIndex guiceIndex = GuiceIndex.get();
 
@@ -64,11 +63,7 @@ public class QuickFixAssistedInjectModel extends AbstractEgapQuickFix {
 			String fullyQualifiedName = modelType.getFullyQualifiedName();
 			BindingDefinition bindStatement = guiceIndex.getAssistedBindingByModelType(fullyQualifiedName);
 
-			if (bindStatement != null) {
-				ProposalNavigateToStatement gotoGuiceStatementProposal = new ProposalNavigateToStatement(
-						bindStatement);
-				proposals.add(gotoGuiceStatementProposal);
-			} else {
+			if (bindStatement == null) {
 				ITypeBinding typeBinding = ((Name) coveringNode).resolveTypeBinding();
 				IPackageBinding currentPackage = typeBinding.getPackage();
 				List<GuiceModule> guiceModules = guiceIndex.getGuiceModulesInAndBelowPackage(currentPackage);

@@ -15,7 +15,7 @@ import de.jaculon.egap.utils.SetUtils;
 
 /**
  * @author tmajunke
- * 
+ *
  */
 public class JavaCodeBuilder {
 
@@ -59,14 +59,9 @@ public class JavaCodeBuilder {
 		append(interfaceName);
 	}
 
-	public void startClass(String typeName) {
-		append("public class ");
-		append(typeName);
-	}
-
 	/**
 	 * Creates a new method declaration.
-	 * 
+	 *
 	 * @param annotations the method annotations, may be null.
 	 * @param qualifier public, protected, .... Must not be null.
 	 * @param methodName the name of the method. Must not be null.
@@ -149,7 +144,7 @@ public class JavaCodeBuilder {
 
 	/**
 	 * Creates import statements for the given variable declarations.
-	 * 
+	 *
 	 * @param targetClassType the class where the
 	 * @param singleVariableDeclaration
 	 */

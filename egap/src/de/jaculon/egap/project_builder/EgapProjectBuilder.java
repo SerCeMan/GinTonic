@@ -16,7 +16,7 @@ import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.JavaCore;
 
 import de.jaculon.egap.EgapPlugin;
-import de.jaculon.egap.guice.BuildState;
+import de.jaculon.egap.guice.GuiceIndexState;
 import de.jaculon.egap.guice.GuiceIndex;
 import de.jaculon.egap.guice.GuiceIndexSerializer;
 import de.jaculon.egap.guice.GuiceModule;
@@ -98,7 +98,7 @@ public class EgapProjectBuilder extends IncrementalProjectBuilder {
 		List<IFile> files = IProjectUtils.getFilesInProjectSkippingBinary(project);
 		for (IFile iFile : files) {
 			if (monitor.isCanceled()) {
-				guiceIndex.setBuildState(BuildState.BUILD_INCOMPLETE);
+				guiceIndex.setBuildState(GuiceIndexState.BUILD_INCOMPLETE);
 				EgapPlugin.logWarning("Indexing Guice modules canceled by user request leaving the index in an incomplete state.");
 				break;
 			}
@@ -108,8 +108,8 @@ public class EgapProjectBuilder extends IncrementalProjectBuilder {
 			}
 		}
 
-		if (guiceIndex.getBuildState() != BuildState.BUILD_INCOMPLETE) {
-			guiceIndex.setBuildState(BuildState.BUILD_COMPLETE);
+		if (guiceIndex.getBuildState() != GuiceIndexState.BUILD_INCOMPLETE) {
+			guiceIndex.setBuildState(GuiceIndexState.BUILD_COMPLETE);
 		}
 
 		long then = System.currentTimeMillis();

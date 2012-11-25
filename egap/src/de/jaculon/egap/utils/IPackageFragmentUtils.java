@@ -2,11 +2,8 @@ package de.jaculon.egap.utils;
 
 import java.util.List;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
-import org.eclipse.jdt.core.JavaModelException;
 
 public class IPackageFragmentUtils {
 
@@ -43,42 +40,6 @@ public class IPackageFragmentUtils {
 		IPackageFragment packageFragmentParent = packageFragmentRoot.getPackageFragment(pathToParentAsDottedName);
 
 		return packageFragmentParent;
-	}
-
-	/**
-	 * Creates a new package in the given project and returns a reference to it.
-	 * If the package already exists, this has no effect.
-	 * 
-	 * @param javaProject the java project where we create the package
-	 * @param srcFolderAsString the name of the src folder where to put the
-	 *            package (e.g for tests this is maybe "src-test")
-	 * @param packageFullyQualified the package we are going to create as
-	 *            dot-separated package name
-	 * @param progressMonitor a progress monitor. Can be null.
-	 * @param force a flag controlling how to deal with resources that are not
-	 *            in sync with the local file system
-	 * 
-	 * @return the package fragment or null if the
-	 * 
-	 * @throws JavaModelException
-	 */
-	public static IPackageFragment createPackageFragment(
-			IJavaProject javaProject, String srcFolderAsString,
-			String packageFullyQualified, IProgressMonitor progressMonitor,
-			boolean force) throws JavaModelException {
-		IPackageFragmentRoot[] srcFoldersInProject = javaProject.getPackageFragmentRoots();
-		for (IPackageFragmentRoot srcFolder : srcFoldersInProject) {
-			String srcFolderName = srcFolder.getElementName();
-			if (srcFolderName.equals(srcFolderAsString)) {
-				IPackageFragment packageFragment = srcFolder.createPackageFragment(
-						packageFullyQualified,
-						force,
-						progressMonitor);
-				return packageFragment;
-
-			}
-		}
-		return null;
 	}
 
 	private static void getParentPackages(IPackageFragment packageFragment,

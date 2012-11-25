@@ -18,7 +18,6 @@ import de.jaculon.egap.quickfix.binding_creation.QuickFixBindingCreation;
 import de.jaculon.egap.quickfix.binding_creation.QuickFixProviderMethodCreation;
 import de.jaculon.egap.quickfix.module_creation.QuickFixCreateGuiceModule;
 import de.jaculon.egap.quickfix.module_installation.QuickFixInstallModule;
-import de.jaculon.egap.quickfix.navigate.QuickfixNavigateTo;
 import de.jaculon.egap.quickfix.provider_conversion.QuickFixProviderConversion;
 import de.jaculon.egap.utils.ListUtils;
 
@@ -35,7 +34,7 @@ public class EgapPlugin extends AbstractUIPlugin implements IStartup {
 	 * Nicht ändern!
 	 */
 	public static final String ID_NATURE = "de.jaculon.egap.EgapNature";
-	
+
 	public static final String ID_DEBUG_MODE = "de.jaculon.egap.DEBUG_MODE";
 	public static final String ID_TEST_SRC_FOLDER = "de.jaculon.egap.test_src_folder";
 	public static final String ID_TEST_SUFFIX = "de.jaculon.egap.test_suffix";
@@ -62,7 +61,7 @@ public class EgapPlugin extends AbstractUIPlugin implements IStartup {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext
 	 * )
@@ -74,14 +73,13 @@ public class EgapPlugin extends AbstractUIPlugin implements IStartup {
 		quickfixes.add(new QuickFixInstallModule());
 		quickfixes.add(new QuickFixAssistedInjectModel());
 		quickfixes.add(new QuickFixProviderConversion());
-		quickfixes.add(new QuickfixNavigateTo());
 		quickfixes.add(new QuickFixBindingCreation());
 		quickfixes.add(new QuickFixProviderMethodCreation());
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext
 	 * )

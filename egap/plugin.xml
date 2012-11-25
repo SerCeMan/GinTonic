@@ -71,11 +71,6 @@
           id="egap.cycleBindings"
           name="Cycle Bindings">
     </command>
-    <command
-          categoryId="egap.category"
-          id="egap.createMockitoJunitTest"
-          name="Create JUnit Test with mocked dependencies">
-    </command>
     <category
           id="egap.category"
           name="Egap">
@@ -87,10 +82,6 @@
           class="de.jaculon.egap.command.CycleBindingsHandler"
           commandId="egap.cycleBindings">
     </handler>
-    <handler
-          class="de.jaculon.egap.command.CreateMockitoJUnitTestHandler"
-          commandId="egap.createMockitoJunitTest">
-    </handler>
  </extension>
  <extension
        point="org.eclipse.ui.bindings">
@@ -99,12 +90,6 @@
           contextId="org.eclipse.jdt.ui.javaEditorScope"
           schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
           sequence="M1+M2+V G">
-    </key>
-    <key
-          commandId="egap.createMockitoJunitTest"
-          contextId="org.eclipse.jdt.ui.javaEditorScope"
-          schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-          sequence="M1+M2+V J">
     </key>
  </extension>
  

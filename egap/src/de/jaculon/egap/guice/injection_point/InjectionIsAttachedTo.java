@@ -1,4 +1,4 @@
-package de.jaculon.egap.utils;
+package de.jaculon.egap.guice.injection_point;
 
 /**
  * This enum holds the information from which of the three possible places

@@ -1,6 +1,6 @@
 package de.jaculon.egap.guice;
 
-public enum BuildState {
+public enum GuiceIndexState {
 	
 	INITIAL,
 	

@@ -7,7 +7,7 @@ package de.jaculon.egap.guice.statements;
  *
  * @author tmajunke
  */
-public class JustInTimeBindingStatement extends GuiceStatement{
+public class JustInTimeBindingStatement extends BindingDefinition{
 
 	private static final long serialVersionUID = 4724240897474687500L;
 

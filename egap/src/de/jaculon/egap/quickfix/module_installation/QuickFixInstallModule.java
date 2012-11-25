@@ -14,7 +14,6 @@ import de.jaculon.egap.guice.GuiceIndex;
 import de.jaculon.egap.guice.GuiceModule;
 import de.jaculon.egap.guice.statements.InstallModuleStatement;
 import de.jaculon.egap.quickfix.AbstractEgapQuickFix;
-import de.jaculon.egap.quickfix.navigate.ProposalNavigateToStatement;
 import de.jaculon.egap.utils.ASTNodeUtils;
 import de.jaculon.egap.utils.StringUtils;
 
@@ -22,18 +21,18 @@ import de.jaculon.egap.utils.StringUtils;
 /**
  * Enables the user to install the selected guice module (the source module) in
  * another guice module (the target module).
- * 
+ *
  * <h5>How is the quick fix activated?</h5>
- * 
+ *
  * The quick fix is triggered if the covering node implements
  * {@link StringUtils#GUICE_MODULE}
- * 
+ *
  * <h5>How do you discover the target module?</h5>
- * 
+ *
  * We collect all modules in the package of the source module and in the parent
  * package. A proposal ("Install SourceModule in TargetModule") is shown for
  * every discovered target module.
- * 
+ *
  * @author tmajunke
  */
 public class QuickFixInstallModule extends AbstractEgapQuickFix {
@@ -77,9 +76,6 @@ public class QuickFixInstallModule extends AbstractEgapQuickFix {
 				for (InstallModuleStatement installModuleStatement : installedModules) {
 					String moduleName = installModuleStatement.getModuleNameFullyQualified();
 					if (moduleName.equals(qualifiedName)) {
-						ProposalNavigateToStatement gotoModule = new ProposalNavigateToStatement(
-								installModuleStatement);
-						proposals.add(gotoModule);
 						alreadyInstalled = true;
 					}
 				}

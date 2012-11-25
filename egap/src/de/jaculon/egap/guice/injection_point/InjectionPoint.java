@@ -1,4 +1,4 @@
-package de.jaculon.egap.utils;
+package de.jaculon.egap.guice.injection_point;
 
 import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.ITypeBinding;
@@ -10,17 +10,17 @@ import de.jaculon.egap.guice.annotations.GuiceAnnotation;
  * An injection point is a {@link FieldDeclaration} which is annotated for
  * injection. The injection information can be attached to the field itself, the
  * setter or the constructor (see {@link #getInjectionIsAttachedTo()}).
- * 
+ *
  * <h1>Example:</h1>
- * 
+ *
  * <pre>
  * &#64Inject
  * private Person person;
  * </pre>
- * 
+ *
  * @author tmajunke
  */
-public class InjectionPoint implements IAnnotatedInjectionPoint{
+public class InjectionPoint implements IInjectionPoint{
 
 	private final FieldDeclaration fieldDeclaration;
 	private final InjectionIsAttachedTo injectionIsAttachedTo;
@@ -54,12 +54,12 @@ public class InjectionPoint implements IAnnotatedInjectionPoint{
 	public InjectionIsAttachedTo getInjectionIsAttachedTo() {
 		return injectionIsAttachedTo;
 	}
-	
+
 	@Override
 	public ITypeBinding getTargetTypeBinding() {
 		return targetTypeBinding;
 	}
-	
+
 	@Override
 	public GuiceAnnotation getGuiceAnnotation() {
 		return guiceAnnotation;
@@ -71,7 +71,7 @@ public class InjectionPoint implements IAnnotatedInjectionPoint{
 	public String getVariableName() {
 		return variableName;
 	}
-	
+
 	@Override
 	public String toString() {
 		return fieldDeclaration.toString();

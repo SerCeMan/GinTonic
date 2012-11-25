@@ -14,7 +14,7 @@ import de.jaculon.egap.guice.ProjectResource;
 
 
 public class IProjectResourceUtils {
-	
+
 	public static void openEditorWithStatementDeclaration(
 			IProjectResource navigationEndpoint, Integer startPosition) {
 		IFile srcFile = getJavaFile(navigationEndpoint);
@@ -23,7 +23,7 @@ public class IProjectResourceUtils {
 				startPosition,
 				0);
 	}
-	
+
 	public static void openEditorWithStatementDeclaration(
 			IProjectResource navigationEndpoint) {
 		openEditorWithStatementDeclaration(navigationEndpoint, navigationEndpoint.getStartPosition());
@@ -31,7 +31,7 @@ public class IProjectResourceUtils {
 
 	/**
 	 * Returns the project resource as {@link IFile}.
-	 * 
+	 *
 	 * @param projectResource the projectResource
 	 * @return the project resource as {@link IFile}.
 	 */
@@ -53,36 +53,31 @@ public class IProjectResourceUtils {
 
 	public static ProjectResource createProjectResource(ICompilationUnit icompilationUnit, ITextSelection textSelection) {
 		ProjectResource projectResource = new ProjectResource();
-		
+
 		IResource resource = icompilationUnit.getResource();
 		IProject project = resource.getProject();
 		projectResource.setProjectName(project.getName());
-		
+
 		List<String> srcFolderPath = ICompilationUnitUtils.getSrcFolderPathComponents(icompilationUnit);
 		projectResource.setSrcFolderPathComponents(srcFolderPath);
-		
+
 		IPackageFragment parent = (IPackageFragment) icompilationUnit.getParent();
 		String packageDotSeparated = parent.getElementName();
 		List<String> packageAsList = StringUtils.split('.', packageDotSeparated);
 		projectResource.setPackage(packageAsList);
-		
+
 		String typeName = ICompilationUnitUtils.getNameWithoutJavaExtension(icompilationUnit);
 		projectResource.setTypeName(typeName);
-		
+
 		if(textSelection != null){
 			int length = textSelection.getLength();
 			projectResource.setLength(length);
 			int startPosition = textSelection.getOffset();
 			projectResource.setStartPosition(startPosition);
 		}
-		
+
 		return projectResource;
 	}
 
-	public static ProjectResource createProjectResource(ICompilationUnit icompilationUnit) {
-		return createProjectResource(icompilationUnit, null);
-	}
-
-	
 
 }

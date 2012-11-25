@@ -12,7 +12,7 @@ import org.eclipse.jdt.ui.text.java.IJavaCompletionProposal;
 
 import de.jaculon.egap.guice.GuiceIndex;
 import de.jaculon.egap.guice.GuiceModule;
-import de.jaculon.egap.guice.statements.GuiceStatement;
+import de.jaculon.egap.guice.statements.BindingDefinition;
 import de.jaculon.egap.quickfix.AbstractEgapQuickFix;
 import de.jaculon.egap.utils.ASTNodeUtils;
 import de.jaculon.egap.utils.ITypeBindingUtils;
@@ -21,11 +21,11 @@ import de.jaculon.egap.utils.ITypeBindingUtils;
 /**
  * Enables the user to create a linked binding for the selected type (the
  * source module) in a nearby guice module (the target module).
- * 
+ *
  * <h5>How is the quick fix activated?</h5>
- * 
+ *
  * <h5>How do you discover the target module?</h5>
- * 
+ *
  * @author tmajunke
  */
 public class QuickFixBindingCreation extends AbstractEgapQuickFix {
@@ -59,7 +59,7 @@ public class QuickFixBindingCreation extends AbstractEgapQuickFix {
 
 		ITypeBinding[] interfaces = sourceType.getInterfaces();
 		for (ITypeBinding interfaceBinding : interfaces) {
-			List<GuiceStatement> bindingStatements = guiceIndex.getBindingsByTypeAndAnnotation(
+			List<BindingDefinition> bindingStatements = guiceIndex.getBindingsByTypeAndAnnotation(
 					interfaceBinding,
 					null);
 

@@ -11,11 +11,11 @@ import org.eclipse.jdt.ui.text.java.IJavaCompletionProposal;
 
 import de.jaculon.egap.guice.GuiceIndex;
 import de.jaculon.egap.guice.GuiceModule;
-import de.jaculon.egap.guice.statements.GuiceStatement;
+import de.jaculon.egap.guice.injection_point.InjectionPoint;
+import de.jaculon.egap.guice.injection_point.InjectionPointDao;
+import de.jaculon.egap.guice.statements.BindingDefinition;
 import de.jaculon.egap.quickfix.AbstractEgapQuickFix;
-import de.jaculon.egap.utils.ASTNodeUtils;
 import de.jaculon.egap.utils.ITypeBindingUtils;
-import de.jaculon.egap.utils.InjectionPoint;
 import de.jaculon.egap.utils.SetUtils;
 
 
@@ -29,22 +29,21 @@ public class QuickFixProviderMethodCreation extends AbstractEgapQuickFix {
 	public void addProposals(IInvocationContext context,
 			List<IJavaCompletionProposal> proposals) throws CoreException {
 		CompilationUnit astRoot = context.getASTRoot();
-		
-		InjectionPoint guiceFieldDecl = ASTNodeUtils.getGuiceFieldDeclarationIfFieldDeclaration(
-				context.getCoveringNode(),
-				astRoot);
 
-		if (guiceFieldDecl != null) {
-			ITypeBinding typeBindingWithoutProvider = ITypeBindingUtils.removeSurroundingProvider(guiceFieldDecl.getTargetTypeBinding());
+		InjectionPointDao injectionPointDao = new InjectionPointDao();
+		InjectionPoint injectionPoint = injectionPointDao.getGuiceFieldDeclarationIfFieldDeclaration(context.getCoveringNode(), astRoot);
+
+		if (injectionPoint != null) {
+			ITypeBinding typeBindingWithoutProvider = ITypeBindingUtils.removeSurroundingProvider(injectionPoint.getTargetTypeBinding());
 
 			GuiceIndex guiceIndex = GuiceIndex.get();
 
 			IPackageBinding currentPackageBinding = astRoot.getPackage().resolveBinding();
 			String packageToLookForGuiceModules = currentPackageBinding.getName();
-			
-			List<GuiceStatement> bindingStatements = guiceIndex.getBindingsByTypeAndAnnotationLimitToPackage(
+
+			List<BindingDefinition> bindingStatements = guiceIndex.getBindingsByTypeAndAnnotationLimitToPackage(
 					typeBindingWithoutProvider,
-					guiceFieldDecl.getGuiceAnnotation(),
+					injectionPoint.getGuiceAnnotation(),
 					SetUtils.newHashSet(packageToLookForGuiceModules));
 
 
@@ -59,8 +58,8 @@ public class QuickFixProviderMethodCreation extends AbstractEgapQuickFix {
 					ProposalProviderMethodCreation proposal = new ProposalProviderMethodCreation(
 							guiceModule,
 							typeBindingWithoutProvider,
-							guiceFieldDecl.getGuiceAnnotation(),
-							guiceFieldDecl.getVariableName());
+							injectionPoint.getGuiceAnnotation(),
+							injectionPoint.getVariableName());
 					proposals.add(proposal);
 				}
 			}

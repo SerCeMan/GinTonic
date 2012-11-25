@@ -66,21 +66,6 @@ public class Refactorator {
 		return provider.getAstRewrite();
 	}
 
-	/**
-	 * Adds the {@link FieldDeclaration} to the end of the body.
-	 * 
-	 * @param fieldDeclaration the fieldDeclaration
-	 */
-	public void addFieldDeclaration(FieldDeclaration fieldDeclaration) {
-		ASTRewrite astRewrite = getAstRewrite();
-		@SuppressWarnings("unchecked")
-		List<TypeDeclaration> types = compilationUnit.types();
-		ListRewrite container = astRewrite.getListRewrite(
-				types.get(0),
-				TypeDeclaration.BODY_DECLARATIONS_PROPERTY);
-		container.insertLast(fieldDeclaration, null);
-	}
-
 	public TrackedStatement addAsLastStatementInMethod(
 			MethodDeclaration method, String statement) {
 		Statement bindingStatement = ASTParserUtils.parseStatementAst3(statement);
@@ -118,7 +103,7 @@ public class Refactorator {
 
 	/**
 	 * Adds the given method and returns it as {@link MethodDeclaration}.
-	 * 
+	 *
 	 * @param methodCode the java code of the method declaration.
 	 */
 	public TrackedMethodDeclaration addMethod(String methodCode) {
@@ -163,23 +148,23 @@ public class Refactorator {
 	 * Creates a new {@link ParameterizedType} by wrapping the given
 	 * {@link Type} inside the wrapperType. We also add the new type as import
 	 * statement.
-	 * 
+	 *
 	 * <h5>Example:</h5>
-	 * 
+	 *
 	 * Given the following field declaration:
-	 * 
+	 *
 	 * <pre>
 	 * public Snake&lt;?&gt; snake;
 	 * </pre>
-	 * 
+	 *
 	 * You can change the <code>Snake <?></code> type to
 	 * <code>Provider<Snake></code> by coding:
-	 * 
+	 *
 	 * <pre>
 	 * <code>refactorator.changeTypeByWrappingIt(snakeType, "com.google.inject.Provider");</code>
 	 * </pre>
-	 * 
-	 * 
+	 *
+	 *
 	 * @param ast
 	 * @param parameterizedType
 	 * @param targetTypeNameFullyQualified the fully qualified type that wraps
@@ -215,7 +200,7 @@ public class Refactorator {
 
 	/**
 	 * Renames all identifiers of the given fieldDeclaration.
-	 * 
+	 *
 	 * @param fieldDeclaration the {@link FieldDeclaration}
 	 * @param newName the newName. The name can include a $ sign which is then
 	 *            replaced by the original identifier. Use this if you want some
@@ -299,7 +284,7 @@ public class Refactorator {
 	 * I don't want to have the ImportRewrite and ASTRewrite as fields of
 	 * Refactorator as they are created on demand. So this is what this
 	 * RefactoratorProvider is for.
-	 * 
+	 *
 	 * @author tmajunke
 	 */
 	private static class RefactoratorProvider {
