@@ -1,6 +1,6 @@
 package de.jaculon.egap.guice.annotations;
 
-import de.jaculon.egap.utils.StringUtils;
+import de.jaculon.egap.guice.GuiceConstants;
 
 /**
  *
@@ -68,7 +68,7 @@ public class GuiceNamedAnnotation extends GuiceAnnotation {
 
 	@Override
 	public String getTypeToImport() {
-		return StringUtils.GUICE_NAMED;
+		return GuiceConstants.GUICE_NAMED;
 	}
 
 }

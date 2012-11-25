@@ -12,12 +12,12 @@ import org.eclipse.jdt.core.dom.MarkerAnnotation;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.Name;
 import org.eclipse.jdt.core.dom.SimpleName;
-import org.eclipse.jdt.core.dom.SingleMemberAnnotation;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 
+import de.jaculon.egap.guice.GuiceConstants;
 import de.jaculon.egap.guice.annotations.GuiceAnnotation;
 import de.jaculon.egap.guice.statements.GuiceStatement;
 
@@ -27,12 +27,12 @@ public class ASTNodeUtils {
 	public static boolean isAssistedAnnotation(ASTNode node) {
 		return isMarkerAnnotationAnnotatedWith(
 				node,
-				StringUtils.GUICE_ANNOTATION_ASSISTED);
+				GuiceConstants.GUICE_ANNOTATION_ASSISTED);
 	}
 
 	/**
 	 * Resolves the {@link ITypeBinding} for the Ast node.
-	 * 
+	 *
 	 * @param coveringNode the ast node.
 	 * @return the type binding or null if the node does not represent a guice
 	 *         module.
@@ -52,7 +52,7 @@ public class ASTNodeUtils {
 	/**
 	 * Resolves the {@link ITypeBinding} for the Ast node if the node is a
 	 * {@link Name} and the type is <b>not</b> a Guice module.
-	 * 
+	 *
 	 * @param coveringNode the ast node.
 	 * @return the type binding or null if the node does represent a guice
 	 *         module.
@@ -90,7 +90,7 @@ public class ASTNodeUtils {
 	private static final class FindMethodByName extends ASTVisitor {
 		private final String fieldAsSetter;
 		private List<MethodDeclaration> methodDeclarations = ListUtils.newArrayList();
-		
+
 		private FindMethodByName(String fieldAsSetter) {
 			super(false);
 			this.fieldAsSetter = fieldAsSetter;
@@ -110,10 +110,10 @@ public class ASTNodeUtils {
 	/**
 	 * Returns true if the given node is a {@link MarkerAnnotation} and the
 	 * qualified name of its type is equal to the given one.
-	 * 
+	 *
 	 * @param node the node
 	 * @param annotationFullyQualified the annotation name we compare
-	 * 
+	 *
 	 * @return true if it is annotated with the given type otherwise false.
 	 */
 	private static boolean isMarkerAnnotationAnnotatedWith(ASTNode node,
@@ -134,7 +134,7 @@ public class ASTNodeUtils {
 	/**
 	 * Checks if the given node is an identifier of a {@link FieldDeclaration}.
 	 * If it is then it is returned, otherwise null is returned.
-	 * 
+	 *
 	 * @param astNode the node
 	 * @return the field declaration or null.
 	 */
@@ -234,7 +234,7 @@ public class ASTNodeUtils {
 
 		ProviderMethod guicyProviderMethodVar = getProviderMethod(
 				name);
-		
+
 		return guicyProviderMethodVar;
 	}
 

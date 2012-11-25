@@ -7,6 +7,7 @@ import org.eclipse.jdt.core.dom.IAnnotationBinding;
 import org.eclipse.jdt.core.dom.IMemberValuePairBinding;
 import org.eclipse.jdt.core.dom.ITypeBinding;
 
+import de.jaculon.egap.guice.GuiceConstants;
 import de.jaculon.egap.guice.annotations.GuiceAnnotation;
 import de.jaculon.egap.guice.annotations.GuiceClassAnnotation;
 import de.jaculon.egap.guice.annotations.GuiceNamedAnnotation;
@@ -23,34 +24,34 @@ public class AnnotationList {
 
 	/**
 	 * Returns true if any of the annotations is of type
-	 * {@link StringUtils#GUICE_ANNOTATION_ASSISTED}, otherwise false.
+	 * {@link GuiceConstants#GUICE_ANNOTATION_ASSISTED}, otherwise false.
 	 */
 	public boolean containsAssistedAnnotation() {
-		return containsAnnotation(StringUtils.GUICE_ANNOTATION_ASSISTED);
+		return containsAnnotation(GuiceConstants.GUICE_ANNOTATION_ASSISTED);
 	}
 	
 	/**
 	 * Returns true if any of the annotations is of type
-	 * {@link StringUtils#GUICE_ANNOTATION_INJECT}, otherwise false.
+	 * {@link GuiceConstants#GUICE_ANNOTATION_INJECT}, otherwise false.
 	 */
 	public boolean containsInjectType() {
-		return containsAnnotation(StringUtils.GUICE_ANNOTATION_INJECT);
+		return containsAnnotation(GuiceConstants.GUICE_ANNOTATION_INJECT);
 	}
 	
 	/**
 	 * Returns true if any of the annotations is of type
-	 * {@link StringUtils#GUICE_SINGLETON_SCOPE}, otherwise false.
+	 * {@link GuiceConstants#GUICE_SINGLETON_SCOPE}, otherwise false.
 	 */
 	public boolean containsSingletonScopeAnnotation() {
-		return containsAnnotation(StringUtils.GUICE_SINGLETON_SCOPE);
+		return containsAnnotation(GuiceConstants.GUICE_SINGLETON_SCOPE);
 	}
 	
 	/**
 	 * Returns true if any of the annotations is of type
-	 * {@link StringUtils#GUICE_PROVIDES}, otherwise false.
+	 * {@link GuiceConstants#GUICE_PROVIDES}, otherwise false.
 	 */
 	public boolean containsProvidesAnnotation() {
-		return containsAnnotation(StringUtils.GUICE_PROVIDES);
+		return containsAnnotation(GuiceConstants.GUICE_PROVIDES);
 	}
 	
 	public GuiceAnnotation getGuiceAnnotation() {

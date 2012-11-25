@@ -10,6 +10,7 @@ import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 
+import de.jaculon.egap.guice.GuiceConstants;
 import de.jaculon.egap.guice.GuiceModule;
 import de.jaculon.egap.icons.Icons;
 import de.jaculon.egap.refactor.Refactorator;
@@ -17,7 +18,6 @@ import de.jaculon.egap.refactor.TrackedStatement;
 import de.jaculon.egap.utils.ASTParserUtils;
 import de.jaculon.egap.utils.IProjectResourceUtils;
 import de.jaculon.egap.utils.MethodDeclarationUtils;
-import de.jaculon.egap.utils.StringUtils;
 
 
 public class ProposalBindingCreation implements IJavaCompletionProposal {
@@ -94,7 +94,7 @@ public class ProposalBindingCreation implements IJavaCompletionProposal {
 
 		final boolean isParameterizedType = interfaceBinding.isParameterizedType();
 		if (isParameterizedType) {
-			refactorator.addImport(StringUtils.GUICE_TYPE_LITERAL);
+			refactorator.addImport(GuiceConstants.GUICE_TYPE_LITERAL);
 		}
 
 		MethodDeclaration configureMethodDeclaration = MethodDeclarationUtils.getConfigureMethodDeclaration(compilationUnitAstNode);

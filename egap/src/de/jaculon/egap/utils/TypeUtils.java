@@ -13,17 +13,18 @@ import org.eclipse.jdt.core.dom.SimpleType;
 import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.WildcardType;
 
+import de.jaculon.egap.guice.GuiceConstants;
 import de.jaculon.egap.source_builder.JavaCodeBuilder;
 
 
 public class TypeUtils {
 	
 	public static boolean isMapBinderType(Type type) {
-		return TypeUtils.isTypeDeclarationTypeKindOf(type, StringUtils.GUICE_MAP_BINDER);
+		return TypeUtils.isTypeDeclarationTypeKindOf(type, GuiceConstants.GUICE_MAP_BINDER);
 	}
 	
 	public static boolean isSetBinderType(Type type) {
-		return TypeUtils.isTypeDeclarationTypeKindOf(type, StringUtils.GUICE_SET_BINDER);
+		return TypeUtils.isTypeDeclarationTypeKindOf(type, GuiceConstants.GUICE_SET_BINDER);
 	}
 	
 	public static boolean isTypeDeclarationTypeKindOf(Type type, String typeFullyQualifiedName) {

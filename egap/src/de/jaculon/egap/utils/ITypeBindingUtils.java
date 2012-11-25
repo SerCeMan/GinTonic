@@ -3,6 +3,8 @@ package de.jaculon.egap.utils;
 import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.Modifier;
 
+import de.jaculon.egap.guice.GuiceConstants;
+
 public class ITypeBindingUtils {
 
 	/**
@@ -22,21 +24,21 @@ public class ITypeBindingUtils {
 	}
 
 	public static boolean isGuiceAbstractModuleType(ITypeBinding typeBinding) {
-		return isKindOf(typeBinding, StringUtils.GUICE_ABSTRACT_MODULE);
+		return isKindOf(typeBinding, GuiceConstants.GUICE_ABSTRACT_MODULE);
 	}
 
 	public static boolean isGuiceProviderType(ITypeBinding typeBinding) {
-		return isKindOf(typeBinding, StringUtils.GUICE_PROVIDER);
+		return isKindOf(typeBinding, GuiceConstants.GUICE_PROVIDER);
 	}
 
 	public static boolean isGuiceNamedType(ITypeBinding typeBinding) {
-		return isKindOf(typeBinding, StringUtils.GUICE_NAMED);
+		return isKindOf(typeBinding, GuiceConstants.GUICE_NAMED);
 	}
 	
 	public static boolean isGuiceBindingAnnotation(ITypeBinding typeBinding) {
 		String qualifiedName = typeBinding.getQualifiedName();
 		return qualifiedName.equals(
-				StringUtils.GUICE_BINDING_ANNOTATION);
+				GuiceConstants.GUICE_BINDING_ANNOTATION);
 	}
 
 	public static boolean isConcreteType(ITypeBinding typeBinding) {
@@ -111,7 +113,7 @@ public class ITypeBindingUtils {
 			ITypeBinding typeBinding) {
 		return removeSurroundingType(
 				typeBinding,
-				StringUtils.GUICE_TYPE_LITERAL);
+				GuiceConstants.GUICE_TYPE_LITERAL);
 	}
 
 	/*
@@ -121,7 +123,7 @@ public class ITypeBindingUtils {
 	 */
 	public static ITypeBinding removeSurroundingProvider(
 			ITypeBinding typeBinding) {
-		return removeSurroundingType(typeBinding, StringUtils.GUICE_PROVIDER);
+		return removeSurroundingType(typeBinding, GuiceConstants.GUICE_PROVIDER);
 	}
 
 	private static ITypeBinding removeSurroundingType(ITypeBinding typeBinding,

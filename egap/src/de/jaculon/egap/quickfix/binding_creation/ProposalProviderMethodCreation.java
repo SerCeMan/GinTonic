@@ -12,6 +12,7 @@ import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 
+import de.jaculon.egap.guice.GuiceConstants;
 import de.jaculon.egap.guice.GuiceModule;
 import de.jaculon.egap.guice.annotations.GuiceAnnotation;
 import de.jaculon.egap.guice.annotations.GuiceClassAnnotation;
@@ -24,7 +25,6 @@ import de.jaculon.egap.utils.IProjectResourceUtils;
 import de.jaculon.egap.utils.MapUtils;
 import de.jaculon.egap.utils.MethodDeclarationUtils;
 import de.jaculon.egap.utils.Preconditions;
-import de.jaculon.egap.utils.StringUtils;
 
 
 
@@ -91,7 +91,7 @@ public class ProposalProviderMethodCreation implements IJavaCompletionProposal {
 				compilationUnitAstNode,
 				compilationUnitAstNode.getAST());
 
-		refactorator.addImport(StringUtils.GUICE_PROVIDES);
+		refactorator.addImport(GuiceConstants.GUICE_PROVIDES);
 		refactorator.addImport(type.getQualifiedName());
 		
 		if (guiceAnnotation != null) {

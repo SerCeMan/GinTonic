@@ -18,6 +18,7 @@ import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 
 import de.jaculon.egap.EgapPlugin;
+import de.jaculon.egap.guice.GuiceConstants;
 import de.jaculon.egap.guice.annotations.GuiceAnnotation;
 import de.jaculon.egap.guice.statements.BindingDefinition;
 import de.jaculon.egap.guice.statements.ConstantBindingStatement;
@@ -124,7 +125,7 @@ public final class GuiceAnalyzerAstVisitor extends ASTVisitor {
 			firstArgument = arguments.get(0);
 		}
 
-		if (declType.equals(StringUtils.GUICE_ABSTRACT_MODULE)) {
+		if (declType.equals(GuiceConstants.GUICE_ABSTRACT_MODULE)) {
 			if (methodname.equals("bind")) {
 				boundType = ExpressionUtils.getQualifiedTypeName(firstArgument);
 
@@ -158,11 +159,11 @@ public final class GuiceAnalyzerAstVisitor extends ASTVisitor {
 				/* We don't care */
 			}
 			else {
-				unsupportedMethod(StringUtils.GUICE_ABSTRACT_MODULE, methodname);
+				unsupportedMethod(GuiceConstants.GUICE_ABSTRACT_MODULE, methodname);
 			}
 		}
 
-		else if (declType.equals(StringUtils.GUICE_LINKED_BINDING_BUILDER)) {
+		else if (declType.equals(GuiceConstants.GUICE_LINKED_BINDING_BUILDER)) {
 
 			/*
 			 * Special case, as the LinkedBindingBuilder is also used from the
@@ -190,13 +191,13 @@ public final class GuiceAnalyzerAstVisitor extends ASTVisitor {
 				}
 				else {
 					unsupportedMethod(
-							StringUtils.GUICE_LINKED_BINDING_BUILDER,
+							GuiceConstants.GUICE_LINKED_BINDING_BUILDER,
 							methodname);
 				}
 			}
 		}
 
-		else if (declType.equals(StringUtils.GUICE_ANNOTATED_BINDING_BUILDER)) {
+		else if (declType.equals(GuiceConstants.GUICE_ANNOTATED_BINDING_BUILDER)) {
 			/* void in(Scope scope); */
 			/* void in(Class<? extends Annotation> scopeAnnotation); */
 			/* void asEagerSingleton(); */
@@ -205,11 +206,11 @@ public final class GuiceAnalyzerAstVisitor extends ASTVisitor {
 			}
 			else {
 				unsupportedMethod(
-						StringUtils.GUICE_ANNOTATED_BINDING_BUILDER,
+						GuiceConstants.GUICE_ANNOTATED_BINDING_BUILDER,
 						methodname);
 			}
 		}
-		else if (declType.equals(StringUtils.GUICE_CONSTANT_BINDING_BUILDER)) {
+		else if (declType.equals(GuiceConstants.GUICE_CONSTANT_BINDING_BUILDER)) {
 			if (methodname.equals("to")) {
 				bindingStatement = new ConstantBindingStatement();
 				implType = ExpressionUtils.getQualifiedTypeName(firstArgument);
@@ -223,21 +224,21 @@ public final class GuiceAnalyzerAstVisitor extends ASTVisitor {
 			/* By the way - no scopes for constants! */
 			else {
 				unsupportedMethod(
-						StringUtils.GUICE_CONSTANT_BINDING_BUILDER,
+						GuiceConstants.GUICE_CONSTANT_BINDING_BUILDER,
 						methodname);
 			}
 		}
-		else if (declType.equals(StringUtils.GUICE_CONSTANT_ANNOTATED_BINDING_BUILDER)) {
+		else if (declType.equals(GuiceConstants.GUICE_CONSTANT_ANNOTATED_BINDING_BUILDER)) {
 			if (methodname.equals("annotatedWith")) {
 				resolveAnnotations(firstArgument);
 			}
 			else {
 				unsupportedMethod(
-						StringUtils.GUICE_CONSTANT_ANNOTATED_BINDING_BUILDER,
+						GuiceConstants.GUICE_CONSTANT_ANNOTATED_BINDING_BUILDER,
 						methodname);
 			}
 		}
-		else if (declType.equals(StringUtils.GUICE_SCOPED_BINDING_BUILDER)) {
+		else if (declType.equals(GuiceConstants.GUICE_SCOPED_BINDING_BUILDER)) {
 			if (methodname.equals("in")) {
 
 				if (firstArgument instanceof QualifiedName) {
@@ -245,23 +246,23 @@ public final class GuiceAnalyzerAstVisitor extends ASTVisitor {
 					String fullyQualifiedName = qualifiedName.getFullyQualifiedName();
 
 					if (fullyQualifiedName.equals("Scopes.SINGLETON")) {
-						scopeType = StringUtils.GUICE_SINGLETON_SCOPE;
+						scopeType = GuiceConstants.GUICE_SINGLETON_SCOPE;
 					}
 				}
 
 			}
 			else if (methodname.equals("asEagerSingleton")) {
 				isEagerSingleton = true;
-				scopeType = StringUtils.GUICE_SINGLETON_SCOPE;
+				scopeType = GuiceConstants.GUICE_SINGLETON_SCOPE;
 			}
 			else {
 				unsupportedMethod(
-						StringUtils.GUICE_CONSTANT_ANNOTATED_BINDING_BUILDER,
+						GuiceConstants.GUICE_CONSTANT_ANNOTATED_BINDING_BUILDER,
 						methodname);
 			}
 		}
 
-		else if (declType.equals(StringUtils.GUICE_MAP_BINDER)) {
+		else if (declType.equals(GuiceConstants.GUICE_MAP_BINDER)) {
 			/*  */
 			if (methodname.equals("addBinding")) {
 				/*
@@ -273,10 +274,10 @@ public final class GuiceAnalyzerAstVisitor extends ASTVisitor {
 				inspectNewMapBinderInvocation(methodInvocation);
 			}
 			else {
-				unsupportedMethod(StringUtils.GUICE_MAP_BINDER, methodname);
+				unsupportedMethod(GuiceConstants.GUICE_MAP_BINDER, methodname);
 			}
 		}
-		else if (declType.equals(StringUtils.GUICE_SET_BINDER)) {
+		else if (declType.equals(GuiceConstants.GUICE_SET_BINDER)) {
 			/* */
 			if (methodname.equals("addBinding")) {
 				/*
@@ -288,7 +289,7 @@ public final class GuiceAnalyzerAstVisitor extends ASTVisitor {
 				inspectNewSetBinderInvocation(methodInvocation);
 			}
 			else {
-				unsupportedMethod(StringUtils.GUICE_SET_BINDER, methodname);
+				unsupportedMethod(GuiceConstants.GUICE_SET_BINDER, methodname);
 			}
 		}
 		else {
@@ -407,7 +408,7 @@ public final class GuiceAnalyzerAstVisitor extends ASTVisitor {
 			providerBindingStatement.setGuiceAnnotation(guiceAnnotation);
 
 			if(markerAnnotationList.containsSingletonScopeAnnotation()){
-				providerBindingStatement.setScopeType(StringUtils.GUICE_SINGLETON_SCOPE);
+				providerBindingStatement.setScopeType(GuiceConstants.GUICE_SINGLETON_SCOPE);
 			}
 
 			addBinding(providerBindingStatement);

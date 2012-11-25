@@ -12,13 +12,13 @@ import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 
+import de.jaculon.egap.guice.GuiceConstants;
 import de.jaculon.egap.guice.GuiceModule;
 import de.jaculon.egap.icons.Icons;
 import de.jaculon.egap.refactor.Refactorator;
 import de.jaculon.egap.templates.GuiceAssistedInjectFactoryBinding;
 import de.jaculon.egap.utils.ASTParserUtils;
 import de.jaculon.egap.utils.IProjectResourceUtils;
-import de.jaculon.egap.utils.StringUtils;
 
 
 /**
@@ -115,7 +115,7 @@ public class ProposalCreateBindingForAssistedFactory implements
 		CompilationUnit compilationUnitAstNode = ASTParserUtils.parseCompilationUnitAst3(compilationUnit);
 		final Refactorator refactorator = Refactorator.create(compilationUnit, compilationUnitAstNode, compilationUnitAstNode.getAST());
 		
-		refactorator.addImport(StringUtils.GUICE_ASSISTEDINJECT_FACTORY_PROVIDER);
+		refactorator.addImport(GuiceConstants.GUICE_ASSISTEDINJECT_FACTORY_PROVIDER);
 		refactorator.addImport(modelType);
 		refactorator.addImport(factoryType);
 

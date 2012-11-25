@@ -11,10 +11,10 @@ import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 
+import de.jaculon.egap.guice.GuiceConstants;
 import de.jaculon.egap.icons.Icons;
 import de.jaculon.egap.refactor.Refactorator;
 import de.jaculon.egap.utils.IFileUtils;
-import de.jaculon.egap.utils.StringUtils;
 import de.jaculon.egap.utils.TypeUtils;
 
 
@@ -77,7 +77,7 @@ public class ProposalConvertToProvider implements IJavaCompletionProposal {
 		Type sourceType = fieldDeclaration.getType();
 		refactorator.changeTypeByWrappingIt(
 				sourceType,
-				StringUtils.GUICE_PROVIDER);
+				GuiceConstants.GUICE_PROVIDER);
 		/* Change the variable name (e.g cat => catProvider) */
 		refactorator.renameFieldIdentifiers(fieldDeclaration, "$Provider");
 		refactorator.refactor(null);
