@@ -3,19 +3,17 @@ package de.jaculon.egap.guice.annotations;
 import de.jaculon.egap.utils.StringUtils;
 
 /**
- * 
+ * <h1>Example:</h1>
  * <pre>
- * <code>
- * @Inject
- *    @TimeBarCloses
- *    private Date timeBarCloses;
- *    </code>
+ *  @Inject
+ *  @TimeBarCloses
+ *  private Date timeBarCloses;
  * </pre>
- * 
+ *
  * @author tmajunke
  */
 public class GuiceClassAnnotation extends GuiceAnnotation {
-	
+
 	private static final long serialVersionUID = 9977899545760793L;
 	private String annotationType;
 
@@ -40,7 +38,7 @@ public class GuiceClassAnnotation extends GuiceAnnotation {
 				+ ((annotationType == null) ? 0 : annotationType.hashCode());
 		return result;
 	}
-	
+
 	@Override
 	public String getTypeToImport() {
 		return annotationType;
@@ -63,5 +61,5 @@ public class GuiceClassAnnotation extends GuiceAnnotation {
 			return false;
 		return true;
 	}
-	
+
 }

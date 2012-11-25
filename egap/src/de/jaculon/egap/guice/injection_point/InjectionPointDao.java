@@ -14,6 +14,7 @@ import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.Annotation;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
+import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.Name;
 import org.eclipse.jdt.core.dom.NodeFinder;
 import org.eclipse.jdt.core.dom.SimpleName;
@@ -36,6 +37,8 @@ import de.jaculon.egap.utils.AnnotationList;
 import de.jaculon.egap.utils.EclipseUtils;
 import de.jaculon.egap.utils.FieldDeclarationUtils;
 import de.jaculon.egap.utils.ListUtils;
+import de.jaculon.egap.utils.MethodDeclarationUtils;
+import de.jaculon.egap.utils.StringUtils;
 
 /**
  * Methods for finding {@link IInjectionPoint}s.
@@ -46,7 +49,9 @@ public class InjectionPointDao {
 
 	/**
 	 * Returns all {@link InjectionPoint}s for the given compilation unit. The
-	 * superclasses of the given compilation unit are also included in the returned list.
+	 * superclasses of the given compilation unit are also included in the
+	 * returned list. Returns an empty list if no {@link InjectionPoint}s could
+	 * be found.
 	 */
 	public List<InjectionPoint> findAllByICompilationUnit(
 			ICompilationUnit compilationUnit) throws JavaModelException {
@@ -63,7 +68,7 @@ public class InjectionPointDao {
 		IType[] allSuperClasses = supertypeHierarchy.getAllSuperclasses(primaryType);
 		for (IType iType : allSuperClasses) {
 			String typeQualified = iType.getFullyQualifiedName();
-			if(typeQualified.equals("java.lang.Object")){
+			if (typeQualified.equals("java.lang.Object")) {
 				continue;
 			}
 			types.add(iType);
@@ -107,7 +112,7 @@ public class InjectionPointDao {
 
 				});
 
-				InjectionPoint injectionPoint = FieldDeclarationUtils.getTypeIfAnnotatedWithInject(
+				InjectionPoint injectionPoint = analyzeForInjectionPoint(
 						fieldDeclaration,
 						compilationUnit,
 						identifier);
@@ -210,7 +215,9 @@ public class InjectionPointDao {
 				length);
 		InjectionPointDao injectionPointDao = new InjectionPointDao();
 
-		IInjectionPoint binding = injectionPointDao.findByAstNode(coveredNode, compilationUnit);
+		IInjectionPoint binding = injectionPointDao.findByAstNode(
+				coveredNode,
+				compilationUnit);
 
 		return binding;
 	}
@@ -264,7 +271,7 @@ public class InjectionPointDao {
 
 		FieldDeclaration fieldDeclaration = ASTNodeUtils.getFieldDeclaration(name);
 		if (fieldDeclaration != null) {
-			InjectionPoint guiceFieldDeclaration = FieldDeclarationUtils.getTypeIfAnnotatedWithInject(
+			InjectionPoint guiceFieldDeclaration = analyzeForInjectionPoint(
 					fieldDeclaration,
 					astRoot,
 					variableName);
@@ -305,6 +312,72 @@ public class InjectionPointDao {
 			}
 		}
 		return new AnnotationList(annotations);
+	}
+
+	@SuppressWarnings("unchecked")
+	private static InjectionPoint analyzeForInjectionPoint(
+			FieldDeclaration fieldDeclaration, CompilationUnit compilationUnit,
+			String fieldName) {
+
+		List<ASTNode> modifiers = fieldDeclaration.modifiers();
+
+		AnnotationList annotationList = ASTNodeUtils.getAnnotationList(modifiers);
+
+		if (annotationList.containsInjectType()) {
+			Type type = fieldDeclaration.getType();
+			GuiceAnnotation guiceAnnotation = annotationList.getGuiceAnnotation();
+			return new InjectionPoint(
+					type.resolveBinding(),
+					guiceAnnotation,
+					fieldName,
+					fieldDeclaration,
+					InjectionIsAttachedTo.FIELD);
+		}
+
+		/*
+		 * Check the @Inject constructor if we can find a parameter with the
+		 * same name as the selected field.
+		 */
+		MethodDeclaration constructor = MethodDeclarationUtils.getConstructorAnnotatedWithInject(compilationUnit);
+		if (constructor != null) {
+			SingleVariableDeclaration variableDeclaration = MethodDeclarationUtils.getVariableDeclarationsByName(
+					constructor,
+					fieldName);
+			if (variableDeclaration != null) {
+				annotationList = ASTNodeUtils.getAnnotationList(variableDeclaration.modifiers());
+				Type type = variableDeclaration.getType();
+				GuiceAnnotation guiceAnnotation = annotationList.getGuiceAnnotation();
+				return new InjectionPoint(
+						type.resolveBinding(),
+						guiceAnnotation,
+						fieldName,
+						fieldDeclaration,
+						InjectionIsAttachedTo.CONSTRUCTOR);
+			}
+		}
+
+		/*
+		 * Check if a guicified setter method exists.
+		 */
+		String setterMethodName = "set" + StringUtils.capitalize(fieldName);
+
+		MethodDeclaration setter = ASTNodeUtils.getMethodByNameExpectSingleMethod(
+				compilationUnit,
+				setterMethodName);
+		if (setter != null) {
+			annotationList = ASTNodeUtils.getAnnotationList(setter.modifiers());
+			if (annotationList.containsInjectType()) {
+				Type type = fieldDeclaration.getType();
+				GuiceAnnotation guiceAnnotation = annotationList.getGuiceAnnotation();
+				return new InjectionPoint(
+						type.resolveBinding(),
+						guiceAnnotation,
+						fieldName,
+						fieldDeclaration,
+						InjectionIsAttachedTo.SETTER);
+			}
+		}
+		return null;
 	}
 
 }
