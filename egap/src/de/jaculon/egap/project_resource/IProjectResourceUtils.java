@@ -71,8 +71,6 @@ public class IProjectResourceUtils {
 		projectResource.setTypeName(typeName);
 
 		if (textSelection != null) {
-			int length = textSelection.getLength();
-			projectResource.setLength(length);
 			int startPosition = textSelection.getOffset();
 			projectResource.setStartPosition(startPosition);
 		}

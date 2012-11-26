@@ -69,7 +69,6 @@ public class ASTNodeUtils {
 	public static void copyStartPositionAndLength(ASTNode astNode,
 			GuiceStatement guiceStatement) {
 		guiceStatement.setStartPosition(astNode.getStartPosition());
-		guiceStatement.setLength(astNode.getLength());
 	}
 
 	public static AnnotationList getAnnotationList(

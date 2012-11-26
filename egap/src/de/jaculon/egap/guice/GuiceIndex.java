@@ -430,7 +430,6 @@ public class GuiceIndex implements Serializable {
 				justInTimeBinding.setSrcFolderPathComponents(srcFolderPathComponents);
 				Integer startPositionOfTopLevelType = ICompilationUnitUtils.getStartPositionOfTopLevelType(compilationUnit);
 				justInTimeBinding.setStartPosition(startPositionOfTopLevelType);
-				justInTimeBinding.setLength(0);
 
 				bindings.add(justInTimeBinding);
 			}

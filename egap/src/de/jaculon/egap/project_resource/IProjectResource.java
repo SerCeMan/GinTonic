@@ -6,9 +6,9 @@ import java.util.List;
 import org.eclipse.jdt.core.dom.ASTNode;
 
 /**
- * A project resource is a leightweight reference to a source code location. It is 
- * currently used to navigate from one source code location to another.
- * 
+ * A project resource is a leightweight reference to a source code location. It
+ * is currently used to navigate from one source code location to another.
+ *
  * @author tmajunke
  */
 public interface IProjectResource {
@@ -19,22 +19,22 @@ public interface IProjectResource {
 	String getProjectName();
 
 	/**
-	 * Returns the path to the src folder. Most likely this is ["src"] but
-	 * maven projects use ["src", "main", "java"].
-	 * 
+	 * Returns the path to the src folder. Most likely this is ["src"] but maven
+	 * projects use ["src", "main", "java"].
+	 *
 	 * @return the path to the src folder.
 	 */
 	List<String> getSrcFolderPathComponents();
 
 	/**
 	 * Returns the package as list of strings (e.g ["java","lang"]).
-	 * 
+	 *
 	 * @return the package as list of strings.
 	 */
 	List<String> getPackage();
 
 	/**
-	 * The package name fully qualified (e.g java.lang). Is empty for the
+	 * The package name fully qualified (e.g "java.lang"). Is empty for the
 	 * default package.
 	 */
 	String getPackageFullyQualified();
@@ -52,14 +52,10 @@ public interface IProjectResource {
 	String getTypeNameFullyQualified();
 
 	/**
-	 * Returns the start position like in {@link ASTNode#getStartPosition()} or
-	 * null if there is none.
+	 * Returns the position of this project resource or null if there is none.
+	 *
+	 * @see ASTNode#getStartPosition()
 	 */
 	Integer getStartPosition();
 
-	/**
-	 * Returns the selection length like in {@link ASTNode#getLength()} or null
-	 * if there is none.
-	 */
-	Integer getLength();
 }

@@ -10,8 +10,8 @@ import de.jaculon.egap.utils.Preconditions;
 
 
 /**
- * A guice module. 
- * 
+ * A guice module.
+ *
  * @author tmajunke
  */
 public class GuiceModule extends ProjectResource{
@@ -21,7 +21,7 @@ public class GuiceModule extends ProjectResource{
 	/**
 	 * The AbstractModule#install(Module) instructions found in the guice
 	 * module.
-	 * 
+	 *
 	 * The key is the fully qualified class name of the installed module.
 	 */
 	private List<InstallModuleStatement> installedModules;
@@ -30,11 +30,11 @@ public class GuiceModule extends ProjectResource{
 	 * The bindings found in the guice module.
 	 */
 	private List<BindingDefinition> bindingDefinitions;
-	
+
 	public List<BindingDefinition> getBindingDefinitions() {
 		return bindingDefinitions;
 	}
-	
+
 	public void setInstalledModules(List<InstallModuleStatement> installedModules) {
 		this.installedModules = installedModules;
 	}
@@ -54,15 +54,11 @@ public class GuiceModule extends ProjectResource{
 		for (BindingDefinition bindingStatement : bindingDefinitions) {
 			Preconditions.checkNotNull(bindingStatement.getBoundType());
 			/* Preconditions.checkNotNull(bindingStatement.getImplType()); */
-			Integer startPosition2 = bindingStatement.getStartPosition();
-			Preconditions.checkNotNull(startPosition2);
-			Integer length2 = bindingStatement.getLength();
-			Preconditions.checkNotNull(length2);
+			Preconditions.checkNotNull(bindingStatement.getStartPosition());
 		}
-		
+
 		for (InstallModuleStatement statement : installedModules) {
 			Preconditions.checkNotNull(statement.getStartPosition());
-			Preconditions.checkNotNull(statement.getLength());
 		}
 	}
 
@@ -70,7 +66,7 @@ public class GuiceModule extends ProjectResource{
 	public String toString() {
 		return getTypeNameFullyQualified();
 	}
-	
-	
+
+
 
 }
