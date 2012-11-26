@@ -1,12 +1,9 @@
-package de.jaculon.egap.guice;
+package de.jaculon.egap.project_resource;
 
 import java.io.Serializable;
 import java.util.List;
 
-import de.jaculon.egap.utils.IProjectResource;
 import de.jaculon.egap.utils.StringUtils;
-
-
 
 public class ProjectResource implements Serializable, IProjectResource {
 
@@ -156,6 +153,11 @@ public class ProjectResource implements Serializable, IProjectResource {
 		return true;
 	}
 
-
+	@Override
+	public String toString() {
+		return "@" + projectName + srcFolderPathComponents
+				+ packageNameComponents + "." + typeName + "(" + startPosition
+				+ ", " + length + ")";
+	}
 
 }

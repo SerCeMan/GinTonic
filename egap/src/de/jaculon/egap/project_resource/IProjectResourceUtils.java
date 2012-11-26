@@ -1,4 +1,4 @@
-package de.jaculon.egap.utils;
+package de.jaculon.egap.project_resource;
 
 import java.util.List;
 
@@ -10,23 +10,23 @@ import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.text.ITextSelection;
 
-import de.jaculon.egap.guice.ProjectResource;
-
+import de.jaculon.egap.utils.ICompilationUnitUtils;
+import de.jaculon.egap.utils.IFileUtils;
+import de.jaculon.egap.utils.StringUtils;
 
 public class IProjectResourceUtils {
 
 	public static void openEditorWithStatementDeclaration(
 			IProjectResource navigationEndpoint, Integer startPosition) {
 		IFile srcFile = getJavaFile(navigationEndpoint);
-		IFileUtils.selectAndRevealInEditor(
-				srcFile,
-				startPosition,
-				0);
+		IFileUtils.selectAndRevealInEditor(srcFile, startPosition, 0);
 	}
 
 	public static void openEditorWithStatementDeclaration(
-			IProjectResource navigationEndpoint) {
-		openEditorWithStatementDeclaration(navigationEndpoint, navigationEndpoint.getStartPosition());
+			IProjectResource projectResource) {
+		openEditorWithStatementDeclaration(
+				projectResource,
+				projectResource.getStartPosition());
 	}
 
 	/**
@@ -45,13 +45,14 @@ public class IProjectResourceUtils {
 	}
 
 	public static ICompilationUnit getICompilationUnit(
-			IProjectResource navigationEndpoint) {
-		IFile srcFile = getJavaFile(navigationEndpoint);
+			IProjectResource projectResource) {
+		IFile srcFile = getJavaFile(projectResource);
 		ICompilationUnit compilationUnit = JavaCore.createCompilationUnitFrom(srcFile);
 		return compilationUnit;
 	}
 
-	public static ProjectResource createProjectResource(ICompilationUnit icompilationUnit, ITextSelection textSelection) {
+	public static ProjectResource createProjectResource(
+			ICompilationUnit icompilationUnit, ITextSelection textSelection) {
 		ProjectResource projectResource = new ProjectResource();
 
 		IResource resource = icompilationUnit.getResource();
@@ -69,7 +70,7 @@ public class IProjectResourceUtils {
 		String typeName = ICompilationUnitUtils.getNameWithoutJavaExtension(icompilationUnit);
 		projectResource.setTypeName(typeName);
 
-		if(textSelection != null){
+		if (textSelection != null) {
 			int length = textSelection.getLength();
 			projectResource.setLength(length);
 			int startPosition = textSelection.getOffset();
@@ -78,6 +79,5 @@ public class IProjectResourceUtils {
 
 		return projectResource;
 	}
-
 
 }

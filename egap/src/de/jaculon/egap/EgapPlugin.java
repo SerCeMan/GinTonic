@@ -34,18 +34,15 @@ public class EgapPlugin extends AbstractUIPlugin implements IStartup {
 	 * Nicht ändern!
 	 */
 	public static final String ID_NATURE = "de.jaculon.egap.EgapNature";
+	public static final String ID_NATURE_OLD = "egap.EgapNature";
 
 	public static final String ID_DEBUG_MODE = "de.jaculon.egap.DEBUG_MODE";
-	public static final String ID_TEST_SRC_FOLDER = "de.jaculon.egap.test_src_folder";
-	public static final String ID_TEST_SUFFIX = "de.jaculon.egap.test_suffix";
-	public static final String ID_TEST_PACKAGE_PREFIX = "de.jaculon.egap.package_prefix";
-	public static final String ID_SRC_FOLDER = "de.jaculon.egap.src_folder";
+	public static final String ID_BUILDER = "de.jaculon.egap.EgapProjectBuilder";
 
 	private static EgapPlugin egapPlugin;
 
 	private List<EgapQuickFix> quickfixes = ListUtils.newArrayList();
 
-	public static String ID = "de.jaculon.egap.EgapBuilder";
 
 	public EgapPlugin() {
 		egapPlugin = this;
@@ -134,12 +131,7 @@ public class EgapPlugin extends AbstractUIPlugin implements IStartup {
 		 * We have to enable the earlyStartup feature as the
 		 * EgapToggleNatureAction's label must be set to one of Add/Remove.
 		 */
-		GuiceIndex guiceIndex = null;
-		try {
-			guiceIndex = GuiceIndexSerializer.read();
-		} catch (Exception e) {
-			EgapPlugin.logException("Error deserializing Guice index!", e);
-		}
+		GuiceIndex guiceIndex = GuiceIndexSerializer.read();
 
 		if (guiceIndex != null) {
 			GuiceIndex.set(guiceIndex);

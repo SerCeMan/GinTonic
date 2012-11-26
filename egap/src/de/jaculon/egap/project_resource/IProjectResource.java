@@ -1,4 +1,4 @@
-package de.jaculon.egap.utils;
+package de.jaculon.egap.project_resource;
 
 import java.util.Collection;
 import java.util.List;

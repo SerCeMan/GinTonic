@@ -2,8 +2,8 @@ package de.jaculon.egap.navigate;
 
 import java.util.List;
 
-import de.jaculon.egap.utils.IProjectResource;
-import de.jaculon.egap.utils.IProjectResourceUtils;
+import de.jaculon.egap.project_resource.IProjectResource;
+import de.jaculon.egap.project_resource.IProjectResourceUtils;
 
 
 /**
@@ -37,8 +37,8 @@ public class NavigationCycle{
 	 *         cycle. Otherwise false.
 	 */
 	public boolean jumpTo(IProjectResource projectResource) {
-		Integer resourceIndex = getResourceIndexFor(projectResource);
-		if (resourceIndex != null) {
+		int resourceIndex = projectResources.indexOf(projectResource);
+		if (resourceIndex != -1) {
 			this.index = resourceIndex;
 			jumpToCurrent();
 			return true;
@@ -64,33 +64,6 @@ public class NavigationCycle{
 	private void increaseIndex() {
 		int size = projectResources.size();
 		this.index = (index + 1) % size;
-	}
-
-	/**
-	 * Returns true if the given projectResource is contained in this navigation
-	 * cycle, otherwise false.
-	 *
-	 * @param projectResource the projectResource
-	 * @return true if the given projectResource is contained in this navigation
-	 *         cycle, otherwise false.
-	 */
-	private Integer getResourceIndexFor(IProjectResource projectResource) {
-		int i = 0;
-		for (IProjectResource iProjectResource : projectResources) {
-			if (iProjectResource.getStartPosition().equals(
-					projectResource.getStartPosition())) {
-				if (iProjectResource.getTypeNameFullyQualified().equals(
-						projectResource.getTypeNameFullyQualified())) {
-					if (iProjectResource.getProjectName().equals(
-							projectResource.getProjectName())) {
-						return i;
-					}
-				}
-			}
-			i++;
-		}
-
-		return null;
 	}
 
 }

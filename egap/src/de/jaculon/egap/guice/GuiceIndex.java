@@ -95,7 +95,6 @@ public class GuiceIndex implements Serializable {
 	}
 
 	private static Job build() {
-		final List<IProject> projectsWithEgapNature = IProjectUtils.getOpenProjectsWithNature(EgapPlugin.ID_NATURE);
 
 		/*
 		 * The Job has versus the IWorkspaceRunnable approach the nose ahead as
@@ -105,16 +104,15 @@ public class GuiceIndex implements Serializable {
 		Job job = new Job("Egap - Building Guice module index") {
 			@Override
 			protected IStatus run(IProgressMonitor progressMonitor) {
+				final List<IProject> projectsWithEgapNature = IProjectUtils.getAccessibleProjectsWithEgapNature();
 				for (IProject project : projectsWithEgapNature) {
 					try {
-						if (project.isOpen()) {
-							IProject iProject = project.getProject();
-							iProject.build(
-									IncrementalProjectBuilder.FULL_BUILD,
-									EgapPlugin.ID,
-									null,
-									progressMonitor);
-						}
+						IProject iProject = project.getProject();
+						iProject.build(
+								IncrementalProjectBuilder.FULL_BUILD,
+								EgapPlugin.ID_BUILDER,
+								null,
+								progressMonitor);
 					} catch (CoreException e) {
 						EgapPlugin.logException(e);
 					}
@@ -405,10 +403,10 @@ public class GuiceIndex implements Serializable {
 
 				IJavaProject javaProject = javaElement.getJavaProject();
 
-				JustInTimeBindingStatement implicitBinding = new JustInTimeBindingStatement();
+				JustInTimeBindingStatement justInTimeBinding = new JustInTimeBindingStatement();
 				IProject project = javaProject.getProject();
 				String projectName = project.getName();
-				implicitBinding.setProjectName(projectName);
+				justInTimeBinding.setProjectName(projectName);
 
 				boolean isParameterizedType = typeBindingOfInterfaceType.isParameterizedType();
 
@@ -421,19 +419,20 @@ public class GuiceIndex implements Serializable {
 				else {
 					typeName = typeBindingOfInterfaceType.getName();
 				}
-				implicitBinding.setTypeName(typeName);
+				justInTimeBinding.setTypeName(typeName);
 
 				IPackageBinding packageBinding = typeBindingOfInterfaceType.getPackage();
 				String[] packageName = packageBinding.getNameComponents();
-				implicitBinding.setPackage(Arrays.asList(packageName));
+				justInTimeBinding.setPackage(Arrays.asList(packageName));
 
 				ICompilationUnit compilationUnit = member.getCompilationUnit();
 				List<String> srcFolderPathComponents = ICompilationUnitUtils.getSrcFolderPathComponents(compilationUnit);
-				implicitBinding.setSrcFolderPathComponents(srcFolderPathComponents);
+				justInTimeBinding.setSrcFolderPathComponents(srcFolderPathComponents);
 				Integer startPositionOfTopLevelType = ICompilationUnitUtils.getStartPositionOfTopLevelType(compilationUnit);
-				implicitBinding.setStartPosition(startPositionOfTopLevelType);
-				bindings.add(implicitBinding);
+				justInTimeBinding.setStartPosition(startPositionOfTopLevelType);
+				justInTimeBinding.setLength(0);
 
+				bindings.add(justInTimeBinding);
 			}
 		}
 	}

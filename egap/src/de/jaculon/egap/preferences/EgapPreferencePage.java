@@ -43,30 +43,11 @@ public class EgapPreferencePage extends FieldEditorPreferencePage implements
 
 		Composite fieldEditorParent = getFieldEditorParent();
 
-		
-		/* Preferences for the junit testcase creation command */
-		addField(new StringFieldEditor(
-				EgapPlugin.ID_TEST_SUFFIX,
-				"Testcase suffix",
-				fieldEditorParent));
-		addField(new StringFieldEditor(
-				EgapPlugin.ID_TEST_PACKAGE_PREFIX,
-				"Test package prefix",
-				fieldEditorParent));
-		addField(new StringFieldEditor(
-				EgapPlugin.ID_TEST_SRC_FOLDER,
-				"Test src folder",
-				fieldEditorParent));
-		addField(new StringFieldEditor(
-				EgapPlugin.ID_SRC_FOLDER,
-				"Src folder",
-				fieldEditorParent));
-		
 		addField(new BooleanFieldEditor(
 				EgapPlugin.ID_DEBUG_MODE,
 				"Debug mode",
 				fieldEditorParent));
-		
+
 	}
 
 	@Override
@@ -76,7 +57,7 @@ public class EgapPreferencePage extends FieldEditorPreferencePage implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
 	 */

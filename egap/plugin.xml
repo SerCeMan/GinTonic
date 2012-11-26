@@ -4,13 +4,13 @@
 
    <extension
          point="org.eclipse.jdt.ui.quickFixProcessors">
-	
+
       <quickFixProcessor
             class="de.jaculon.egap.quickfix.EgapQuickFixProcessor"
             id="egap.quickfix.EgapQuickFixProcessor"
             name="egap.quickfix.EgapQuickFixProcessor">
       </quickFixProcessor>
-      
+
    </extension>
    <extension
          point="org.eclipse.ui.preferencePages">
@@ -26,16 +26,16 @@
             class="de.jaculon.egap.preferences.PreferenceInitializer">
       </initializer>
    </extension>
-   
+
    <extension
-			id="egap.EgapBuilder"
+			id="de.jaculon.egap.EgapProjectBuilder"
 			name="Egap Project Builder"
 			point="org.eclipse.core.resources.builders">
 		<builder hasNature="true">
 			<run class="de.jaculon.egap.project_builder.EgapProjectBuilder" />
 		</builder>
 	</extension>
-	
+
 	<extension
 			id="egap.EgapNature"
 			name="Egap Project Nature"
@@ -43,9 +43,9 @@
 		<runtime>
 			<run class="de.jaculon.egap.nature.EgapNature" />
 		</runtime>
-		<builder id="egap.EgapBuilder" />
+		<builder id="de.jaculon.egap.EgapProjectBuilder" />
 	</extension>
-	
+
 	<extension point="org.eclipse.ui.popupMenus">
 		<objectContribution
 				adaptable="true"
@@ -62,7 +62,7 @@
 			</action>
 		</objectContribution>
 	</extension>
-	
+
 	<extension point="org.eclipse.ui.startup"></extension>
  <extension
        point="org.eclipse.ui.commands">
@@ -92,6 +92,6 @@
           sequence="M1+M2+V G">
     </key>
  </extension>
- 
+
 
 </plugin>

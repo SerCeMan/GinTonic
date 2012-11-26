@@ -73,21 +73,4 @@ public class BindingDefinition extends GuiceStatement {
 		return guiceAnnotation;
 	}
 
-	/**
-	 * Delivers the label which is displayed in the quickfix.
-	 */
-	@Override
-	public String getLabel() {
-		String guiceModuleName = getTypeName();
-		String label = "Goto binding in '" + guiceModuleName + "'";
-		String scopeTypeAsString = getScopeTypeSimpleName();
-
-		if (scopeType == null) {
-			scopeTypeAsString = "Unscoped";
-		}
-
-		label = label + " (Scope:" + scopeTypeAsString + ")";
-		return label;
-	}
-
 }

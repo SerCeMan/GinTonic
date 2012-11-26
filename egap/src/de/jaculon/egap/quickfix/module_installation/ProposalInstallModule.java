@@ -14,10 +14,10 @@ import org.eclipse.swt.graphics.Point;
 
 import de.jaculon.egap.guice.GuiceModule;
 import de.jaculon.egap.icons.Icons;
+import de.jaculon.egap.project_resource.IProjectResourceUtils;
 import de.jaculon.egap.refactor.Refactorator;
 import de.jaculon.egap.templates.InstallModuleTemplate;
 import de.jaculon.egap.utils.ASTParserUtils;
-import de.jaculon.egap.utils.IProjectResourceUtils;
 
 
 public class ProposalInstallModule implements IJavaCompletionProposal {

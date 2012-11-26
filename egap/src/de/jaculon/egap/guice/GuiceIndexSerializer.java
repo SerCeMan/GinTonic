@@ -14,7 +14,6 @@ import org.eclipse.core.runtime.IPath;
 import de.jaculon.egap.EgapPlugin;
 import de.jaculon.egap.utils.DateUtils;
 
-
 public class GuiceIndexSerializer {
 
 	private static final String GUICE_INDEX_FILENAME = "GuiceIndex";
@@ -31,14 +30,15 @@ public class GuiceIndexSerializer {
 	/**
 	 * Returns the index from disc or null if it does not exist or cannot be
 	 * read.
+	 * @throws IOException
 	 */
-	public static GuiceIndex read() throws IOException, ClassNotFoundException {
+	public static GuiceIndex read(){
 
 		ObjectInputStream deserializer = null;
 		FileInputStream fileInputStream = null;
+
 		try {
 			File guiceIndexSerialized = getPathToGuiceIndexAsSerializedFile();
-
 			if (!guiceIndexSerialized.exists()) {
 				return null;
 			}
@@ -58,20 +58,32 @@ public class GuiceIndexSerializer {
 					+ DateUtils.formatMilliseconds(elapsed) + ").");
 			EgapPlugin.logInfo(guiceIndex.getIndexInfoDetailed());
 			return guiceIndex;
-		} finally {
+		}catch (Exception e) {
+			EgapPlugin.logWarning("Error deserializing Guice index!");
+		}
+		finally {
 			if (deserializer != null) {
-				deserializer.close();
+				try {
+					deserializer.close();
+				} catch (IOException e) {
+
+				}
 			}
 		}
+		return null;
 	}
 
 	/**
 	 * Serializes the guice index to disc. Overwrites old index.
-	 * 
+	 *
 	 * @throws IOException
 	 */
 	public static void write() throws IOException {
 		GuiceIndex guiceIndex = GuiceIndex.get();
+		if (guiceIndex.getNrOfGuiceModules() == 0) {
+			EgapPlugin.logInfo("Didn't write Guice index as it is empty.");
+			return;
+		}
 		ObjectOutputStream serializer = null;
 		FileOutputStream fileOutputStream = null;
 		try {
@@ -93,7 +105,7 @@ public class GuiceIndexSerializer {
 
 	/**
 	 * Returns the path to the file where to persistently store the guice index.
-	 * 
+	 *
 	 */
 	public static File getPathToGuiceIndexAsSerializedFile() {
 		try {

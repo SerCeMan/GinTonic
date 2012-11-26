@@ -16,9 +16,4 @@ public class InstallModuleStatement extends GuiceStatement {
 		return moduleNameFullyQualified;
 	}
 
-	@Override
-	public String getLabel() {
-		return "Goto module install in '" + getTypeName() + "'";
-	}
-
 }

@@ -4,6 +4,7 @@ import java.util.List;
 
 import de.jaculon.egap.guice.statements.BindingDefinition;
 import de.jaculon.egap.guice.statements.InstallModuleStatement;
+import de.jaculon.egap.project_resource.ProjectResource;
 import de.jaculon.egap.utils.Preconditions;
 
 

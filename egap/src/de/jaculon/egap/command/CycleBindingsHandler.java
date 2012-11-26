@@ -20,9 +20,9 @@ import de.jaculon.egap.guice.GuiceIndex;
 import de.jaculon.egap.guice.injection_point.IInjectionPoint;
 import de.jaculon.egap.guice.injection_point.InjectionPointDao;
 import de.jaculon.egap.guice.statements.BindingDefinition;
+import de.jaculon.egap.project_resource.IProjectResource;
+import de.jaculon.egap.project_resource.IProjectResourceUtils;
 import de.jaculon.egap.utils.EclipseUtils;
-import de.jaculon.egap.utils.IProjectResource;
-import de.jaculon.egap.utils.IProjectResourceUtils;
 
 /**
  * Jumps from an {@link IInjectionPoint} to its binding definition(s).
@@ -40,26 +40,10 @@ public class CycleBindingsHandler extends AbstractHandler {
 	private ICompilationUnit icompilationUnit;
 	private ITextSelection currentSelection;
 
-	private long findCycleTook;
-	private long findInjectionPointTook;
-	private long findBindingDefinitionsTook;
-
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-
-		findCycleTook = 0;
-		findInjectionPointTook = 0;
-		findBindingDefinitionsTook = 0;
-
-		long now = System.currentTimeMillis();
 		try {
 			cycle();
-			long then = System.currentTimeMillis();
-			findCycleTook = then - now;
-			EgapPlugin.logInfo("jump to binding took " + findCycleTook
-					+ " (findBindingDefinitions = "
-					+ findBindingDefinitionsTook + ", findInjectionPoint = "
-					+ findInjectionPointTook + " ms)");
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		} finally {
@@ -82,20 +66,14 @@ public class CycleBindingsHandler extends AbstractHandler {
 				return;
 			}
 		}
-		long now = System.currentTimeMillis();
 		IInjectionPoint injectionPoint = injectionPointDao.findInjectionPointByTextSelection(
 				icompilationUnit,
 				currentSelection);
-		long then = System.currentTimeMillis();
-		findInjectionPointTook = then - now;
 
 		if (injectionPoint != null) {
 
-			long now2 = System.currentTimeMillis();
 			GuiceIndex guiceIndex = GuiceIndex.get();
 			List<BindingDefinition> bindingDefinitions = guiceIndex.getBindingDefinitionsFor(injectionPoint);
-			long then2 = System.currentTimeMillis();
-			findBindingDefinitionsTook = then2 - now2;
 
 			if (!bindingDefinitions.isEmpty()) {
 				/*

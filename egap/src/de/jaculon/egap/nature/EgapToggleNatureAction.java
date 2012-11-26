@@ -3,7 +3,6 @@ package de.jaculon.egap.nature;
 import java.util.Iterator;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jdt.core.JavaCore;
@@ -25,37 +24,40 @@ public class EgapToggleNatureAction implements IObjectActionDelegate {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	@Override
 	public void run(final IAction action) {
-		
+
 		final IProject project = getProject(selection);
 		if (project != null) {
-			boolean natureToggled = IProjectUtils.toggleNature(project, EgapPlugin.ID_NATURE);
-			if (natureToggled) {
-				action.setText(REMOVE);
-			} else {
-				action.setText(ADD);
-			}
+
 			try {
-				project.build(IncrementalProjectBuilder.FULL_BUILD, null);
-			} catch (final CoreException e) {
-				EgapPlugin.logException(e);
+				boolean hasEgapNature = IProjectUtils.hasEgapNature(project);
+				if (hasEgapNature) {
+					IProjectUtils.removeEgapNature(project, null);
+					action.setText(ADD);
+				}else{
+					IProjectUtils.addEgapNature(project, null);
+					action.setText(REMOVE);
+				}
+			} catch (CoreException e1) {
+				throw new RuntimeException(e1);
 			}
 		}
 	}
 
 	@Override
 	public void selectionChanged(final IAction action, final ISelection selection) {
-		
+
 		this.selection = selection;
 
 		final IProject project = getProject(selection);
 		if (project != null) {
 			try {
-				if (project.hasNature(EgapPlugin.ID_NATURE)) {
+				boolean hasEgapNature = IProjectUtils.hasEgapNature(project);
+				if (hasEgapNature) {
 					action.setText(REMOVE);
 				} else {
 					action.setText(ADD);
@@ -69,7 +71,7 @@ public class EgapToggleNatureAction implements IObjectActionDelegate {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.IObjectActionDelegate#setActivePart(org.eclipse.jface.action.IAction, org.eclipse.ui.IWorkbenchPart)
 	 */
 	@Override
@@ -86,15 +88,15 @@ public class EgapToggleNatureAction implements IObjectActionDelegate {
 				} else if (element instanceof IAdaptable) {
 					project = (IProject) ((IAdaptable) element).getAdapter(IProject.class);
 				}
-				
+
 				if(project == null){
 					return null;
 				}
-				
-				if(!project.isOpen()){
+
+				if(!project.isAccessible()){
 					return null;
 				}
-				
+
 				try {
 					if(!project.hasNature(JavaCore.NATURE_ID)){
 						return null;
@@ -102,7 +104,7 @@ public class EgapToggleNatureAction implements IObjectActionDelegate {
 				} catch (CoreException e) {
 					throw new RuntimeException(e);
 				}
-				
+
 				return project;
 			}
 		}

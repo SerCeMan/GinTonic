@@ -14,6 +14,7 @@ import org.eclipse.jdt.ui.text.java.IProblemLocation;
 import org.eclipse.jdt.ui.text.java.IQuickFixProcessor;
 
 import de.jaculon.egap.EgapPlugin;
+import de.jaculon.egap.utils.IProjectUtils;
 import de.jaculon.egap.utils.ListUtils;
 
 
@@ -33,15 +34,15 @@ public class EgapQuickFixProcessor implements IQuickFixProcessor {
 
 		/**
 		 * The quick fixes are only enabled if the project has the de.jaculon.egap nature.
-		 * 
+		 *
 		 * Have to check this here, as the configuration in the plugin.xml:
-		 * 
+		 *
 		 * <pre>
-		 * <with variable="projectNatures"> 
-		 * <equals value="de.jaculon.egap.EgapNature"/> 
+		 * <with variable="projectNatures">
+		 * <equals value="de.jaculon.egap.EgapNature"/>
 		 * </with>
 		 * </pre>
-		 * 
+		 *
 		 * does not do it!
 		 */
 		ICompilationUnit compilationUnit = context.getCompilationUnit();
@@ -49,7 +50,7 @@ public class EgapQuickFixProcessor implements IQuickFixProcessor {
 		IJavaProject javaProject = parent.getJavaProject();
 		IProject project = javaProject.getProject();
 
-		if (!project.hasNature(EgapPlugin.ID_NATURE)) {
+		if (! IProjectUtils.hasEgapNature(project)) {
 
 			if (!loggedWarningAboutProjectWithoutEgapNature) {
 				/* One log message is sufficient! */

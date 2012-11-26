@@ -1,5 +1,7 @@
 package de.jaculon.egap.utils;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -13,13 +15,12 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 
 import de.jaculon.egap.EgapPlugin;
-
-
 
 public class IProjectUtils {
 
@@ -56,56 +57,53 @@ public class IProjectUtils {
 	}
 
 	/**
-	 * Adds the given nature to the projects natures if it does not yet exist.
-	 * Otherwise the nature is removed from the project.
-	 *
-	 * @param project the project
-	 * @param natureId the nature ID
-	 * @return true if the nature was added, otherwise false.
+	 * Adds the Egap nature to the projects natures.
 	 */
-	public static boolean toggleNature(final IProject project, String natureId) {
-		try {
-			final IProjectDescription description = project.getDescription();
-			final String[] natures = description.getNatureIds();
-
-			for (int i = 0; i < natures.length; ++i) {
-				if (natureId.equals(natures[i])) {
-
-					// Remove the nature
-					final String[] newNatures = new String[natures.length - 1];
-					System.arraycopy(natures, 0, newNatures, 0, i);
-					System.arraycopy(
-							natures,
-							i + 1,
-							newNatures,
-							i,
-							natures.length - i - 1);
-					description.setNatureIds(newNatures);
-					project.setDescription(description, null);
-
-					return false;
-				}
-			}
-
-			/* Nature not found -- adding it */
-			final String[] newNatures = new String[natures.length + 1];
-			System.arraycopy(natures, 0, newNatures, 0, natures.length);
-			newNatures[natures.length] = EgapPlugin.ID_NATURE;
-			description.setNatureIds(newNatures);
-			project.setDescription(description, null);
-		} catch (final CoreException e) {
-			EgapPlugin.logException(e);
-		}
-		return true;
+	public static void addEgapNature(IProject project,
+			IProgressMonitor progressMonitor) throws CoreException {
+		changeNature(
+				project,
+				progressMonitor,
+				new IFunction<HashSet<String>>() {
+					@Override
+					public void apply(HashSet<String> natures) {
+						natures.add(EgapPlugin.ID_NATURE);
+					}
+				});
 	}
 
-	public static List<IProject> getOpenProjectsWithNature(String natureId) {
+	private static void changeNature(IProject project,
+			IProgressMonitor progressMonitor,
+			IFunction<HashSet<String>> function) throws CoreException {
+		final IProjectDescription description = project.getDescription();
+		final HashSet<String> natures = new HashSet<String>(
+				Arrays.asList(description.getNatureIds()));
+		function.apply(natures);
+		description.setNatureIds(natures.toArray(new String[] {}));
+		project.setDescription(description, progressMonitor);
+	}
+
+	public static void removeEgapNature(IProject project,
+			IProgressMonitor progressMonitor) throws CoreException {
+		changeNature(
+				project,
+				progressMonitor,
+				new IFunction<HashSet<String>>() {
+					@Override
+					public void apply(HashSet<String> natures) {
+						natures.remove(EgapPlugin.ID_NATURE);
+						natures.remove(EgapPlugin.ID_NATURE_OLD);
+					}
+				});
+	}
+
+	public static List<IProject> getAccessibleProjectsWithEgapNature() {
 		final IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 		List<IProject> projectsWithNature = ListUtils.newArrayList();
 
 		for (IProject iProject : projects) {
 			try {
-				if (iProject.isOpen() && iProject.hasNature(natureId)) {
+				if (iProject.isAccessible() && hasEgapNature(iProject)) {
 					projectsWithNature.add(iProject);
 				}
 			} catch (CoreException e) {
@@ -114,6 +112,11 @@ public class IProjectUtils {
 		}
 
 		return projectsWithNature;
+	}
+
+	public static boolean hasEgapNature(IProject project) throws CoreException {
+		return project.hasNature(EgapPlugin.ID_NATURE)
+				|| project.hasNature(EgapPlugin.ID_NATURE_OLD);
 	}
 
 	private static final class CollectFiles implements IResourceVisitor {
@@ -134,12 +137,15 @@ public class IProjectUtils {
 				if (IFolderUtils.isSourceFolder(folder, sourceFolders)) {
 					return true;
 				}
-				/* We must always descend into every folder, as otherwise
-				 * folders with more segments (like maven projects with
-				 * a src folder src/main/java) are not correctly
-				 * scanned for files (Bug in Rev 3). */
+				/*
+				 * We must always descend into every folder, as otherwise
+				 * folders with more segments (like maven projects with a src
+				 * folder src/main/java) are not correctly scanned for files
+				 * (Bug in Rev 3).
+				 */
 				return true;
-			} else if (resource instanceof IFile) {
+			}
+			else if (resource instanceof IFile) {
 				files.add((IFile) resource);
 			}
 
