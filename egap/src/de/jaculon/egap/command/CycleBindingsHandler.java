@@ -81,8 +81,8 @@ public class CycleBindingsHandler extends AbstractHandler {
 				 * can create a new navigation cycle!
 				 */
 				navigationCycle = new BindingNavigationCycle(
-						bindingDefinitions,
-						currentCodeLocation);
+						currentCodeLocation,
+						bindingDefinitions);
 				navigationCycle.jumpToNext();
 			}
 			else {

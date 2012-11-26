@@ -15,7 +15,7 @@ import de.jaculon.egap.utils.ListUtils;
  */
 public class BindingNavigationCycle extends NavigationCycle{
 
-	public BindingNavigationCycle(List<BindingDefinition> bindingDefinitions, IProjectResource origin) {
+	public BindingNavigationCycle(IProjectResource origin, List<BindingDefinition> bindingDefinitions) {
 		List<IProjectResource> projectResources = ListUtils.newArrayListWithCapacity(bindingDefinitions.size() + 1);
 		projectResources.add(origin);
 		projectResources.addAll(bindingDefinitions);
