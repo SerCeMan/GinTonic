@@ -315,7 +315,7 @@ public class InjectionPointDao {
 	}
 
 	@SuppressWarnings("unchecked")
-	private static InjectionPoint analyzeForInjectionPoint(
+	private InjectionPoint analyzeForInjectionPoint(
 			FieldDeclaration fieldDeclaration, CompilationUnit compilationUnit,
 			String fieldName) {
 
