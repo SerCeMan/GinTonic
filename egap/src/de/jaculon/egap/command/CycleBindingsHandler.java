@@ -61,7 +61,7 @@ public class CycleBindingsHandler extends AbstractHandler {
 			 * First we check if the current code location is contained in our
 			 * navigation cycle.
 			 */
-			boolean couldJump = navigationCycle.jumpTo(currentCodeLocation);
+			boolean couldJump = navigationCycle.jumpToFollower(currentCodeLocation);
 			if (couldJump) {
 				return;
 			}

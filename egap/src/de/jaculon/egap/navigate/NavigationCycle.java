@@ -5,14 +5,13 @@ import java.util.List;
 import de.jaculon.egap.project_resource.IProjectResource;
 import de.jaculon.egap.project_resource.IProjectResourceUtils;
 
-
 /**
  * A {@link NavigationCycle} can be used to jump from one project resource to
- * another. Jump means that the target resource is opened in an eclipse editor.
- *
+ * another. Jump means that the target resource is opened in the eclipse editor.
+ * 
  * @author tmajunke
  */
-public class NavigationCycle{
+public class NavigationCycle {
 
 	/**
 	 * The project resources that we can jump to.
@@ -29,19 +28,23 @@ public class NavigationCycle{
 	}
 
 	/**
-	 * Jumps to the given project resource if the resource is contained in this
-	 * navigation cycle.
-	 *
+	 * Jumps to the project resource that is the follower of the given resource.
+	 * It also sets the resource pointer to the follower.
+	 * 
+	 * To do so we must first check if the given resource is contained in this
+	 * navigation cycle. The check compares the resources start position and
+	 * qualified name. If the resource is not contained in this navigation cycle
+	 * then nothing happens and the method returns false.
+	 * 
 	 * @param projectResource the projectResource. May not be null.
 	 * @return true, if the resource has been contained in this navigation
 	 *         cycle. Otherwise false.
 	 */
-	public boolean jumpTo(IProjectResource projectResource) {
+	public boolean jumpToFollower(IProjectResource projectResource) {
 		Integer resourceIndex = getResourceIndexFor(projectResource);
 		if (resourceIndex != null) {
 			this.index = resourceIndex;
-			increaseIndex();
-			jumpToCurrent();
+			jumpToNext();
 			return true;
 		}
 		return false;
@@ -70,7 +73,7 @@ public class NavigationCycle{
 	/**
 	 * Returns true if the given projectResource is contained in this navigation
 	 * cycle, otherwise false.
-	 *
+	 * 
 	 * @param projectResource the projectResource
 	 * @return true if the given projectResource is contained in this navigation
 	 *         cycle, otherwise false.
@@ -78,14 +81,13 @@ public class NavigationCycle{
 	private Integer getResourceIndexFor(IProjectResource projectResource) {
 		int i = 0;
 		for (IProjectResource iProjectResource : projectResources) {
-			if (iProjectResource.getStartPosition().equals(
-					projectResource.getStartPosition())) {
-				if (iProjectResource.getTypeNameFullyQualified().equals(
-						projectResource.getTypeNameFullyQualified())) {
-					if (iProjectResource.getProjectName().equals(
-							projectResource.getProjectName())) {
-						return i;
-					}
+			Integer startPosition = iProjectResource.getStartPosition();
+			Integer startPosition2 = projectResource.getStartPosition();
+			if (startPosition.equals(startPosition2)) {
+				String typeNameFullyQualified = iProjectResource.getTypeNameFullyQualified();
+				String typeNameFullyQualified2 = projectResource.getTypeNameFullyQualified();
+				if (typeNameFullyQualified.equals(typeNameFullyQualified2)) {
+					return i;
 				}
 			}
 			i++;
