@@ -43,7 +43,7 @@ import de.jaculon.egap.utils.StringUtils;
  * The guice index holds the informations about the guice modules as collected
  * during the build process ({@link EgapProjectBuilder}), so they can be
  * accessed faster (e.g by the quickfixes).
- *
+ * 
  * @author tmajunke
  */
 public class GuiceIndex implements Serializable {
@@ -205,24 +205,31 @@ public class GuiceIndex implements Serializable {
 	}
 
 	/**
-	 * Returns the guice modules of the given package and the parent packages as
-	 * indicated by the parameter depth. Returns an empty list if no modules
-	 * were found.
-	 *
-	 * @param depth the number of parent packages to include (0 = the empty list
-	 *            is returned, 1 means the modules in the given package, 2 means
-	 *            the modules in the given package and the parent package, 3...
-	 *            think you got it).
+	 * <pre>
+	 * getGuiceModulesInAndBelowPackage(currentPackageBinding, null, 2);
+	 * </pre>
 	 */
 	public List<GuiceModule> getGuiceModulesInAndBelowPackage(
 			IPackageBinding currentPackageBinding) {
 		return getGuiceModulesInAndBelowPackage(currentPackageBinding, null, 2);
 	}
 
+	/**
+	 * Returns the guice modules of the given package and the parent packages as
+	 * indicated by the parameter depth. Returns an empty list if no modules
+	 * were found.
+	 * 
+	 * @param packageBinding the package in which we look for the guice modules
+	 * @param ignoreModule a fully qualified type name of a guice module, which
+	 *            is ignored. Can be null.
+	 * @param depth the number of parent packages to include (0 = the empty list
+	 *            is returned, 1 means the modules in the given package, 2 means
+	 *            the modules in the given package and the parent package, 3...
+	 *            think you got it).
+	 */
 	public List<GuiceModule> getGuiceModulesInAndBelowPackage(
-			IPackageBinding currentPackageBinding, String ignoreModule,
-			int depth) {
-		IPackageFragment currentPackage = (IPackageFragment) currentPackageBinding.getJavaElement();
+			IPackageBinding packageBinding, String ignoreModule, int depth) {
+		IPackageFragment currentPackage = (IPackageFragment) packageBinding.getJavaElement();
 		List<IPackageFragment> parentPackages = IPackageFragmentUtils.getParentPackages(
 				currentPackage,
 				depth);
@@ -266,46 +273,39 @@ public class GuiceIndex implements Serializable {
 
 	public List<BindingDefinition> getBindingDefinitionsFor(
 			IInjectionPoint injectionPoint) {
-		List<BindingDefinition> projectResourcesToVisit;
+
 		ITypeBinding typeBinding = injectionPoint.getTargetTypeBinding();
 		ITypeBinding typeBindingWithoutProvider = ITypeBindingUtils.removeSurroundingProvider(typeBinding);
 
 		GuiceAnnotation guiceAnnotation = injectionPoint.getGuiceAnnotation();
 
-		long now = System.currentTimeMillis();
-
-		projectResourcesToVisit = getBindingsByTypeAndAnnotation(
+		List<BindingDefinition> bindingDefinitions = getBindingsByTypeAndAnnotation(
 				typeBindingWithoutProvider,
 				guiceAnnotation);
 
-		long then = System.currentTimeMillis();
-		long elapsed = then - now;
-		System.out.println("getBindingsForInjectionPoint took " + elapsed
-				+ " ms");
-
-		return projectResourcesToVisit;
+		return bindingDefinitions;
 	}
 
 	/**
 	 * Returns the {@link BindingDefinition}s for the given bound type and
 	 * annotation type.
-	 *
+	 * 
 	 * <h5>Just in time binding</h5>
-	 *
+	 * 
 	 * If we could not find an explicit binding then we check the type. If it is
 	 * a concrete class the we return a just in time binding. In all other cases
 	 * we return null.
-	 *
+	 * 
 	 * <h5>MapBinder Statements</h5>
-	 *
+	 * 
 	 * If the type to find is a {@link Map}, then we also check if we can find a
 	 * suitable MapBinder statement.
-	 *
+	 * 
 	 * @param typeToFind the bound type. Cannot be null. Primitives (like "int")
 	 *            values are allowed. Provider types are not allowed( e.g
 	 *            instead of asking for "Provider&lt;Date&gt;" you must ask for
 	 *            "Date").
-	 *
+	 * 
 	 * @param annotationTypeToFind the annotationType. Can be null.
 	 * @param namedAnnotationLiteralValueToFind the literal value of the named
 	 *            annotation. Can be null.
@@ -377,11 +377,11 @@ public class GuiceIndex implements Serializable {
 
 			/*
 			 * No implicit binding if the injected type is parameterized!
-			 *
+			 * 
 			 * Example:
-			 *
+			 * 
 			 * @Inject private ModulSpez<T> modulSpez;
-			 *
+			 * 
 			 * @Inject private DatendateiParser<M15N1OV14>
 			 * m15n1oDatendateiParser;
 			 */
@@ -439,7 +439,7 @@ public class GuiceIndex implements Serializable {
 	/**
 	 * Synonym for getBindingsByTypeAndAnnotationLimitToPackage(typeToFind,
 	 * guiceAnnotationToFind, null);
-	 *
+	 * 
 	 * @see #getBindingsByTypeAndAnnotationLimitToPackage(ITypeBinding,
 	 *      GuiceAnnotation, Set)
 	 */
