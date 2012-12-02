@@ -71,7 +71,7 @@ public class ProposalCreateGuiceModule implements IJavaCompletionProposal {
 				guiceModuleClassName,
 				source);
 
-		ICompilationUnitUtils.viewInEditor(iCompilationUnit);
+		ICompilationUnitUtils.selectAndRevealPrimaryType(iCompilationUnit);
 
 	}
 

@@ -62,7 +62,7 @@ public class GuiceIndex implements Serializable {
 	private ArrayList<GuiceModule> guiceModules = new ArrayList<GuiceModule>(
 			100);
 
-	private GuiceIndex() {
+	public GuiceIndex() {
 		super();
 	}
 

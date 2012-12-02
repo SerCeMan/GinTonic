@@ -14,21 +14,15 @@ import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
+import org.eclipse.jdt.core.ISourceRange;
+import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.core.dom.AST;
-import org.eclipse.jdt.core.dom.ASTParser;
-import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.jdt.core.dom.SimpleName;
-import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.ui.CodeGeneration;
-
-
-
 
 public class ICompilationUnitUtils {
 
 	public static final String JAVA_EXTENSION = ".java";
-
+	
 	public static ICompilationUnit createJavaCompilationUnit(
 			IPackageFragment packageFragment, String className, String javaCode) {
 
@@ -69,7 +63,7 @@ public class ICompilationUnitUtils {
 	/**
 	 * Returns the name of the {@link ICompilationUnit} without the .java
 	 * extension.
-	 *
+	 * 
 	 * @param compilationUnit the {@link ICompilationUnit}
 	 * @return the name without the .java extension.
 	 */
@@ -79,7 +73,8 @@ public class ICompilationUnitUtils {
 		return elementName.replace(JAVA_EXTENSION, "");
 	}
 
-	public static List<String> getSrcFolderPathComponents(ICompilationUnit compilationUnit){
+	public static List<String> getSrcFolderPathComponents(
+			ICompilationUnit compilationUnit) {
 		IPackageFragmentRoot packageFragmentRoot = (IPackageFragmentRoot) compilationUnit.getAncestor(IJavaElement.PACKAGE_FRAGMENT_ROOT);
 		IResource underlyingResource;
 		try {
@@ -89,8 +84,8 @@ public class ICompilationUnitUtils {
 		}
 		List<String> folderPathSegments = ListUtils.newArrayList();
 		IContainer parent = (IFolder) underlyingResource;
-		while(true){
-			if(parent instanceof IProject){
+		while (true) {
+			if (parent instanceof IProject) {
 				break;
 			}
 			IFolder middleFolder = (IFolder) parent;
@@ -104,25 +99,31 @@ public class ICompilationUnitUtils {
 		return folderPathSegments;
 	}
 
-	public static Integer getStartPositionOfTopLevelType(ICompilationUnit compilationUnit) {
-		ASTParser astParser = ASTParser.newParser(AST.JLS3);
-		astParser.setSource(compilationUnit);
-		astParser.setKind(ASTParser.K_COMPILATION_UNIT);
-		CompilationUnit astRoot = (CompilationUnit) astParser.createAST(null);
-
-		@SuppressWarnings("unchecked")
-		List<TypeDeclaration> types = astRoot.types();
-
-		if (types.size() > 0) {
-			TypeDeclaration typeDeclaration = types.get(0);
-			SimpleName name = typeDeclaration.getName();
-			int startPosition = name.getStartPosition();
-			return startPosition;
+	public static Integer getStartPositionOfTopLevelType(
+			ICompilationUnit compilationUnit) {
+		IType primaryType = compilationUnit.findPrimaryType();
+		if (primaryType == null) {
+			return null;
 		}
-		return null;
+		ISourceRange nameRange;
+		try {
+			nameRange = primaryType.getNameRange();
+			if(nameRange == null){
+				return null;
+			}
+		} catch (JavaModelException e) {
+			throw new RuntimeException(e);
+		}
+		return nameRange.getOffset();
 	}
 
-	public static void viewInEditor(ICompilationUnit iCompilationUnit){
+	/**
+	 * Opens an editor with the given compilationUnit and sets the cursor on the
+	 * primary type.
+	 * 
+	 * @param iCompilationUnit the compilationUnit. May not be null.
+	 */
+	public static void selectAndRevealPrimaryType(ICompilationUnit iCompilationUnit) {
 		IResource resource = iCompilationUnit.getResource();
 
 		if (resource instanceof IFile) {

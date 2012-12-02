@@ -1,6 +1,7 @@
 package de.jaculon.egap.utils;
 
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
@@ -13,7 +14,8 @@ import org.eclipse.ui.PlatformUI;
 public class EclipseUtils {
 
 	public static IEditorPart getActiveEditor() {
-		IWorkbenchWindow activeWorkbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		IWorkbench workbench = PlatformUI.getWorkbench();
+		IWorkbenchWindow activeWorkbenchWindow = workbench.getActiveWorkbenchWindow();
 		IWorkbenchPage activePage = activeWorkbenchWindow.getActivePage();
 		IEditorPart editorPart = activePage.getActiveEditor();
 		return editorPart;
