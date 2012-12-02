@@ -14,7 +14,7 @@ import org.eclipse.swt.graphics.Point;
 import de.jaculon.egap.guice.GuiceConstants;
 import de.jaculon.egap.icons.Icons;
 import de.jaculon.egap.refactor.Refactorator;
-import de.jaculon.egap.utils.IFileUtils;
+import de.jaculon.egap.select_and_reveal.SelectAndReveal;
 import de.jaculon.egap.utils.TypeUtils;
 
 
@@ -82,7 +82,7 @@ public class ProposalConvertToProvider implements IJavaCompletionProposal {
 		refactorator.renameFieldIdentifiers(fieldDeclaration, "$Provider");
 		refactorator.refactor(null);
 		int startPosition = sourceType.getStartPosition();
-		IFileUtils.setCaretAndRevealInEditor(
+		SelectAndReveal.selectAndReveal(
 				(IFile) icompilationUnit.getResource(),
 				startPosition);
 	}

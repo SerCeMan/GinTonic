@@ -9,6 +9,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 
 import de.jaculon.egap.icons.Icons;
+import de.jaculon.egap.select_and_reveal.SelectAndReveal;
 import de.jaculon.egap.templates.GuiceModuleTemplate;
 import de.jaculon.egap.utils.ICompilationUnitUtils;
 
@@ -71,7 +72,7 @@ public class ProposalCreateGuiceModule implements IJavaCompletionProposal {
 				guiceModuleClassName,
 				source);
 
-		ICompilationUnitUtils.selectAndRevealPrimaryType(iCompilationUnit);
+		SelectAndReveal.selectAndRevealPrimaryType(iCompilationUnit);
 
 	}
 

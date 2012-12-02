@@ -7,8 +7,16 @@ import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.ISourceRange;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.texteditor.ITextEditor;
 
-import de.jaculon.egap.utils.IFileUtils;
+import de.jaculon.egap.EgapPlugin;
+import de.jaculon.egap.utils.ICompilationUnitUtils;
 
 public class SelectAndReveal {
 
@@ -28,10 +36,51 @@ public class SelectAndReveal {
 		ISourceRange fieldRange = field.getNameRange();
 
 		IResource resource = compilationUnit.getResource();
-		IFileUtils.selectAndRevealInEditor(
+		SelectAndReveal.selectAndReveal(
 				(IFile) resource,
 				fieldRange.getOffset(),
 				0);
+	}
+
+	/**
+	 * Opens an editor with the given compilationUnit and sets the cursor on the
+	 * primary type.
+	 * 
+	 * @param iCompilationUnit the compilationUnit. May not be null.
+	 */
+	public static void selectAndRevealPrimaryType(ICompilationUnit iCompilationUnit) {
+		IResource resource = iCompilationUnit.getResource();
+	
+		if (resource instanceof IFile) {
+			IFile file = (IFile) resource;
+			Integer startPositionOfTopLevelType = ICompilationUnitUtils.getStartPositionOfTopLevelType(iCompilationUnit);
+			SelectAndReveal.selectAndReveal(
+					file,
+					startPositionOfTopLevelType,
+					0);
+		}
+	}
+
+	public static void selectAndReveal(IFile srcFile,
+			Integer startPosition, Integer length) {
+		try {
+			final IWorkbench workbench = PlatformUI.getWorkbench();
+			IWorkbenchWindow activeWorkbenchWindow = workbench.getActiveWorkbenchWindow();
+			final IWorkbenchPage activePage = activeWorkbenchWindow.getActivePage();
+			ITextEditor editorPart = (ITextEditor) IDE.openEditor(
+					activePage,
+					srcFile,
+					true);
+			if (startPosition != null && length != null) {
+				editorPart.selectAndReveal(startPosition, length);
+			}
+		} catch (final PartInitException pie) {
+			EgapPlugin.logException(pie);
+		}
+	}
+
+	public static void selectAndReveal(IFile srcFile, int position) {
+		selectAndReveal(srcFile, position, 0);
 	}
 
 }

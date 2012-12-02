@@ -4,7 +4,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -115,25 +114,6 @@ public class ICompilationUnitUtils {
 			throw new RuntimeException(e);
 		}
 		return nameRange.getOffset();
-	}
-
-	/**
-	 * Opens an editor with the given compilationUnit and sets the cursor on the
-	 * primary type.
-	 * 
-	 * @param iCompilationUnit the compilationUnit. May not be null.
-	 */
-	public static void selectAndRevealPrimaryType(ICompilationUnit iCompilationUnit) {
-		IResource resource = iCompilationUnit.getResource();
-
-		if (resource instanceof IFile) {
-			IFile file = (IFile) resource;
-			Integer startPositionOfTopLevelType = ICompilationUnitUtils.getStartPositionOfTopLevelType(iCompilationUnit);
-			IFileUtils.selectAndRevealInEditor(
-					file,
-					startPositionOfTopLevelType,
-					0);
-		}
 	}
 
 }

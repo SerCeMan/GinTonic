@@ -10,6 +10,7 @@ import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.text.ITextSelection;
 
+import de.jaculon.egap.select_and_reveal.SelectAndReveal;
 import de.jaculon.egap.utils.ICompilationUnitUtils;
 import de.jaculon.egap.utils.IFileUtils;
 import de.jaculon.egap.utils.StringUtils;
@@ -19,7 +20,7 @@ public class IProjectResourceUtils {
 	public static void openEditorWithStatementDeclaration(
 			IProjectResource navigationEndpoint, Integer startPosition) {
 		IFile srcFile = getJavaFile(navigationEndpoint);
-		IFileUtils.selectAndRevealInEditor(srcFile, startPosition, 0);
+		SelectAndReveal.selectAndReveal(srcFile, startPosition, 0);
 	}
 
 	public static void openEditorWithStatementDeclaration(
