@@ -61,7 +61,7 @@ public class QuickFixAssistedInjectModel extends AbstractEgapQuickFix {
 
 			/* Does a binding exist? */
 			String fullyQualifiedName = modelType.getFullyQualifiedName();
-			BindingDefinition bindStatement = guiceIndex.getAssistedBindingByModelType(fullyQualifiedName);
+			BindingDefinition bindStatement = guiceIndex.getAssistedBindingDefinitionsByModelType(fullyQualifiedName);
 
 			if (bindStatement == null) {
 				ITypeBinding typeBinding = ((Name) coveringNode).resolveTypeBinding();

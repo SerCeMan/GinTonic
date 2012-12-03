@@ -75,7 +75,7 @@ public class CycleBindingsHandler extends AbstractHandler {
 
 		if (injectionPoint != null) {
 
-			List<BindingDefinition> bindingDefinitions = guiceIndex.getBindingDefinitionsFor(injectionPoint);
+			List<BindingDefinition> bindingDefinitions = guiceIndex.getBindingDefinitions(injectionPoint);
 
 			if (!bindingDefinitions.isEmpty()) {
 				navigationCycle = new BindingNavigationCycle(

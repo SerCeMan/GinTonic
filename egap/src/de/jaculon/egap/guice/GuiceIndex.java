@@ -158,7 +158,7 @@ public class GuiceIndex implements Serializable {
 	}
 
 	/**
-	 * Removes all modules of the given project from the index.
+	 * Removes all modules of the given project.
 	 */
 	public void removeGuiceModulesByProjectName(String projectName) {
 		Preconditions.checkNotNull(projectName);
@@ -271,15 +271,12 @@ public class GuiceIndex implements Serializable {
 		return guiceModulesInGivenPackages;
 	}
 
-	public List<BindingDefinition> getBindingDefinitionsFor(
+	public List<BindingDefinition> getBindingDefinitions(
 			IInjectionPoint injectionPoint) {
-
 		ITypeBinding typeBinding = injectionPoint.getTargetTypeBinding();
 		ITypeBinding typeBindingWithoutProvider = ITypeBindingUtils.removeSurroundingProvider(typeBinding);
-
 		GuiceAnnotation guiceAnnotation = injectionPoint.getGuiceAnnotation();
-
-		List<BindingDefinition> bindingDefinitions = getBindingsByTypeAndAnnotation(
+		List<BindingDefinition> bindingDefinitions = getBindingDefinitions(
 				typeBindingWithoutProvider,
 				guiceAnnotation);
 
@@ -293,8 +290,8 @@ public class GuiceIndex implements Serializable {
 	 * <h5>Just in time binding</h5>
 	 * 
 	 * If we could not find an explicit binding then we check the type. If it is
-	 * a concrete class the we return a just in time binding. In all other cases
-	 * we return null.
+	 * a concrete class and there is no guice annotation applied and it is not a
+	 * binary type then we return a just in time binding.
 	 * 
 	 * <h5>MapBinder Statements</h5>
 	 * 
@@ -311,10 +308,10 @@ public class GuiceIndex implements Serializable {
 	 *            annotation. Can be null.
 	 * @param packageToLimit if given then only the Guice modules in the same
 	 *            package are processed. Can be null.
-	 * @return the discovered {@link BindingDefinition}. Can be empty but not
-	 *         null if we did not find a binding.
+	 * @return the discovered {@link BindingDefinition}s. Is empty if we did not
+	 *         find a binding.
 	 */
-	public List<BindingDefinition> getBindingsByTypeAndAnnotationLimitToPackage(
+	public List<BindingDefinition> getBindingDefinitions(
 			ITypeBinding typeToFind, GuiceAnnotation guiceAnnotationToFind,
 			Set<String> packageToLimit) {
 		String typeToFindQualifiedName = typeToFind.getQualifiedName();
@@ -395,9 +392,6 @@ public class GuiceIndex implements Serializable {
 
 				IMember member = (IMember) javaElement;
 				if (member.isBinary()) {
-					/* Not supported ! */
-					EgapPlugin.logInfo("Just in time binding not supported for binary type "
-							+ typeBindingOfInterfaceType.getQualifiedName());
 					return;
 				}
 
@@ -440,18 +434,14 @@ public class GuiceIndex implements Serializable {
 	 * Synonym for getBindingsByTypeAndAnnotationLimitToPackage(typeToFind,
 	 * guiceAnnotationToFind, null);
 	 * 
-	 * @see #getBindingsByTypeAndAnnotationLimitToPackage(ITypeBinding,
-	 *      GuiceAnnotation, Set)
+	 * @see #getBindingDefinitions(ITypeBinding, GuiceAnnotation, Set)
 	 */
-	public List<BindingDefinition> getBindingsByTypeAndAnnotation(
+	public List<BindingDefinition> getBindingDefinitions(
 			ITypeBinding typeToFind, GuiceAnnotation guiceAnnotationToFind) {
-		return getBindingsByTypeAndAnnotationLimitToPackage(
-				typeToFind,
-				guiceAnnotationToFind,
-				null);
+		return getBindingDefinitions(typeToFind, guiceAnnotationToFind, null);
 	}
 
-	public AssistedBindingStatement getAssistedBindingByModelType(
+	public AssistedBindingStatement getAssistedBindingDefinitionsByModelType(
 			String boundModelType) {
 		for (GuiceModule guiceModule : guiceModules) {
 			List<BindingDefinition> bindingStatements = guiceModule.getBindingDefinitions();

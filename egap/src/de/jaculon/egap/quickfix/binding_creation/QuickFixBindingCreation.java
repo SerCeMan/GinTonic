@@ -59,7 +59,7 @@ public class QuickFixBindingCreation extends AbstractEgapQuickFix {
 
 		ITypeBinding[] interfaces = sourceType.getInterfaces();
 		for (ITypeBinding interfaceBinding : interfaces) {
-			List<BindingDefinition> bindingStatements = guiceIndex.getBindingsByTypeAndAnnotation(
+			List<BindingDefinition> bindingStatements = guiceIndex.getBindingDefinitions(
 					interfaceBinding,
 					null);
 

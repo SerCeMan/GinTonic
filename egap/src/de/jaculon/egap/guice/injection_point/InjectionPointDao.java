@@ -213,13 +213,12 @@ public class InjectionPointDao {
 				compilationUnit,
 				offset,
 				length);
-		InjectionPointDao injectionPointDao = new InjectionPointDao();
 
-		IInjectionPoint binding = injectionPointDao.findByAstNode(
+		IInjectionPoint injectionPoint = findByAstNode(
 				coveredNode,
 				compilationUnit);
 
-		return binding;
+		return injectionPoint;
 	}
 
 	/**
