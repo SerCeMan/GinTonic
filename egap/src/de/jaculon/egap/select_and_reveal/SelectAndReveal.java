@@ -1,12 +1,19 @@
 package de.jaculon.egap.select_and_reveal;
 
+import java.util.Arrays;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IField;
+import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.ISourceRange;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.core.dom.ASTVisitor;
+import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.MethodDeclaration;
+import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -16,6 +23,9 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 import de.jaculon.egap.EgapPlugin;
+import de.jaculon.egap.quickfix.assisted_inject.ProposalCreateBindingForAssistedFactory;
+import de.jaculon.egap.templates.GuiceAssistedInjectFactoryBinding;
+import de.jaculon.egap.utils.ASTParserUtils;
 import de.jaculon.egap.utils.ICompilationUnitUtils;
 
 public class SelectAndReveal {
@@ -40,6 +50,36 @@ public class SelectAndReveal {
 				(IFile) resource,
 				fieldRange.getOffset(),
 				0);
+	}
+	
+	public static void selectAndRevealParamOfMethod(
+			ICompilationUnit iCompilationUnit, final String methodName,
+			String paramName) {
+		CompilationUnit ast3 = ASTParserUtils.parseCompilationUnitAst3(iCompilationUnit);
+		ast3.accept(new ASTVisitor() {
+
+			@SuppressWarnings("synthetic-access")
+			@Override
+			public boolean visit(MethodDeclaration method) {
+
+				SimpleName simpleName = method.getName();
+				String methodname = simpleName.toString();
+
+				if (methodname.equals(methodName)) {
+					method.accept(new ASTVisitor(){});
+					return false; /* Stop processing the child nodes */
+				}
+
+				return false;
+			}
+
+		});
+
+		IResource resource = iCompilationUnit.getResource();
+//		SelectAndReveal.selectAndReveal(
+//				(IFile) resource,
+//				fieldRange.getOffset(),
+//				0);
 	}
 
 	/**
