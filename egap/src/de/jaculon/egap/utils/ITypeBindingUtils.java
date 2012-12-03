@@ -24,21 +24,21 @@ public class ITypeBindingUtils {
 	}
 
 	public static boolean isGuiceAbstractModuleType(ITypeBinding typeBinding) {
-		return isKindOf(typeBinding, GuiceConstants.GUICE_ABSTRACT_MODULE);
+		return isKindOf(typeBinding, GuiceConstants.ABSTRACT_MODULE);
 	}
 
 	public static boolean isGuiceProviderType(ITypeBinding typeBinding) {
-		return isKindOf(typeBinding, GuiceConstants.GUICE_PROVIDER);
+		return isKindOf(typeBinding, GuiceConstants.PROVIDER);
 	}
 
 	public static boolean isGuiceNamedType(ITypeBinding typeBinding) {
-		return isKindOf(typeBinding, GuiceConstants.GUICE_NAMED);
+		return isKindOf(typeBinding, GuiceConstants.NAMED);
 	}
 
 	public static boolean isGuiceBindingAnnotation(ITypeBinding typeBinding) {
 		String qualifiedName = typeBinding.getQualifiedName();
 		return qualifiedName.equals(
-				GuiceConstants.GUICE_BINDING_ANNOTATION);
+				GuiceConstants.BINDING_ANNOTATION);
 	}
 
 	public static boolean isConcreteType(ITypeBinding typeBinding) {
@@ -113,7 +113,7 @@ public class ITypeBindingUtils {
 			ITypeBinding typeBinding) {
 		return removeSurroundingType(
 				typeBinding,
-				GuiceConstants.GUICE_TYPE_LITERAL);
+				GuiceConstants.TYPE_LITERAL);
 	}
 
 	/*
@@ -123,7 +123,7 @@ public class ITypeBindingUtils {
 	 */
 	public static ITypeBinding removeSurroundingProvider(
 			ITypeBinding typeBinding) {
-		return removeSurroundingType(typeBinding, GuiceConstants.GUICE_PROVIDER);
+		return removeSurroundingType(typeBinding, GuiceConstants.PROVIDER);
 	}
 
 	private static ITypeBinding removeSurroundingType(ITypeBinding typeBinding,

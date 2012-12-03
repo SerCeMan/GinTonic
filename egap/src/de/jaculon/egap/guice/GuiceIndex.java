@@ -22,6 +22,7 @@ import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.dom.IPackageBinding;
 import org.eclipse.jdt.core.dom.ITypeBinding;
 
+import de.jaculon.egap.EgapIDs;
 import de.jaculon.egap.EgapPlugin;
 import de.jaculon.egap.guice.annotations.GuiceAnnotation;
 import de.jaculon.egap.guice.injection_point.IInjectionPoint;
@@ -110,7 +111,7 @@ public class GuiceIndex implements Serializable {
 						IProject iProject = project.getProject();
 						iProject.build(
 								IncrementalProjectBuilder.FULL_BUILD,
-								EgapPlugin.ID_BUILDER,
+								EgapIDs.BUILDER,
 								null,
 								progressMonitor);
 					} catch (CoreException e) {
@@ -289,9 +290,10 @@ public class GuiceIndex implements Serializable {
 	 * 
 	 * <h5>Just in time binding</h5>
 	 * 
-	 * If we could not find an explicit binding then we check the type. If it is
-	 * a concrete class and there is no guice annotation applied and it is not a
-	 * binary type then we return a just in time binding.
+	 * If we could not find an explicit binding then we check if it could be a
+	 * just-in-time-binding. We assume a just-in-time-binding if the typeToFind
+	 * is a concrete class and there is no guice annotation applied and it is
+	 * not a binary type.
 	 * 
 	 * <h5>MapBinder Statements</h5>
 	 * 

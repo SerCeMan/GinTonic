@@ -228,10 +228,10 @@ public class InjectionPointDao {
 	 * <ul>
 	 *
 	 * <li>is an identifier of a field declaration and the field declaration is
-	 * annoted with {@link GuiceConstants#GUICE_ANNOTATION_INJECT}. In this case
+	 * annoted with {@link GuiceConstants#ANNOTATION_INJECT}. In this case
 	 * the returned type is a {@link InjectionPoint}.</li>
 	 * <li>is a parameter of a method declaration and the method declaration is
-	 * annoted with {@link GuiceConstants#GUICE_PROVIDES}. In this case the
+	 * annoted with {@link GuiceConstants#PROVIDES}. In this case the
 	 * returned type is a {@link ProviderMethod}.</li>
 	 * </ul>
 	 *

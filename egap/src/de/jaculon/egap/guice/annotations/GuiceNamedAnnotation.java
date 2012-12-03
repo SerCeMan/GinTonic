@@ -68,7 +68,7 @@ public class GuiceNamedAnnotation extends GuiceAnnotation {
 
 	@Override
 	public String getTypeToImport() {
-		return GuiceConstants.GUICE_NAMED;
+		return GuiceConstants.NAMED;
 	}
 
 }

@@ -77,7 +77,7 @@ public class ProposalConvertToProvider implements IJavaCompletionProposal {
 		Type sourceType = fieldDeclaration.getType();
 		refactorator.changeTypeByWrappingIt(
 				sourceType,
-				GuiceConstants.GUICE_PROVIDER);
+				GuiceConstants.PROVIDER);
 		/* Change the variable name (e.g cat => catProvider) */
 		refactorator.renameFieldIdentifiers(fieldDeclaration, "$Provider");
 		refactorator.refactor(null);

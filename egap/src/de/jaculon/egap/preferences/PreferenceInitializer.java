@@ -3,6 +3,7 @@ package de.jaculon.egap.preferences;
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.jface.preference.IPreferenceStore;
 
+import de.jaculon.egap.EgapIDs;
 import de.jaculon.egap.EgapPlugin;
 
 
@@ -21,7 +22,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 	public void initializeDefaultPreferences() {
 		EgapPlugin egapPlugin = EgapPlugin.getEgapPlugin();
 		IPreferenceStore store = egapPlugin.getPreferenceStore();
-		store.setDefault(EgapPlugin.ID_DEBUG_MODE, false);
+		store.setDefault(EgapIDs.DEBUG_MODE, false);
 	}
 
 }

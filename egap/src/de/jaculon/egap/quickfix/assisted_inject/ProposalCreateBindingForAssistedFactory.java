@@ -115,7 +115,7 @@ public class ProposalCreateBindingForAssistedFactory implements
 		CompilationUnit compilationUnitAstNode = ASTParserUtils.parseCompilationUnitAst3(compilationUnit);
 		final Refactorator refactorator = Refactorator.create(compilationUnit, compilationUnitAstNode, compilationUnitAstNode.getAST());
 		
-		refactorator.addImport(GuiceConstants.GUICE_ASSISTEDINJECT_FACTORY_PROVIDER);
+		refactorator.addImport(GuiceConstants.ASSISTEDINJECT_FACTORY_PROVIDER);
 		refactorator.addImport(modelType);
 		refactorator.addImport(factoryType);
 

@@ -7,6 +7,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.osgi.framework.Version;
 
+import de.jaculon.egap.EgapIDs;
 import de.jaculon.egap.EgapPlugin;
 
 
@@ -43,7 +44,7 @@ public class EgapPreferencePage extends FieldEditorPreferencePage implements
 		Composite fieldEditorParent = getFieldEditorParent();
 
 		addField(new BooleanFieldEditor(
-				EgapPlugin.ID_DEBUG_MODE,
+				EgapIDs.DEBUG_MODE,
 				"Debug mode",
 				fieldEditorParent));
 

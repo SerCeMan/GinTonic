@@ -24,7 +24,7 @@ public class ASTNodeUtils {
 	public static boolean isAssistedAnnotation(ASTNode node) {
 		return isMarkerAnnotationAnnotatedWith(
 				node,
-				GuiceConstants.GUICE_ANNOTATION_ASSISTED);
+				GuiceConstants.ANNOTATION_ASSISTED);
 	}
 
 	/**

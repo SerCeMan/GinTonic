@@ -28,17 +28,6 @@ import de.jaculon.egap.utils.ListUtils;
  */
 public class EgapPlugin extends AbstractUIPlugin implements IStartup {
 
-	public static final String ID_PLUGIN = "de.jaculon.egap";
-
-	/**
-	 * Nicht ändern!
-	 */
-	public static final String ID_NATURE = "de.jaculon.egap.EgapNature";
-	public static final String ID_NATURE_OLD = "egap.EgapNature";
-
-	public static final String ID_DEBUG_MODE = "de.jaculon.egap.DEBUG_MODE";
-	public static final String ID_BUILDER = "de.jaculon.egap.EgapProjectBuilder";
-
 	private static EgapPlugin egapPlugin;
 
 	private List<EgapQuickFix> quickfixes = ListUtils.newArrayList();
@@ -121,7 +110,7 @@ public class EgapPlugin extends AbstractUIPlugin implements IStartup {
 	public static void doLog(int severity, String message, Throwable throwable) {
 		EgapPlugin egapPlugin = getEgapPlugin();
 		ILog logger = egapPlugin.getLog();
-		Status status = new Status(severity, ID_PLUGIN, message, throwable);
+		Status status = new Status(severity, EgapIDs.PLUGIN, message, throwable);
 		logger.log(status);
 	}
 
@@ -147,7 +136,7 @@ public class EgapPlugin extends AbstractUIPlugin implements IStartup {
 
 	public static boolean isDebugMode() {
 		IPreferenceStore store = egapPlugin.getPreferenceStore();
-		boolean isDebugModeEnabled = store.getBoolean(ID_DEBUG_MODE);
+		boolean isDebugModeEnabled = store.getBoolean(EgapIDs.DEBUG_MODE);
 		return isDebugModeEnabled;
 	}
 

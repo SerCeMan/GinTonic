@@ -91,7 +91,7 @@ public class ProposalProviderMethodCreation implements IJavaCompletionProposal {
 				compilationUnitAstNode,
 				compilationUnitAstNode.getAST());
 
-		refactorator.addImport(GuiceConstants.GUICE_PROVIDES);
+		refactorator.addImport(GuiceConstants.PROVIDES);
 		refactorator.addImport(type.getQualifiedName());
 		
 		if (guiceAnnotation != null) {

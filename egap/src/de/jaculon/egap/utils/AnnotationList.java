@@ -24,34 +24,34 @@ public class AnnotationList {
 
 	/**
 	 * Returns true if any of the annotations is of type
-	 * {@link GuiceConstants#GUICE_ANNOTATION_ASSISTED}, otherwise false.
+	 * {@link GuiceConstants#ANNOTATION_ASSISTED}, otherwise false.
 	 */
 	public boolean containsAssistedAnnotation() {
-		return containsAnnotation(GuiceConstants.GUICE_ANNOTATION_ASSISTED);
+		return containsAnnotation(GuiceConstants.ANNOTATION_ASSISTED);
 	}
 
 	/**
 	 * Returns true if any of the annotations is of type
-	 * {@link GuiceConstants#GUICE_ANNOTATION_INJECT}, otherwise false.
+	 * {@link GuiceConstants#ANNOTATION_INJECT}, otherwise false.
 	 */
 	public boolean containsInjectType() {
-		return containsAnnotation(GuiceConstants.GUICE_ANNOTATION_INJECT);
+		return containsAnnotation(GuiceConstants.ANNOTATION_INJECT);
 	}
 
 	/**
 	 * Returns true if any of the annotations is of type
-	 * {@link GuiceConstants#GUICE_SINGLETON_SCOPE}, otherwise false.
+	 * {@link GuiceConstants#SINGLETON_SCOPE}, otherwise false.
 	 */
 	public boolean containsSingletonScopeAnnotation() {
-		return containsAnnotation(GuiceConstants.GUICE_SINGLETON_SCOPE);
+		return containsAnnotation(GuiceConstants.SINGLETON_SCOPE);
 	}
 
 	/**
 	 * Returns true if any of the annotations is of type
-	 * {@link GuiceConstants#GUICE_PROVIDES}, otherwise false.
+	 * {@link GuiceConstants#PROVIDES}, otherwise false.
 	 */
 	public boolean containsProvidesAnnotation() {
-		return containsAnnotation(GuiceConstants.GUICE_PROVIDES);
+		return containsAnnotation(GuiceConstants.PROVIDES);
 	}
 
 	public GuiceAnnotation getGuiceAnnotation() {

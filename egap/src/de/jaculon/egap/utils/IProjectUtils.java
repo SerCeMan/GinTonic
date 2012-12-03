@@ -20,7 +20,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 
-import de.jaculon.egap.EgapPlugin;
+import de.jaculon.egap.EgapIDs;
 
 public class IProjectUtils {
 
@@ -67,7 +67,7 @@ public class IProjectUtils {
 				new IFunction<HashSet<String>>() {
 					@Override
 					public void apply(HashSet<String> natures) {
-						natures.add(EgapPlugin.ID_NATURE);
+						natures.add(EgapIDs.NATURE);
 					}
 				});
 	}
@@ -91,8 +91,8 @@ public class IProjectUtils {
 				new IFunction<HashSet<String>>() {
 					@Override
 					public void apply(HashSet<String> natures) {
-						natures.remove(EgapPlugin.ID_NATURE);
-						natures.remove(EgapPlugin.ID_NATURE_OLD);
+						natures.remove(EgapIDs.NATURE);
+						natures.remove(EgapIDs.NATURE_OLD);
 					}
 				});
 	}
@@ -115,8 +115,8 @@ public class IProjectUtils {
 	}
 
 	public static boolean hasEgapNature(IProject project) throws CoreException {
-		return project.hasNature(EgapPlugin.ID_NATURE)
-				|| project.hasNature(EgapPlugin.ID_NATURE_OLD);
+		return project.hasNature(EgapIDs.NATURE)
+				|| project.hasNature(EgapIDs.NATURE_OLD);
 	}
 
 	private static final class CollectFiles implements IResourceVisitor {

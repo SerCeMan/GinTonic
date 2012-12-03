@@ -94,7 +94,7 @@ public class ProposalBindingCreation implements IJavaCompletionProposal {
 
 		final boolean isParameterizedType = interfaceBinding.isParameterizedType();
 		if (isParameterizedType) {
-			refactorator.addImport(GuiceConstants.GUICE_TYPE_LITERAL);
+			refactorator.addImport(GuiceConstants.TYPE_LITERAL);
 		}
 
 		MethodDeclaration configureMethodDeclaration = MethodDeclarationUtils.getConfigureMethodDeclaration(compilationUnitAstNode);

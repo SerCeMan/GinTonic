@@ -20,11 +20,11 @@ import de.jaculon.egap.source_builder.JavaCodeBuilder;
 public class TypeUtils {
 	
 	public static boolean isMapBinderType(Type type) {
-		return TypeUtils.isTypeDeclarationTypeKindOf(type, GuiceConstants.GUICE_MAP_BINDER);
+		return TypeUtils.isTypeDeclarationTypeKindOf(type, GuiceConstants.MAP_BINDER);
 	}
 	
 	public static boolean isSetBinderType(Type type) {
-		return TypeUtils.isTypeDeclarationTypeKindOf(type, GuiceConstants.GUICE_SET_BINDER);
+		return TypeUtils.isTypeDeclarationTypeKindOf(type, GuiceConstants.SET_BINDER);
 	}
 	
 	public static boolean isTypeDeclarationTypeKindOf(Type type, String typeFullyQualifiedName) {
