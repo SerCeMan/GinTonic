@@ -1,12 +1,12 @@
 package de.jaculon.egap.select_and_reveal;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IField;
-import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.ISourceRange;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
@@ -23,8 +23,6 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 import de.jaculon.egap.EgapPlugin;
-import de.jaculon.egap.quickfix.assisted_inject.ProposalCreateBindingForAssistedFactory;
-import de.jaculon.egap.templates.GuiceAssistedInjectFactoryBinding;
 import de.jaculon.egap.utils.ASTParserUtils;
 import de.jaculon.egap.utils.ICompilationUnitUtils;
 
@@ -51,11 +49,13 @@ public class SelectAndReveal {
 				fieldRange.getOffset(),
 				0);
 	}
-	
-	public static void selectAndRevealParamOfMethod(
+
+	public static int selectAndRevealParamOfMethod(
 			ICompilationUnit iCompilationUnit, final String methodName,
-			String paramName) {
+			final String paramName) {
 		CompilationUnit ast3 = ASTParserUtils.parseCompilationUnitAst3(iCompilationUnit);
+
+		final List<SimpleName> simpleNames = new ArrayList<SimpleName>();
 		ast3.accept(new ASTVisitor() {
 
 			@SuppressWarnings("synthetic-access")
@@ -63,23 +63,38 @@ public class SelectAndReveal {
 			public boolean visit(MethodDeclaration method) {
 
 				SimpleName simpleName = method.getName();
-				String methodname = simpleName.toString();
+				String methodname = simpleName.getIdentifier();
 
 				if (methodname.equals(methodName)) {
-					method.accept(new ASTVisitor(){});
-					return false; /* Stop processing the child nodes */
+					method.accept(new ASTVisitor() {
+
+						@Override
+						public boolean visit(SimpleName simpleName) {
+							String identifier = simpleName.getIdentifier();
+							if (identifier.equals(paramName)) {
+								simpleNames.add(simpleName);
+							}
+
+							return true;
+						}
+
+					});
+					return true; 
 				}
 
-				return false;
+				return true;
 			}
 
 		});
 
 		IResource resource = iCompilationUnit.getResource();
-//		SelectAndReveal.selectAndReveal(
-//				(IFile) resource,
-//				fieldRange.getOffset(),
-//				0);
+		SimpleName simpleName = simpleNames.get(0);
+		int startPosition = simpleName.getStartPosition();
+		SelectAndReveal.selectAndReveal(
+				(IFile) resource,
+				startPosition,
+				0);
+		return startPosition;
 	}
 
 	/**
@@ -88,9 +103,10 @@ public class SelectAndReveal {
 	 * 
 	 * @param iCompilationUnit the compilationUnit. May not be null.
 	 */
-	public static void selectAndRevealPrimaryType(ICompilationUnit iCompilationUnit) {
+	public static void selectAndRevealPrimaryType(
+			ICompilationUnit iCompilationUnit) {
 		IResource resource = iCompilationUnit.getResource();
-	
+
 		if (resource instanceof IFile) {
 			IFile file = (IFile) resource;
 			Integer startPositionOfTopLevelType = ICompilationUnitUtils.getStartPositionOfTopLevelType(iCompilationUnit);
@@ -101,8 +117,8 @@ public class SelectAndReveal {
 		}
 	}
 
-	public static void selectAndReveal(IFile srcFile,
-			Integer startPosition, Integer length) {
+	public static void selectAndReveal(IFile srcFile, Integer startPosition,
+			Integer length) {
 		try {
 			final IWorkbench workbench = PlatformUI.getWorkbench();
 			IWorkbenchWindow activeWorkbenchWindow = workbench.getActiveWorkbenchWindow();
