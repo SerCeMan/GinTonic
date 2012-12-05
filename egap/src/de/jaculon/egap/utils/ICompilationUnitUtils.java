@@ -68,8 +68,9 @@ public class ICompilationUnitUtils {
 	 */
 	public static String getNameWithoutJavaExtension(
 			ICompilationUnit compilationUnit) {
-		String elementName = compilationUnit.getElementName();
-		return elementName.replace(JAVA_EXTENSION, "");
+		IType primaryType = compilationUnit.findPrimaryType();
+		String elementName = primaryType.getElementName();
+		return elementName;
 	}
 
 	public static List<String> getSrcFolderPathComponents(
@@ -107,7 +108,7 @@ public class ICompilationUnitUtils {
 		ISourceRange nameRange;
 		try {
 			nameRange = primaryType.getNameRange();
-			if(nameRange == null){
+			if (nameRange == null) {
 				return null;
 			}
 		} catch (JavaModelException e) {
