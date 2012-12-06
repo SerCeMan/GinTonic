@@ -178,7 +178,7 @@ public class InjectionPointDao {
 
 		/**
 		 * Here we can perform a quick check on the IJavaElement if the
-		 * currently selected element is a binding. Trying to avoid the parsing.
+		 * currently selected element can be an injection point. Trying to avoid the parsing.
 		 *
 		 * <pre>
 		 * IJavaElement.FIELD

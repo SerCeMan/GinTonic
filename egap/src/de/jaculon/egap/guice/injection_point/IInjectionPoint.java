@@ -17,6 +17,6 @@ public interface IInjectionPoint {
 	/**
 	 * Returns the annotation or null if it is not annotated.
 	 */
-	public abstract GuiceAnnotation getGuiceAnnotation();
+	GuiceAnnotation getGuiceAnnotation();
 
 }
