@@ -13,7 +13,7 @@ public class ProjectResource implements Serializable, IProjectResource {
 	private List<String> srcFolderPathComponents;
 	private List<String> packageNameComponents;
 	private String typeName;
-	protected Integer startPosition;
+	private Integer startPosition;
 
 	public ProjectResource() {
 	}
