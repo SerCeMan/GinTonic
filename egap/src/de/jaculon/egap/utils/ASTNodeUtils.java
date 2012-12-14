@@ -16,8 +16,6 @@ import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 
 import de.jaculon.egap.guice.GuiceConstants;
-import de.jaculon.egap.guice.statements.GuiceStatement;
-import de.jaculon.egap.source_reference.SourceCodeReference;
 
 
 public class ASTNodeUtils {
