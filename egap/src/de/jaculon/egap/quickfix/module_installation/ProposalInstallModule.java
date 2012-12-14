@@ -14,7 +14,6 @@ import org.eclipse.swt.graphics.Point;
 
 import de.jaculon.egap.guice.GuiceModule;
 import de.jaculon.egap.icons.Icons;
-import de.jaculon.egap.project_resource.IProjectResourceUtils;
 import de.jaculon.egap.refactor.Refactorator;
 import de.jaculon.egap.templates.InstallModuleTemplate;
 import de.jaculon.egap.utils.ASTParserUtils;
@@ -89,7 +88,7 @@ public class ProposalInstallModule implements IJavaCompletionProposal {
 
 	@Override
 	public void apply(IDocument document) {
-		ICompilationUnit compilationUnit = IProjectResourceUtils.getICompilationUnit(guiceModuleTarget.getSourceCodeReference());
+		ICompilationUnit compilationUnit = guiceModuleTarget.getSourceCodeReference().resolveICompilationUnit();
 		CompilationUnit compilationUnitAstNode = ASTParserUtils.parseCompilationUnitAst3(compilationUnit);
 		Refactorator refactorator = Refactorator.create(compilationUnit, compilationUnitAstNode, compilationUnitAstNode.getAST());
 		refactorator.addImport(guiceModuleSource.getQualifiedName());

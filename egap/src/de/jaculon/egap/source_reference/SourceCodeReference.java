@@ -10,6 +10,8 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.ASTNode;
 
 import de.jaculon.egap.navigate.IJumpable;
@@ -207,21 +209,37 @@ public class SourceCodeReference implements Serializable, IJumpable {
 
 	@Override
 	public void jump() {
+		jump(getOffset());
+	}
+	
+	public void jump(int offset) {
+		IFile file = resolveIFile();
+		SelectAndReveal.selectAndReveal(file, offset, 0);
+	}
+	
+	public IFile resolveIFile(){
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IWorkspaceRoot root = workspace.getRoot();
 		IProject project = root.getProject(projectName);
-
-		String sourceFolder = StringUtils.join(
-				StringUtils.PATH_SEPARATOR,
-				srcFolderPathComponents)
-				+ StringUtils.PATH_SEPARATOR
-				+ StringUtils.join(StringUtils.PATH_SEPARATOR, getPackageNameComponents());
+		
+		char pathSeparator = StringUtils.PATH_SEPARATOR;
+		
+		String sourceFolder = StringUtils.join(pathSeparator, srcFolderPathComponents)
+				+ pathSeparator + StringUtils.join(pathSeparator, getPackageNameComponents());
 
 		IFolder folder = project.getFolder(sourceFolder);
 
-		String filename = getPrimaryTypeName()
-				+ ICompilationUnitUtils.JAVA_EXTENSION;
+		String filename = getPrimaryTypeName() + ICompilationUnitUtils.JAVA_EXTENSION;
 		IFile file = folder.getFile(filename);
-		SelectAndReveal.selectAndReveal(file, getOffset(), 0);
+
+		return file;
 	}
+	
+	public ICompilationUnit resolveICompilationUnit() {
+		IFile resolvedIFile = resolveIFile();
+		ICompilationUnit compilationUnit = JavaCore.createCompilationUnitFrom(resolvedIFile);
+		return compilationUnit;
+	}
+
+	
 }

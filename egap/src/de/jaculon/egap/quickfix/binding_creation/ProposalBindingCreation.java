@@ -13,9 +13,9 @@ import org.eclipse.swt.graphics.Point;
 import de.jaculon.egap.guice.GuiceConstants;
 import de.jaculon.egap.guice.GuiceModule;
 import de.jaculon.egap.icons.Icons;
-import de.jaculon.egap.project_resource.IProjectResourceUtils;
 import de.jaculon.egap.refactor.Refactorator;
 import de.jaculon.egap.refactor.TrackedStatement;
+import de.jaculon.egap.source_reference.SourceCodeReference;
 import de.jaculon.egap.utils.ASTParserUtils;
 import de.jaculon.egap.utils.MethodDeclarationUtils;
 
@@ -82,7 +82,8 @@ public class ProposalBindingCreation implements IJavaCompletionProposal {
 
 	@Override
 	public void apply(IDocument document) {
-		ICompilationUnit compilationUnit = IProjectResourceUtils.getICompilationUnit(guiceModule.getSourceCodeReference());
+		SourceCodeReference sourceCodeReference = guiceModule.getSourceCodeReference();
+		ICompilationUnit compilationUnit = sourceCodeReference.resolveICompilationUnit();
 		CompilationUnit compilationUnitAstNode = ASTParserUtils.parseCompilationUnitAst3(compilationUnit);
 		final Refactorator refactorator = Refactorator.create(
 				compilationUnit,
@@ -121,8 +122,7 @@ public class ProposalBindingCreation implements IJavaCompletionProposal {
 			
 			refactorator.refactor(null);
 			int startPosition = trackedStatement.getStartPosition();
-			IProjectResourceUtils.openEditorWithStatementDeclaration(
-					guiceModule.getSourceCodeReference(), startPosition);
+			sourceCodeReference.jump(startPosition);
 		}
 
 	}
