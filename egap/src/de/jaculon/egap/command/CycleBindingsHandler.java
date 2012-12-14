@@ -5,6 +5,11 @@ import java.util.List;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.IPackageFragment;
+import org.eclipse.jface.text.ITextSelection;
 
 import de.jaculon.egap.EgapPlugin;
 import de.jaculon.egap.cu_selection.ICompilationUnitSelection;
@@ -13,8 +18,9 @@ import de.jaculon.egap.guice.GuiceIndex;
 import de.jaculon.egap.guice.injection_point.IInjectionPoint;
 import de.jaculon.egap.guice.injection_point.InjectionPointDao;
 import de.jaculon.egap.guice.statements.BindingDefinition;
-import de.jaculon.egap.project_resource.IProjectResourceUtils;
-import de.jaculon.egap.project_resource.ProjectResource;
+import de.jaculon.egap.source_reference.SourceCodeReference;
+import de.jaculon.egap.utils.ICompilationUnitUtils;
+import de.jaculon.egap.utils.StringUtils;
 
 /**
  * Jumps from an {@link IInjectionPoint} to its binding definition(s).
@@ -58,7 +64,7 @@ public class CycleBindingsHandler extends AbstractHandler {
 			return;
 		}
 
-		ProjectResource currentCodeLocation = IProjectResourceUtils.createProjectResource(
+		SourceCodeReference currentCodeLocation = createSourceCodeReference(
 				compilationUnitSelection.getICompilationUnit(),
 				compilationUnitSelection.getITextSelection());
 
@@ -89,6 +95,35 @@ public class CycleBindingsHandler extends AbstractHandler {
 			}
 		}
 
+	}
+	
+	private SourceCodeReference createSourceCodeReference(
+			ICompilationUnit icompilationUnit, ITextSelection textSelection) {
+		SourceCodeReference codeReference = new SourceCodeReference();
+
+		IResource resource = icompilationUnit.getResource();
+		IProject project = resource.getProject();
+		codeReference.setProjectName(project.getName());
+
+		List<String> srcFolderPath = ICompilationUnitUtils.getSrcFolderPathComponents(icompilationUnit);
+		codeReference.setSrcFolderPathComponents(srcFolderPath);
+
+		IPackageFragment parent = (IPackageFragment) icompilationUnit.getParent();
+		String packageDotSeparated = parent.getElementName();
+		List<String> packageAsList = StringUtils.split('.', packageDotSeparated);
+		codeReference.setPackageNameComponents(packageAsList);
+
+		String typeName = ICompilationUnitUtils.getNameWithoutJavaExtension(icompilationUnit);
+		codeReference.setPrimaryTypeName(typeName);
+
+		if (textSelection != null) {
+			int offset = textSelection.getOffset();
+			codeReference.setOffset(offset);
+			int length = textSelection.getLength();
+			codeReference.setLength(length);
+		}
+
+		return codeReference;
 	}
 
 }

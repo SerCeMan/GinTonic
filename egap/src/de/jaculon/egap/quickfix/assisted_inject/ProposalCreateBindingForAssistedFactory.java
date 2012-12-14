@@ -86,7 +86,7 @@ public class ProposalCreateBindingForAssistedFactory implements
 	 */
 	public String getDisplayString() {
 		return "Create factory binding in module '"
-				+ guiceModule.getTypeName()
+				+ guiceModule.getPrimaryTypeName()
 				+ "'";
 	}
 
@@ -99,7 +99,7 @@ public class ProposalCreateBindingForAssistedFactory implements
 		return "Create factory binding for '"
 				+ getFactoryTypeName()
 				+ "' in module '"
-				+ guiceModule.getTypeName()
+				+ guiceModule.getPrimaryTypeName()
 				+ "'";
 	}
 
@@ -111,7 +111,7 @@ public class ProposalCreateBindingForAssistedFactory implements
 	@Override
 	public void apply(IDocument document) {
 
-		ICompilationUnit compilationUnit = IProjectResourceUtils.getICompilationUnit(guiceModule);
+		ICompilationUnit compilationUnit = IProjectResourceUtils.getICompilationUnit(guiceModule.getSourceCodeReference());
 		CompilationUnit compilationUnitAstNode = ASTParserUtils.parseCompilationUnitAst3(compilationUnit);
 		final Refactorator refactorator = Refactorator.create(compilationUnit, compilationUnitAstNode, compilationUnitAstNode.getAST());
 		
@@ -121,7 +121,6 @@ public class ProposalCreateBindingForAssistedFactory implements
 
 		compilationUnitAstNode.accept(new ASTVisitor() {
 
-			@SuppressWarnings("synthetic-access")
 			@Override
 			public boolean visit(MethodDeclaration method) {
 

@@ -2,46 +2,46 @@ package de.jaculon.egap.navigate;
 
 import java.util.List;
 
-import de.jaculon.egap.project_resource.IProjectResource;
-import de.jaculon.egap.project_resource.IProjectResourceUtils;
+import de.jaculon.egap.source_reference.SourceCodeReference;
 
 /**
- * A {@link NavigationCycle} can be used to jump from one project resource to
- * another. Jump means that the target resource is opened in the eclipse editor.
+ * A {@link NavigationCycle} can be used to jump from one {@link SourceCodeReference} to
+ * another.
  * 
  * @author tmajunke
  */
-public class NavigationCycle {
+public class NavigationCycle<T extends SourceCodeReference> {
 
-	/**
-	 * The project resources that we can jump to.
-	 */
-	private List<IProjectResource> projectResources;
+	private List<T> sourceCodeReferences;
 
 	/**
 	 * The index so we know where to jump next.
 	 */
 	private int index = 0;
 
-	public void setProjectResources(List<IProjectResource> projectResources) {
-		this.projectResources = projectResources;
+	public void setSourceCodeReferences(List<T> sourceCodeReferences) {
+		this.sourceCodeReferences = sourceCodeReferences;
+	}
+	
+	public int getIndex() {
+		return index;
 	}
 
 	/**
-	 * Jumps to the project resource that is the follower of the given resource.
-	 * It also sets the resource pointer to the follower.
+	 * Jumps to the {@link SourceCodeReference} that is the follower of the given
+	 * {@link SourceCodeReference}. It also sets the resource pointer to the follower.
 	 * 
-	 * To do so we must first check if the given resource is contained in this
-	 * navigation cycle. The check compares the resources start position and
+	 * To do so we must first check if the given reference is contained in this
+	 * navigation cycle. The check compares the reference start position and
 	 * qualified name. If the resource is not contained in this navigation cycle
 	 * then nothing happens and the method returns false.
 	 * 
-	 * @param projectResource the projectResource. May not be null.
+	 * @param sourceCodeReference the {@link IJumpable}. May not be null.
 	 * @return true, if the resource has been contained in this navigation
 	 *         cycle. Otherwise false.
 	 */
-	public boolean jumpToFollower(IProjectResource projectResource) {
-		Integer resourceIndex = getResourceIndexFor(projectResource);
+	public boolean jumpToFollower(T sourceCodeReference) {
+		Integer resourceIndex = getResourceIndexFor(sourceCodeReference);
 		if (resourceIndex != null) {
 			this.index = resourceIndex;
 			jumpToNext();
@@ -61,32 +61,32 @@ public class NavigationCycle {
 	}
 
 	private void jumpToCurrent() {
-		IProjectResource jumpTarget = projectResources.get(index);
-		IProjectResourceUtils.openEditorWithStatementDeclaration(jumpTarget);
+		T jumpTarget = sourceCodeReferences.get(index);
+		jumpTarget.jump();
 	}
 
 	private void increaseIndex() {
-		int size = projectResources.size();
+		int size = sourceCodeReferences.size();
 		this.index = (index + 1) % size;
 	}
 
 	/**
-	 * Returns true if the given projectResource is contained in this navigation
+	 * Returns true if the given sourceCodeReference is contained in this navigation
 	 * cycle, otherwise false.
 	 * 
-	 * @param projectResource the projectResource
-	 * @return true if the given projectResource is contained in this navigation
+	 * @param sourceCodeReferenceToFind the reference
+	 * @return true if the given reference is contained in this navigation
 	 *         cycle, otherwise false.
 	 */
-	private Integer getResourceIndexFor(IProjectResource projectResource) {
+	private Integer getResourceIndexFor(SourceCodeReference sourceCodeReferenceToFind) {
 		int i = 0;
-		for (IProjectResource iProjectResource : projectResources) {
-			Integer startPosition = iProjectResource.getStartPosition();
-			Integer startPosition2 = projectResource.getStartPosition();
-			if (startPosition.equals(startPosition2)) {
-				String typeNameFullyQualified = iProjectResource.getTypeNameFullyQualified();
-				String typeNameFullyQualified2 = projectResource.getTypeNameFullyQualified();
-				if (typeNameFullyQualified.equals(typeNameFullyQualified2)) {
+		for (T sourceCodeReference : sourceCodeReferences){
+			Integer startPosition = sourceCodeReference.getOffset();
+			Integer startPositionToFind = sourceCodeReferenceToFind.getOffset();
+			if (startPosition.equals(startPositionToFind)) {
+				String typeNameFullyQualified = sourceCodeReference.getPrimaryTypeNameFullyQualified();
+				String typeNameFullyQualifiedToFind = sourceCodeReferenceToFind.getPrimaryTypeNameFullyQualified();
+				if (typeNameFullyQualified.equals(typeNameFullyQualifiedToFind)) {
 					return i;
 				}
 			}

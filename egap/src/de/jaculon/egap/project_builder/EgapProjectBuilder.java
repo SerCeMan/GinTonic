@@ -179,7 +179,7 @@ public class EgapProjectBuilder extends IncrementalProjectBuilder {
 							(IFile) resource);
 					if (guiceModule != null) {
 						monitor.subTask("Added Guice module "
-								+ guiceModule.getTypeNameFullyQualified()
+								+ guiceModule.getPrimaryTypeNameFullyQualified()
 								+ " to index.");
 						guiceIndex.addGuiceModule(guiceModule, true);
 					}
@@ -198,7 +198,7 @@ public class EgapProjectBuilder extends IncrementalProjectBuilder {
 							(IFile) resource);
 					if (guiceModule != null) {
 						monitor.subTask("Updated Guice module "
-								+ guiceModule.getTypeNameFullyQualified() + ".");
+								+ guiceModule.getPrimaryTypeNameFullyQualified() + ".");
 						guiceIndex.updateGuiceModule(guiceModule);
 					}
 					else {

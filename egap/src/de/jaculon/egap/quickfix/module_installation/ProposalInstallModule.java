@@ -70,7 +70,7 @@ public class ProposalInstallModule implements IJavaCompletionProposal {
 	 */
 	public String getDisplayString() {
 		return "Install '" + guiceModuleSource.getName() + "' in '"
-				+ guiceModuleTarget.getTypeName() + "'";
+				+ guiceModuleTarget.getPrimaryTypeName() + "'";
 	}
 
 	@Override
@@ -89,7 +89,7 @@ public class ProposalInstallModule implements IJavaCompletionProposal {
 
 	@Override
 	public void apply(IDocument document) {
-		ICompilationUnit compilationUnit = IProjectResourceUtils.getICompilationUnit(guiceModuleTarget);
+		ICompilationUnit compilationUnit = IProjectResourceUtils.getICompilationUnit(guiceModuleTarget.getSourceCodeReference());
 		CompilationUnit compilationUnitAstNode = ASTParserUtils.parseCompilationUnitAst3(compilationUnit);
 		Refactorator refactorator = Refactorator.create(compilationUnit, compilationUnitAstNode, compilationUnitAstNode.getAST());
 		refactorator.addImport(guiceModuleSource.getQualifiedName());

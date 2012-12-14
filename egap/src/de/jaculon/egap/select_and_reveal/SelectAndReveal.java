@@ -109,16 +109,16 @@ public class SelectAndReveal {
 
 		if (resource instanceof IFile) {
 			IFile file = (IFile) resource;
-			Integer startPositionOfTopLevelType = ICompilationUnitUtils.getStartPositionOfTopLevelType(iCompilationUnit);
+			Integer offsetOfTopLevelType = ICompilationUnitUtils.getStartPositionOfTopLevelType(iCompilationUnit);
 			SelectAndReveal.selectAndReveal(
 					file,
-					startPositionOfTopLevelType,
+					offsetOfTopLevelType,
 					0);
 		}
 	}
 
-	public static void selectAndReveal(IFile srcFile, Integer startPosition,
-			Integer length) {
+	public static void selectAndReveal(IFile srcFile, int offset,
+			int length) {
 		try {
 			final IWorkbench workbench = PlatformUI.getWorkbench();
 			IWorkbenchWindow activeWorkbenchWindow = workbench.getActiveWorkbenchWindow();
@@ -127,16 +127,14 @@ public class SelectAndReveal {
 					activePage,
 					srcFile,
 					true);
-			if (startPosition != null && length != null) {
-				editorPart.selectAndReveal(startPosition, length);
-			}
+			editorPart.selectAndReveal(offset, length);
 		} catch (final PartInitException pie) {
 			EgapPlugin.logException(pie);
 		}
 	}
 
-	public static void selectAndReveal(IFile srcFile, int position) {
-		selectAndReveal(srcFile, position, 0);
+	public static void selectAndReveal(IFile srcFile, int offset) {
+		selectAndReveal(srcFile, offset, 0);
 	}
 
 }

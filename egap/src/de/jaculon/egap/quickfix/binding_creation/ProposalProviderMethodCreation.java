@@ -63,7 +63,7 @@ public class ProposalProviderMethodCreation implements IJavaCompletionProposal {
 	 * Kurz Beschreibung der Aktion,taucht in der QuickfixProposal-Auswahl auf!
 	 */
 	public String getDisplayString() {
-		return "Create provider method in " + guiceModule.getTypeName();
+		return "Create provider method in " + guiceModule.getPrimaryTypeName();
 
 	}
 
@@ -84,7 +84,7 @@ public class ProposalProviderMethodCreation implements IJavaCompletionProposal {
 	@Override
 	public void apply(IDocument document) {
 		
-		ICompilationUnit compilationUnit = IProjectResourceUtils.getICompilationUnit(guiceModule);
+		ICompilationUnit compilationUnit = IProjectResourceUtils.getICompilationUnit(guiceModule.getSourceCodeReference());
 		CompilationUnit compilationUnitAstNode = ASTParserUtils.parseCompilationUnitAst3(compilationUnit);
 		final Refactorator refactorator = Refactorator.create(
 				compilationUnit,
@@ -106,7 +106,7 @@ public class ProposalProviderMethodCreation implements IJavaCompletionProposal {
 			
 			int startPosition = trackedMethodDeclaration.getStartPosition();
 			IProjectResourceUtils.openEditorWithStatementDeclaration(
-					guiceModule,
+					guiceModule.getSourceCodeReference(),
 					startPosition);
 		}
 		

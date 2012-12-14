@@ -17,6 +17,7 @@ import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 
 import de.jaculon.egap.guice.GuiceConstants;
 import de.jaculon.egap.guice.statements.GuiceStatement;
+import de.jaculon.egap.source_reference.SourceCodeReference;
 
 
 public class ASTNodeUtils {
@@ -64,11 +65,6 @@ public class ASTNodeUtils {
 			}
 		}
 		return null;
-	}
-
-	public static void copyStartPositionAndLength(ASTNode astNode,
-			GuiceStatement guiceStatement) {
-		guiceStatement.setStartPosition(astNode.getStartPosition());
 	}
 
 	public static AnnotationList getAnnotationList(

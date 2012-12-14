@@ -1,30 +1,37 @@
 package de.jaculon.egap.guice;
 
+import java.io.Serializable;
 import java.util.List;
 
 import de.jaculon.egap.guice.statements.BindingDefinition;
 import de.jaculon.egap.guice.statements.InstallModuleStatement;
-import de.jaculon.egap.project_resource.ProjectResource;
-import de.jaculon.egap.utils.Preconditions;
-
-
+import de.jaculon.egap.source_reference.IReferencable;
+import de.jaculon.egap.source_reference.SourceCodeReference;
 
 /**
  * A guice module.
  *
  * @author tmajunke
  */
-public class GuiceModule extends ProjectResource{
+public class GuiceModule implements Serializable, IReferencable{
 
 	private static final long serialVersionUID = -5175606018524563987L;
-
+	
+	private SourceCodeReference sourceCodeReference;
+	
 	/**
 	 * The AbstractModule#install(Module) instructions found in the guice
 	 * module.
-	 *
-	 * The key is the fully qualified class name of the installed module.
 	 */
 	private List<InstallModuleStatement> installedModules;
+	
+	public GuiceModule(SourceCodeReference sourceCodeReference,
+			List<InstallModuleStatement> installedModules,
+			List<BindingDefinition> bindingDefinitions) {
+		this.sourceCodeReference = sourceCodeReference;
+		this.installedModules = installedModules;
+		this.bindingDefinitions = bindingDefinitions;
+	}
 
 	/**
 	 * The bindings found in the guice module.
@@ -35,14 +42,6 @@ public class GuiceModule extends ProjectResource{
 		return bindingDefinitions;
 	}
 
-	public void setInstalledModules(List<InstallModuleStatement> installedModules) {
-		this.installedModules = installedModules;
-	}
-
-	public void setBindingDefinitions(List<BindingDefinition> bindingDefinitions) {
-		this.bindingDefinitions = bindingDefinitions;
-	}
-
 	/**
 	 * Returns the list of installed module statements.
 	 */
@@ -50,23 +49,25 @@ public class GuiceModule extends ProjectResource{
 		return installedModules;
 	}
 
-	public void validate() {
-		for (BindingDefinition bindingStatement : bindingDefinitions) {
-			Preconditions.checkNotNull(bindingStatement.getBoundType());
-			/* Preconditions.checkNotNull(bindingStatement.getImplType()); */
-			Preconditions.checkNotNull(bindingStatement.getStartPosition());
-		}
-
-		for (InstallModuleStatement statement : installedModules) {
-			Preconditions.checkNotNull(statement.getStartPosition());
-		}
-	}
-
 	@Override
-	public String toString() {
-		return getTypeNameFullyQualified();
+	public SourceCodeReference getSourceCodeReference() {
+		return sourceCodeReference;
 	}
 
+	public String getPrimaryTypeNameFullyQualified() {
+		return getSourceCodeReference().getPrimaryTypeNameFullyQualified();
+	}
 
+	public String getProjectName() {
+		return getSourceCodeReference().getProjectName();
+	}
+
+	public String getPackageNameComponentsFullyQualified() {
+		return getSourceCodeReference().getPackageNameComponentsFullyQualified();
+	}
+
+	public String getPrimaryTypeName() {
+		return getSourceCodeReference().getPrimaryTypeName();
+	}
 
 }

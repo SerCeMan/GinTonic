@@ -10,6 +10,7 @@ import java.util.Map;
 public class StringUtils {
 
 	public static final char THE_DOT = '.';
+	public static final char PATH_SEPARATOR = '/';
 	public static final String LINE_SEPARATOR = System.getProperty("line.separator");
 
 	public static final String MAP_TYPE = "java.util.Map";
@@ -102,8 +103,6 @@ public class StringUtils {
 		String[] splitString = stringToSplit.split("\\" + c);
 		return Arrays.asList(splitString);
 	}
-
-
 
 
 

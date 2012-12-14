@@ -52,7 +52,7 @@ public class ProposalBindingCreation implements IJavaCompletionProposal {
 	 * Kurz Beschreibung der Aktion,taucht in der QuickfixProposal-Auswahl auf!
 	 */
 	public String getDisplayString() {
-		String typeName = guiceModule.getTypeName();
+		String typeName = guiceModule.getPrimaryTypeName();
 		if (annotated) {
 			String displayString = "Create an annotated binding to "
 					+ interfaceBinding.getName() + " in "
@@ -82,7 +82,7 @@ public class ProposalBindingCreation implements IJavaCompletionProposal {
 
 	@Override
 	public void apply(IDocument document) {
-		ICompilationUnit compilationUnit = IProjectResourceUtils.getICompilationUnit(guiceModule);
+		ICompilationUnit compilationUnit = IProjectResourceUtils.getICompilationUnit(guiceModule.getSourceCodeReference());
 		CompilationUnit compilationUnitAstNode = ASTParserUtils.parseCompilationUnitAst3(compilationUnit);
 		final Refactorator refactorator = Refactorator.create(
 				compilationUnit,
@@ -122,7 +122,7 @@ public class ProposalBindingCreation implements IJavaCompletionProposal {
 			refactorator.refactor(null);
 			int startPosition = trackedStatement.getStartPosition();
 			IProjectResourceUtils.openEditorWithStatementDeclaration(
-					guiceModule, startPosition);
+					guiceModule.getSourceCodeReference(), startPosition);
 		}
 
 	}

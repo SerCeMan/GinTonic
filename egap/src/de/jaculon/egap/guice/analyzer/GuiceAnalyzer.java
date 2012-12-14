@@ -18,16 +18,18 @@ import de.jaculon.egap.guice.GuiceModule;
 import de.jaculon.egap.guice.statements.BindingDefinition;
 import de.jaculon.egap.guice.statements.GuiceStatement;
 import de.jaculon.egap.guice.statements.InstallModuleStatement;
+import de.jaculon.egap.source_reference.SourceCodeReference;
 import de.jaculon.egap.utils.ASTParserUtils;
 import de.jaculon.egap.utils.ICompilationUnitUtils;
 import de.jaculon.egap.utils.SetUtils;
 
-
 public class GuiceAnalyzer {
 
-	public static HashSet<String> supportedGuiceTypes = SetUtils.newHashSet("AbstractModule", "PrivateModule");
+	private static HashSet<String> supportedGuiceTypes = SetUtils.newHashSet(
+			"AbstractModule",
+			"PrivateModule");
 
-	/**
+/**
 	 * Analyzes the given file it is a Guice Module (see {@link ITypeBindingUtils#isGuiceModuleType(ITypeBinding)).
 	 *
 	 * @return the {@link GuiceModule} or null if it is not a guice module.
@@ -42,10 +44,10 @@ public class GuiceAnalyzer {
 		/*
 		 * We have to reject non java files (like binary .class files). Note to
 		 * the developer: If you remove this check the following call to
-		 *
+		 * 
 		 * <pre> ICompilationUnit compilationUnit = (ICompilationUnit)
 		 * JavaCore.create(file); </pre>
-		 *
+		 * 
 		 * can fail with a ClassCastException.
 		 */
 		if (!filename.endsWith(ICompilationUnitUtils.JAVA_EXTENSION)) {
@@ -111,34 +113,36 @@ public class GuiceAnalyzer {
 		String projectName = project.getName();
 		List<String> srcFolderPath = ICompilationUnitUtils.getSrcFolderPathComponents(compilationUnit);
 
-		GuiceModule guiceModule = new GuiceModule();
-		guiceModule.setTypeName(guiceModuleName);
-		guiceModule.setPackage(Arrays.asList(packageFullyQualified));
-		guiceModule.setProjectName(projectName);
-		guiceModule.setSrcFolderPathComponents(srcFolderPath);
+		SourceCodeReference sourceCodeReferenceToGuiceModule = new SourceCodeReference();
+		sourceCodeReferenceToGuiceModule.setProjectName(projectName);
+		sourceCodeReferenceToGuiceModule.setPackageNameComponents(Arrays.asList(packageFullyQualified));
+		sourceCodeReferenceToGuiceModule.setSrcFolderPathComponents(srcFolderPath);
+		sourceCodeReferenceToGuiceModule.setPrimaryTypeName(guiceModuleName);
 
 		List<BindingDefinition> bindingStatements = astVisitor.getBindingStatements();
 		for (BindingDefinition bindingStatement : bindingStatements) {
-			copyInfo(guiceModule, bindingStatement);
+			copyInfo(sourceCodeReferenceToGuiceModule, bindingStatement);
 		}
 		List<InstallModuleStatement> installModuleStatements = astVisitor.getInstallModuleStatements();
 		for (InstallModuleStatement installModuleStatement : installModuleStatements) {
-			copyInfo(guiceModule, installModuleStatement);
+			copyInfo(sourceCodeReferenceToGuiceModule, installModuleStatement);
 		}
 
-		guiceModule.setBindingDefinitions(bindingStatements);
-		guiceModule.setInstalledModules(installModuleStatements);
-
-		guiceModule.validate();
+		GuiceModule guiceModule = new GuiceModule(
+				sourceCodeReferenceToGuiceModule,
+				installModuleStatements,
+				bindingStatements);
 
 		return guiceModule;
 	}
 
-	private void copyInfo(GuiceModule guiceModule, GuiceStatement statement) {
-		statement.setProjectName(guiceModule.getProjectName());
-		statement.setPackage(guiceModule.getPackage());
-		statement.setSrcFolderPathComponents(guiceModule.getSrcFolderPathComponents());
-		statement.setTypeName(guiceModule.getTypeName());
+	private void copyInfo(SourceCodeReference guiceModule,
+			GuiceStatement statement) {
+		SourceCodeReference statementReference = statement.getSourceCodeReference();
+		statementReference.setProjectName(guiceModule.getProjectName());
+		statementReference.setPackageNameComponents(guiceModule.getPackageNameComponents());
+		statementReference.setSrcFolderPathComponents(guiceModule.getSrcFolderPathComponents());
+		statementReference.setPrimaryTypeName(guiceModule.getPrimaryTypeName());
 	}
 
 }

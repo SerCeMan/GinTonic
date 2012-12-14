@@ -22,6 +22,7 @@ import de.jaculon.egap.guice.GuiceConstants;
 import de.jaculon.egap.guice.annotations.GuiceAnnotation;
 import de.jaculon.egap.guice.statements.BindingDefinition;
 import de.jaculon.egap.guice.statements.ConstantBindingStatement;
+import de.jaculon.egap.guice.statements.GuiceStatement;
 import de.jaculon.egap.guice.statements.InstallModuleStatement;
 import de.jaculon.egap.guice.statements.InstanceBindingStatement;
 import de.jaculon.egap.guice.statements.LinkedBindingStatement;
@@ -29,6 +30,7 @@ import de.jaculon.egap.guice.statements.MapBinderCreateStatement;
 import de.jaculon.egap.guice.statements.ProviderBindingStatement;
 import de.jaculon.egap.guice.statements.ProviderMethod;
 import de.jaculon.egap.guice.statements.SetBinderCreateStatement;
+import de.jaculon.egap.source_reference.SourceCodeReference;
 import de.jaculon.egap.utils.ASTNodeUtils;
 import de.jaculon.egap.utils.AnnotationList;
 import de.jaculon.egap.utils.ExpressionUtils;
@@ -39,22 +41,16 @@ import de.jaculon.egap.utils.SetUtils;
 import de.jaculon.egap.utils.StringUtils;
 import de.jaculon.egap.utils.TypeUtils;
 
-
-
 /**
  * @author tmajunke
  */
 @SuppressWarnings("unchecked")
 public final class GuiceAnalyzerAstVisitor extends ASTVisitor {
 
-	/**
-	 * Note: Needed from outside.
-	 */
 	private ITypeBinding guiceModuleTypeBinding;
 	private List<BindingDefinition> bindingStatements = ListUtils.newArrayListWithCapacity(30);
 	private List<InstallModuleStatement> installModuleStatements = ListUtils.newArrayListWithCapacity(50);
 
-	/* Internals */
 	private BindingDefinition bindingStatement;
 	private GuiceAnnotation guiceAnnotation;
 	private String boundType;
@@ -79,15 +75,6 @@ public final class GuiceAnalyzerAstVisitor extends ASTVisitor {
 		guiceModuleTypeBinding = node.resolveBinding();
 		Preconditions.checkNotNull(guiceModuleTypeBinding);
 		return true;
-	}
-
-	private void clearScope() {
-		boundType = null;
-		implType = null;
-		guiceAnnotation = null;
-		scopeType = null;
-		isEagerSingleton = false;
-		bindingStatement = null;
 	}
 
 	private void addBinding(BindingDefinition bindingStatement) {
@@ -146,9 +133,11 @@ public final class GuiceAnalyzerAstVisitor extends ASTVisitor {
 				String installType = ExpressionUtils.getQualifiedTypeName(firstArgument);
 				InstallModuleStatement installModuleStatement = new InstallModuleStatement();
 				installModuleStatement.setModuleNameFullyQualified(installType);
-				ASTNodeUtils.copyStartPositionAndLength(
+
+				injectSourceCodeReference(
 						methodInvocation,
 						installModuleStatement);
+
 				addModuleInstallStatement(installModuleStatement);
 				clearScope();
 			}
@@ -299,6 +288,14 @@ public final class GuiceAnalyzerAstVisitor extends ASTVisitor {
 		return true;
 	}
 
+	private void injectSourceCodeReference(ASTNode astNode,
+			GuiceStatement guiceStatement) {
+		SourceCodeReference sourceCodeReference = new SourceCodeReference();
+		sourceCodeReference.setOffset(astNode.getStartPosition());
+		sourceCodeReference.setLength(astNode.getLength());
+		guiceStatement.setSourceCodeReference(sourceCodeReference);
+	}
+
 	private void resolveAnnotations(Expression firstArgument) {
 		guiceAnnotation = ExpressionUtils.resolveGuiceAnnotation(firstArgument);
 	}
@@ -311,9 +308,9 @@ public final class GuiceAnalyzerAstVisitor extends ASTVisitor {
 		bindingStatement.setScopeType(scopeType);
 		bindingStatement.setGuiceAnnotation(guiceAnnotation);
 		bindingStatement.setEagerSingleton(isEagerSingleton);
-		ASTNodeUtils.copyStartPositionAndLength(
-				methodInvocation,
-				bindingStatement);
+
+		injectSourceCodeReference(methodInvocation, bindingStatement);
+
 		addBinding(bindingStatement);
 		clearScope();
 	}
@@ -365,8 +362,7 @@ public final class GuiceAnalyzerAstVisitor extends ASTVisitor {
 						parameterizedType.typeArguments(),
 						StringUtils.MAP_TYPE);
 				bindingStatement.setBoundType(interfaceType);
-				ASTNodeUtils.copyStartPositionAndLength(node, bindingStatement);
-
+				injectSourceCodeReference(node, bindingStatement);
 				addBinding(bindingStatement);
 				return true;
 			}
@@ -378,7 +374,7 @@ public final class GuiceAnalyzerAstVisitor extends ASTVisitor {
 						parameterizedType.typeArguments(),
 						StringUtils.SET_TYPE);
 				bindingStatement.setBoundType(boundType);
-				ASTNodeUtils.copyStartPositionAndLength(node, bindingStatement);
+				injectSourceCodeReference(node, bindingStatement);
 				addBinding(bindingStatement);
 				return true;
 			}
@@ -401,13 +397,11 @@ public final class GuiceAnalyzerAstVisitor extends ASTVisitor {
 			Type returnType2 = node.getReturnType2();
 			String boundType = TypeUtils.resolveQualifiedName(returnType2);
 			providerMethod.setBoundType(boundType);
-			ASTNodeUtils.copyStartPositionAndLength(
-					node,
-					providerMethod);
+			injectSourceCodeReference(node, providerMethod);
 			guiceAnnotation = markerAnnotationList.getGuiceAnnotation();
 			providerMethod.setGuiceAnnotation(guiceAnnotation);
 
-			if(markerAnnotationList.containsSingletonScopeAnnotation()){
+			if (markerAnnotationList.containsSingletonScopeAnnotation()) {
 				providerMethod.setScopeType(GuiceConstants.SINGLETON_SCOPE);
 			}
 
@@ -415,6 +409,15 @@ public final class GuiceAnalyzerAstVisitor extends ASTVisitor {
 		}
 
 		return true;
+	}
+
+	private void clearScope() {
+		boundType = null;
+		implType = null;
+		guiceAnnotation = null;
+		scopeType = null;
+		isEagerSingleton = false;
+		bindingStatement = null;
 	}
 
 }

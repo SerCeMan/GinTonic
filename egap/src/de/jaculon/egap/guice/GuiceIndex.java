@@ -31,6 +31,7 @@ import de.jaculon.egap.guice.statements.BindingDefinition;
 import de.jaculon.egap.guice.statements.InstallModuleStatement;
 import de.jaculon.egap.guice.statements.JustInTimeBindingStatement;
 import de.jaculon.egap.project_builder.EgapProjectBuilder;
+import de.jaculon.egap.source_reference.SourceCodeReference;
 import de.jaculon.egap.utils.ICompilationUnitUtils;
 import de.jaculon.egap.utils.IPackageFragmentUtils;
 import de.jaculon.egap.utils.IProjectUtils;
@@ -146,14 +147,10 @@ public class GuiceIndex implements Serializable {
 
 	public void addGuiceModule(GuiceModule guiceModule, boolean log) {
 
-		Preconditions.checkNotNull(guiceModule.getTypeName());
-		Preconditions.checkNotNull(guiceModule.getPackageFullyQualified());
-		Preconditions.checkNotNull(guiceModule.getProjectName());
-
 		guiceModules.add(guiceModule);
 		if (log) {
 			EgapPlugin.logInfo("Added "
-					+ guiceModule.getTypeNameFullyQualified()
+					+ guiceModule.getPrimaryTypeNameFullyQualified()
 					+ " to Guice index " + getIndexInfoShort() + ".");
 		}
 	}
@@ -171,14 +168,14 @@ public class GuiceIndex implements Serializable {
 			}
 		}
 		for (GuiceModule guiceModule : guiceModuleInfosToRemove) {
-			removeGuiceModule(guiceModule.getTypeNameFullyQualified(), false);
+			removeGuiceModule(guiceModule.getPrimaryTypeNameFullyQualified(), false);
 		}
 	}
 
 	public void removeGuiceModule(String nameFullyQualified, boolean log) {
 		for (int i = 0; i < guiceModules.size(); i++) {
 			GuiceModule guiceModule = guiceModules.get(i);
-			String fullyQualifiedName = guiceModule.getTypeNameFullyQualified();
+			String fullyQualifiedName = guiceModule.getPrimaryTypeNameFullyQualified();
 			if (fullyQualifiedName.equals(nameFullyQualified)) {
 				GuiceModule removedModule = guiceModules.remove(i);
 				if (log) {
@@ -199,9 +196,9 @@ public class GuiceIndex implements Serializable {
 	}
 
 	public void updateGuiceModule(GuiceModule guiceModule) {
-		removeGuiceModule(guiceModule.getTypeNameFullyQualified(), false);
+		removeGuiceModule(guiceModule.getPrimaryTypeNameFullyQualified(), false);
 		addGuiceModule(guiceModule, false);
-		EgapPlugin.logInfo("Updated " + guiceModule.getTypeNameFullyQualified()
+		EgapPlugin.logInfo("Updated " + guiceModule.getPrimaryTypeNameFullyQualified()
 				+ " from Guice index " + getIndexInfoShort() + ".");
 	}
 
@@ -255,8 +252,8 @@ public class GuiceIndex implements Serializable {
 			String packagePath = packageFragment.getElementName();
 
 			for (GuiceModule guiceModule : guiceModules) {
-				String packageFullyQualified = guiceModule.getPackageFullyQualified();
-				boolean ignoreModule = guiceModule.getTypeNameFullyQualified().equals(
+				String packageFullyQualified = guiceModule.getPackageNameComponentsFullyQualified();
+				boolean ignoreModule = guiceModule.getPrimaryTypeNameFullyQualified().equals(
 						moduleToIgnore);
 
 				if (ignoreModule) {
@@ -328,7 +325,7 @@ public class GuiceIndex implements Serializable {
 		for (GuiceModule guiceModule : guiceModules) {
 
 			if (packageToLimit != null) {
-				String packageFullyQualified = guiceModule.getPackageFullyQualified();
+				String packageFullyQualified = guiceModule.getPackageNameComponentsFullyQualified();
 
 				if (!packageToLimit.contains(packageFullyQualified)) {
 					continue;
@@ -399,10 +396,8 @@ public class GuiceIndex implements Serializable {
 
 				IJavaProject javaProject = javaElement.getJavaProject();
 
-				JustInTimeBindingStatement justInTimeBinding = new JustInTimeBindingStatement();
 				IProject project = javaProject.getProject();
 				String projectName = project.getName();
-				justInTimeBinding.setProjectName(projectName);
 
 				boolean isParameterizedType = typeBindingOfInterfaceType.isParameterizedType();
 
@@ -410,23 +405,30 @@ public class GuiceIndex implements Serializable {
 				if (isParameterizedType) {
 					ITypeBinding typeDeclaration = typeBindingOfInterfaceType.getTypeDeclaration();
 					typeName = typeDeclaration.getName();
-
 				}
 				else {
 					typeName = typeBindingOfInterfaceType.getName();
 				}
-				justInTimeBinding.setTypeName(typeName);
 
 				IPackageBinding packageBinding = typeBindingOfInterfaceType.getPackage();
 				String[] packageName = packageBinding.getNameComponents();
-				justInTimeBinding.setPackage(Arrays.asList(packageName));
 
 				ICompilationUnit compilationUnit = member.getCompilationUnit();
 				List<String> srcFolderPathComponents = ICompilationUnitUtils.getSrcFolderPathComponents(compilationUnit);
-				justInTimeBinding.setSrcFolderPathComponents(srcFolderPathComponents);
 				Integer startPositionOfTopLevelType = ICompilationUnitUtils.getStartPositionOfTopLevelType(compilationUnit);
-				justInTimeBinding.setStartPosition(startPositionOfTopLevelType);
 
+				JustInTimeBindingStatement justInTimeBinding = new JustInTimeBindingStatement();
+				
+				SourceCodeReference sourceCodeReference = new SourceCodeReference();
+				
+				sourceCodeReference.setProjectName(projectName);
+				sourceCodeReference.setPrimaryTypeName(typeName);
+				sourceCodeReference.setPackageNameComponents(Arrays.asList(packageName));
+				sourceCodeReference.setSrcFolderPathComponents(srcFolderPathComponents);
+				sourceCodeReference.setOffset(startPositionOfTopLevelType);
+				
+				justInTimeBinding.setSourceCodeReference(sourceCodeReference);
+				
 				bindings.add(justInTimeBinding);
 			}
 		}
