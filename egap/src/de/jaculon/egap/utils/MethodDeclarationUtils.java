@@ -158,7 +158,8 @@ public class MethodDeclarationUtils {
 
 		@Override
 		public boolean visit(MethodDeclaration node) {
-			if (isConstructor(node)) {
+			boolean isConstructor = isConstructor(node);
+			if (isConstructor) {
 				constructors.add(node);
 			}
 			return false;
