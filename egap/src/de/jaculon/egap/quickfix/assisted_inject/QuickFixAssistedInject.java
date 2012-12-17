@@ -27,7 +27,7 @@ import de.jaculon.egap.utils.MethodDeclarationUtils;
 /**
  * @author tmajunke
  */
-public class QuickFixAssistedInjectModel extends AbstractEgapQuickFix {
+public class QuickFixAssistedInject extends AbstractEgapQuickFix {
 
 	@Override
 	public void addProposals(IInvocationContext context,
@@ -59,7 +59,6 @@ public class QuickFixAssistedInjectModel extends AbstractEgapQuickFix {
 		if (factory.exists()) {
 			GuiceIndex guiceIndex = GuiceIndex.get();
 
-			/* Does a binding exist? */
 			String fullyQualifiedName = modelType.getFullyQualifiedName();
 			BindingDefinition bindStatement = guiceIndex.getAssistedBindingDefinitionsByModelType(fullyQualifiedName);
 

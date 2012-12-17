@@ -13,7 +13,7 @@ import org.osgi.framework.BundleContext;
 import de.jaculon.egap.guice.GuiceIndex;
 import de.jaculon.egap.guice.GuiceIndexSerializer;
 import de.jaculon.egap.quickfix.EgapQuickFix;
-import de.jaculon.egap.quickfix.assisted_inject.QuickFixAssistedInjectModel;
+import de.jaculon.egap.quickfix.assisted_inject.QuickFixAssistedInject;
 import de.jaculon.egap.quickfix.binding_creation.QuickFixBindingCreation;
 import de.jaculon.egap.quickfix.binding_creation.QuickFixProviderMethodCreation;
 import de.jaculon.egap.quickfix.module_creation.QuickFixCreateGuiceModule;
@@ -57,7 +57,7 @@ public class EgapPlugin extends AbstractUIPlugin implements IStartup {
 		super.start(context);
 		quickfixes.add(new QuickFixCreateGuiceModule());
 		quickfixes.add(new QuickFixInstallModule());
-		quickfixes.add(new QuickFixAssistedInjectModel());
+		quickfixes.add(new QuickFixAssistedInject());
 		quickfixes.add(new QuickFixProviderConversion());
 		quickfixes.add(new QuickFixBindingCreation());
 		quickfixes.add(new QuickFixProviderMethodCreation());
