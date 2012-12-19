@@ -55,7 +55,7 @@ public class GuiceAnalyzer {
 		}
 
 		try {
-			ICompilationUnit compilationUnit = (ICompilationUnit) JavaCore.create(file);
+			ICompilationUnit compilationUnit = JavaCore.createCompilationUnitFrom(file);
 			if (compilationUnit == null) {
 				return null;
 			}
