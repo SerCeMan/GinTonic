@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Egap (Eclipse Guice Assistance Plugin)
 Bundle-SymbolicName: de.jaculon.egap;singleton:=true
-Bundle-Version: 1.0.196
+Bundle-Version: 1.0.208
 Bundle-Activator: de.jaculon.egap.EgapPlugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
