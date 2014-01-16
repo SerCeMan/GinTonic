@@ -27,7 +27,8 @@ public class GuiceAnalyzer {
 
 	private static HashSet<String> supportedGuiceTypes = SetUtils.newHashSet(
 			"AbstractModule",
-			"PrivateModule");
+			"PrivateModule",
+			"AbstractGinModule");
 
 /**
 	 * Analyzes the given file it is a Guice Module (see {@link ITypeBindingUtils#isGuiceModuleType(ITypeBinding)).

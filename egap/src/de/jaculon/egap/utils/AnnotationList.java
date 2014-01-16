@@ -35,7 +35,7 @@ public class AnnotationList {
 	 * {@link GuiceConstants#ANNOTATION_INJECT}, otherwise false.
 	 */
 	public boolean containsInjectType() {
-		return containsAnnotation(GuiceConstants.ANNOTATION_INJECT);
+		return containsAnnotation(GuiceConstants.ANNOTATION_INJECT) || containsAnnotation("com.google.inject.Inject");
 	}
 
 	/**

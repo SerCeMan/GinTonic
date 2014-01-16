@@ -37,7 +37,7 @@
 	</extension>
 
 	<extension
-			id="egap.EgapNature"
+			id="de.jaculon.egap.EgapNature"
 			name="Egap Project Nature"
 			point="org.eclipse.core.resources.natures">
 		<runtime>

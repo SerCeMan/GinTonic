@@ -4,7 +4,7 @@ public class EgapIDs {
 
 	public static final String PLUGIN = "de.jaculon.egap";
 	/**
-	 * Nicht ändern!
+	 * Nicht ï¿½ndern!
 	 */
 	public static final String NATURE = "de.jaculon.egap.EgapNature";
 	public static final String NATURE_OLD = "egap.EgapNature";

@@ -112,7 +112,7 @@ public final class GuiceAnalyzerAstVisitor extends ASTVisitor {
 			firstArgument = arguments.get(0);
 		}
 
-		if (declType.equals(GuiceConstants.ABSTRACT_MODULE)) {
+		if (declType.equals(GuiceConstants.ABSTRACT_MODULE) || declType.equals(GuiceConstants.ABSTRACT_GIN_MODULE)) {
 			if (methodname.equals("bind")) {
 				boundType = ExpressionUtils.getQualifiedTypeName(firstArgument);
 

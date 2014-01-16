@@ -299,6 +299,19 @@ public class InjectionPointDao {
 			return null;
 
 		}
+		ASTNode parentParent = parentNode.getParent();
+		if(parentParent instanceof FieldDeclaration) {
+			FieldDeclaration fieldDeclaration = (FieldDeclaration) parentParent;
+			
+				@SuppressWarnings("unchecked")
+				AnnotationList markerAnnotationList = getAnnotationList(fieldDeclaration.modifiers());
+				Type type = fieldDeclaration.getType();
+				GuiceAnnotation guiceAnnotation = markerAnnotationList.getGuiceAnnotation();
+				return new ProviderMethod(
+						type.resolveBinding(),
+						guiceAnnotation,
+						name.getFullyQualifiedName());
+		}
 		return null;
 	}
 

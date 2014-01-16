@@ -1,5 +1,7 @@
 package de.jaculon.egap.utils;
 
+import static java.util.Arrays.asList;
+
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -77,7 +79,8 @@ public class IProjectUtils {
 			IFunction<HashSet<String>> function) throws CoreException {
 		final IProjectDescription description = project.getDescription();
 		final HashSet<String> natures = new HashSet<String>(
-				Arrays.asList(description.getNatureIds()));
+				asList(description.getNatureIds()));
+		natures.addAll(asList(project.getDescription().getNatureIds()));
 		function.apply(natures);
 		description.setNatureIds(natures.toArray(new String[] {}));
 		project.setDescription(description, progressMonitor);
