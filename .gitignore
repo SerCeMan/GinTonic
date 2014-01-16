@@ -1,0 +1,28 @@
+### Eclipse ###
+.metadata
+.gradle
+bin/
+tmp/
+*.tmp
+*.bak
+*.swp
+local.properties
+.settings/
+.loadpath
+
+# External tool builders
+.externalToolBuilders/
+
+# PDT-specific
+.buildpath
+
+# sbteclipse plugin 
+.target
+
+### Java ###
+*.class
+
+# Package Files #
+*.jar
+*.war
+*.ear
