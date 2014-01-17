@@ -47,8 +47,7 @@ public class QuickFixAssistedInject extends AbstractEgapQuickFix {
 		IType modelType = compilationUnit.findPrimaryType();
 		IPackageFragment modelPackage = modelType.getPackageFragment();
 		/*
-		 * Wir leiten den Namen der Factory aus der Compilation Unit ab (z.B
-		 * Person => PersonFactory)
+		 * We derive the name of the factory from the CompilationUnit from (eg, person => person Factory)
 		 */
 		String modelTypeName = modelType.getElementName();
 		String factoryTypeName = modelTypeName + "Factory";

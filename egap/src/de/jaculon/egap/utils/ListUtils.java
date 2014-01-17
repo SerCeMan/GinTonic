@@ -1,10 +1,9 @@
 package de.jaculon.egap.utils;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
+import java.util.*;
 
 public class ListUtils {
-
+    
 	public static <E> ArrayList<E> newArrayListWithCapacity(int initialArraySize) {
 		return new ArrayList<E>(initialArraySize);
 	}
@@ -23,6 +22,10 @@ public class ListUtils {
 			list.add(e);
 		}
 		return list;
+	}
+	
+	public static <E> List<E> immutableListOf(E... elements) {
+	    return Collections.unmodifiableList(Arrays.asList(elements));
 	}
 
 }

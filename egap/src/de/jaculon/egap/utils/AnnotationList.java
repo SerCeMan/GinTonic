@@ -1,5 +1,6 @@
 package de.jaculon.egap.utils;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.jdt.core.dom.Annotation;
@@ -32,10 +33,10 @@ public class AnnotationList {
 
 	/**
 	 * Returns true if any of the annotations is of type
-	 * {@link GuiceConstants#ANNOTATION_INJECT}, otherwise false.
+	 * {@link GuiceConstants#ANNOTATION_INJECTS}, otherwise false.
 	 */
 	public boolean containsInjectType() {
-		return containsAnnotation(GuiceConstants.ANNOTATION_INJECT) || containsAnnotation("com.google.inject.Inject");
+	    return containsAnyAnnotation(GuiceConstants.ANNOTATIONS_INJECT);
 	}
 
 	/**
@@ -43,7 +44,7 @@ public class AnnotationList {
 	 * {@link GuiceConstants#SINGLETON_SCOPE}, otherwise false.
 	 */
 	public boolean containsSingletonScopeAnnotation() {
-		return containsAnnotation(GuiceConstants.SINGLETON_SCOPE);
+	    return containsAnyAnnotation(GuiceConstants.SINGLETON_ANNOTATIONS);
 	}
 
 	/**
@@ -66,6 +67,15 @@ public class AnnotationList {
 		}
 
 		return null;
+	}
+	
+	private boolean containsAnyAnnotation(Collection<String> annotationTypes) {
+	    for(String annotationType : annotationTypes) {
+	        if(containsAnnotation(annotationType)) {
+	            return true;
+	        }
+	    }
+	    return false;
 	}
 
 	private boolean containsAnnotation(String annotationType) {

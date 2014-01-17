@@ -7,6 +7,9 @@ import de.jaculon.egap.utils.StringUtils;
  * @author tmajunke
  */
 public class BindingDefinition extends GuiceStatement {
+    
+    public BindingDefinition() {
+    }
 
 	private static final long serialVersionUID = -8478037964657180287L;
 
@@ -73,4 +76,9 @@ public class BindingDefinition extends GuiceStatement {
 		return guiceAnnotation;
 	}
 
+	@Override
+    public String toString() {
+        return "BindingDefinition [boundType=" + boundType + ", guiceAnnotation=" + guiceAnnotation + ", scopeType="
+                + scopeType + ", isEagerSingleton=" + isEagerSingleton + "]";
+    }
 }

@@ -2,32 +2,33 @@
 <?eclipse version="3.4"?>
 <plugin>
 
-   <extension
+    <extension
          point="org.eclipse.jdt.ui.quickFixProcessors">
 
       <quickFixProcessor
-            class="de.jaculon.egap.quickfix.EgapQuickFixProcessor"
-            id="egap.quickfix.EgapQuickFixProcessor"
-            name="egap.quickfix.EgapQuickFixProcessor">
+           class="de.jaculon.egap.quickfix.EgapQuickFixProcessor"
+           id="egap.quickfix.EgapQuickFixProcessor"
+           name="egap.quickfix.EgapQuickFixProcessor">
       </quickFixProcessor>
-
-   </extension>
-   <extension
+    </extension>
+   
+    <extension
          point="org.eclipse.ui.preferencePages">
       <page
-            class="de.jaculon.egap.preferences.EgapPreferencePage"
-            id="egap.preferences.EgapPreferencePage"
-            name="Egap">
+           class="de.jaculon.egap.preferences.EgapPreferencePage"
+           id="egap.preferences.EgapPreferencePage"
+           name="Egap">
       </page>
-   </extension>
-   <extension
+    </extension>
+   
+    <extension
          point="org.eclipse.core.runtime.preferences">
       <initializer
-            class="de.jaculon.egap.preferences.PreferenceInitializer">
+           class="de.jaculon.egap.preferences.PreferenceInitializer">
       </initializer>
-   </extension>
+    </extension>
 
-   <extension
+    <extension
 			id="de.jaculon.egap.EgapProjectBuilder"
 			name="Egap Project Builder"
 			point="org.eclipse.core.resources.builders">
@@ -53,45 +54,76 @@
 				nameFilter="*"
 				objectClass="org.eclipse.core.resources.IProject">
 			<action
-         class="de.jaculon.egap.nature.EgapToggleNatureAction"
-         enablesFor="+"
-         icon="icons/egap_icon_big.png"
-         id="egap.toggleNatureAction"
-         label="Add/Remove Egap Nature"
-         menubarPath="additions">
+		        class="de.jaculon.egap.nature.EgapToggleNatureAction"
+		        enablesFor="+"
+		        icon="icons/egap_icon_big.png"
+		        id="egap.toggleNatureAction"
+		        label="Add/Remove Egap Nature"
+		        menubarPath="additions">
 			</action>
 		</objectContribution>
 	</extension>
 
 	<extension point="org.eclipse.ui.startup"></extension>
- <extension
-       point="org.eclipse.ui.commands">
-    <command
-          categoryId="egap.category"
-          id="egap.cycleBindings"
-          name="Cycle Bindings">
-    </command>
-    <category
-          id="egap.category"
-          name="Egap">
-    </category>
- </extension>
- <extension
-       point="org.eclipse.ui.handlers">
-    <handler
-          class="de.jaculon.egap.command.CycleBindingsHandler"
-          commandId="egap.cycleBindings">
-    </handler>
- </extension>
- <extension
-       point="org.eclipse.ui.bindings">
-    <key
-          commandId="egap.cycleBindings"
-          contextId="org.eclipse.jdt.ui.javaEditorScope"
-          schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-          sequence="M1+M2+V G">
-    </key>
- </extension>
 
-
+	<!-- Go to bindings -->
+	<extension
+	       point="org.eclipse.ui.commands">
+	    <command
+	          categoryId="egap.category"
+	          id="egap.cycleBindings"
+	          name="Cycle Bindings">
+	    </command>
+	    <category
+	          id="egap.category"
+	          name="Egap">
+	    </category>
+	</extension>
+	<extension
+	       point="org.eclipse.ui.handlers">
+	    <handler
+	          class="de.jaculon.egap.command.CycleBindingsHandler"
+	          commandId="egap.cycleBindings">
+	    </handler>
+	</extension>
+	<extension
+	       point="org.eclipse.ui.bindings">
+	    <key
+	          commandId="egap.cycleBindings"
+	          contextId="org.eclipse.jdt.ui.javaEditorScope"
+	          schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+	          sequence="M1+M2+V G">
+	    </key>
+	</extension>
+	
+	<!-- Go to impl -->
+	<extension
+	       point="org.eclipse.ui.commands">
+	    <command
+	          categoryId="egap.category"
+	          id="egap.goToImpl"
+	          name="Go to Impl">
+	    </command>
+	    <category
+	          id="egap.category"
+	          name="Egap">
+	    </category>
+	</extension>
+	<extension
+	       point="org.eclipse.ui.handlers">
+	    <handler
+	          class="de.jaculon.egap.command.GoToImplHandler"
+	          commandId="egap.goToImpl">
+	    </handler>
+	</extension>
+	<extension
+	       point="org.eclipse.ui.bindings">
+	    <key
+	          commandId="egap.goToImpl"
+	          contextId="org.eclipse.jdt.ui.javaEditorScope"
+	          schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+	          sequence="M1+M2+V F">
+	    </key>
+	</extension>
+	
 </plugin>

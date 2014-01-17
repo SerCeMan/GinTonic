@@ -20,7 +20,7 @@ import de.jaculon.egap.guice.annotations.GuiceAnnotation;
  *
  * @author tmajunke
  */
-public class InjectionPoint implements IInjectionPoint{
+public class InjectionPoint implements IInjectionPoint {
 
 	private final FieldDeclaration fieldDeclaration;
 	private final InjectionIsAttachedTo injectionIsAttachedTo;

@@ -7,9 +7,9 @@ package de.jaculon.egap.source_reference;
  */
 public interface IReferencable {
 
-	/**
-	 * Returns the {@link SourceCodeReference}.
-	 */
-	public SourceCodeReference getSourceCodeReference();
+    /**
+     * Returns the {@link SourceCodeReference}.
+     */
+    public SourceCodeReference getSourceCodeReference();
 
 }

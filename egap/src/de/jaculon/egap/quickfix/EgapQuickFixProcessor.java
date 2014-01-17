@@ -17,92 +17,88 @@ import de.jaculon.egap.EgapPlugin;
 import de.jaculon.egap.utils.IProjectUtils;
 import de.jaculon.egap.utils.ListUtils;
 
-
-
 public class EgapQuickFixProcessor implements IQuickFixProcessor {
 
-	private boolean loggedWarningAboutProjectWithoutEgapNature;
+    private boolean loggedWarningAboutProjectWithoutEgapNature;
 
-	@Override
-	public boolean hasCorrections(ICompilationUnit unit, int problemId) {
-		return false;
-	}
+    @Override
+    public boolean hasCorrections(ICompilationUnit unit, int problemId) {
+        return false;
+    }
 
-	@Override
-	public IJavaCompletionProposal[] getCorrections(IInvocationContext context,
-			IProblemLocation[] locations) throws CoreException {
+    @Override
+    public IJavaCompletionProposal[] getCorrections(IInvocationContext context, IProblemLocation[] locations)
+            throws CoreException {
 
-		/**
-		 * The quick fixes are only enabled if the project has the de.jaculon.egap nature.
-		 *
-		 * Have to check this here, as the configuration in the plugin.xml:
-		 *
-		 * <pre>
-		 * <with variable="projectNatures">
-		 * <equals value="de.jaculon.egap.EgapNature"/>
-		 * </with>
-		 * </pre>
-		 *
-		 * does not do it!
-		 */
-		ICompilationUnit compilationUnit = context.getCompilationUnit();
-		IJavaElement parent = compilationUnit.getParent();
-		IJavaProject javaProject = parent.getJavaProject();
-		IProject project = javaProject.getProject();
+        /**
+         * The quick fixes are only enabled if the project has the
+         * de.jaculon.egap nature.
+         * 
+         * Have to check this here, as the configuration in the plugin.xml:
+         * 
+         * <pre>
+         * <with variable="projectNatures">
+         * <equals value="de.jaculon.egap.EgapNature"/>
+         * </with>
+         * </pre>
+         * 
+         * does not do it!
+         */
+        ICompilationUnit compilationUnit = context.getCompilationUnit();
+        IJavaElement parent = compilationUnit.getParent();
+        IJavaProject javaProject = parent.getJavaProject();
+        IProject project = javaProject.getProject();
 
-		if (! IProjectUtils.hasEgapNature(project)) {
+        if (!IProjectUtils.hasEgapNature(project)) {
 
-			if (!loggedWarningAboutProjectWithoutEgapNature) {
-				/* One log message is sufficient! */
-				EgapPlugin.logInfo("The de.jaculon.egap quickfixes are disabled as the project '"
-						+ project.getName()
-						+ "' does not have the de.jaculon.egap nature. To enable the de.jaculon.egap quickfixes "
-						+ "click the 'Add Egap Nature' button in the projects context menu.");
-				loggedWarningAboutProjectWithoutEgapNature = true;
-			}
+            if (!loggedWarningAboutProjectWithoutEgapNature) {
+                /* One log message is sufficient! */
+                EgapPlugin.logInfo("The de.jaculon.egap quickfixes are disabled as the project '" + project.getName()
+                        + "' does not have the de.jaculon.egap nature. To enable the de.jaculon.egap quickfixes "
+                        + "click the 'Add Egap Nature' button in the projects context menu.");
+                loggedWarningAboutProjectWithoutEgapNature = true;
+            }
 
-			return null;
-		}
+            return null;
+        }
 
-		/*
-		 * Simple benchmark to ensure that we perform a quickfix not a slooow
-		 * fix !
-		 */
-		long now = System.currentTimeMillis();
+        /*
+         * Simple benchmark to ensure that we perform a quickfix not a slooow
+         * fix !
+         */
+        long now = System.currentTimeMillis();
 
-		EgapPlugin egapPlugin = EgapPlugin.getEgapPlugin();
-		List<EgapQuickFix> egapQuickfixes = egapPlugin.getQuickfixes();
+        EgapPlugin egapPlugin = EgapPlugin.getEgapPlugin();
+        List<EgapQuickFix> egapQuickfixes = egapPlugin.getQuickfixes();
 
-		List<IJavaCompletionProposal> proposals = ListUtils.newLinkedList();
+        List<IJavaCompletionProposal> proposals = ListUtils.newLinkedList();
 
-		int nrOfEnabledQuickFixes = 0;
-		for (EgapQuickFix quickFix : egapQuickfixes) {
-			nrOfEnabledQuickFixes++;
-			/* Every quickfix can contribute a proposal. */
-			try {
-				quickFix.addProposals(context, proposals);
-			} catch (Exception e) {
-				EgapPlugin.log(IStatus.ERROR, e.getMessage(), e);
-			}
-		}
+        int nrOfEnabledQuickFixes = 0;
+        for (EgapQuickFix quickFix : egapQuickfixes) {
+            nrOfEnabledQuickFixes++;
+            /* Every quickfix can contribute a proposal. */
+            try {
+                quickFix.addProposals(context, proposals);
+            } catch (Exception e) {
+                EgapPlugin.log(IStatus.ERROR, e.getMessage(), e);
+            }
+        }
 
-		long then = System.currentTimeMillis();
-		long diff = then - now;
+        long then = System.currentTimeMillis();
+        long diff = then - now;
 
-		String message = "Egap QuickFix took " + diff + " ms, "
-				+ nrOfEnabledQuickFixes + " fixes enabled.";
-		if (diff > 50) {
-			EgapPlugin.logWarning(message);
-		}
-		else {
-			EgapPlugin.logInfo(message);
-		}
+        String message = "Egap QuickFix took " + diff + " ms, " + nrOfEnabledQuickFixes + " fixes enabled.";
+        if (diff > 50) {
+            EgapPlugin.logWarning(message);
+        } else {
+            EgapPlugin.logInfo(message);
+        }
 
-		if (proposals.isEmpty()) {
-			return null;
-		}
+        if (proposals.isEmpty()) {
+            return null;
+        }
 
-		return proposals.toArray(new IJavaCompletionProposal[proposals.size()]);
-	}
+        return proposals.toArray(new IJavaCompletionProposal[proposals.size()]);
+    }
 
 }

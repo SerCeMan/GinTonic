@@ -5,29 +5,26 @@ import org.eclipse.jface.text.ITextSelection;
 
 public class ICompilationUnitSelection {
 
-	private ICompilationUnit compilationUnit;
-	private ITextSelection textSelection;
+    private ICompilationUnit compilationUnit;
+    private ITextSelection textSelection;
 
-	public ICompilationUnitSelection(ICompilationUnit compilationUnit,
-			ITextSelection textSelection) {
-		super();
-		this.compilationUnit = compilationUnit;
-		this.textSelection = textSelection;
-	}
+    public ICompilationUnitSelection(ICompilationUnit compilationUnit, ITextSelection textSelection) {
+        this.compilationUnit = compilationUnit;
+        this.textSelection = textSelection;
+    }
 
-	public ICompilationUnit getICompilationUnit() {
-		return compilationUnit;
-	}
+    public ICompilationUnit getICompilationUnit() {
+        return compilationUnit;
+    }
 
-	public ITextSelection getITextSelection() {
-		return textSelection;
-	}
+    public ITextSelection getITextSelection() {
+        return textSelection;
+    }
 
-	@Override
-	public String toString() {
-		return compilationUnit.getElementName() + "(Selection offset = "
-				+ textSelection.getOffset() + ", length = "
-				+ textSelection.getLength() + ")";
-	}
+    @Override
+    public String toString() {
+        return compilationUnit.getElementName() + "(Selection offset = " + textSelection.getOffset() + ", length = "
+                + textSelection.getLength() + ")";
+    }
 
 }

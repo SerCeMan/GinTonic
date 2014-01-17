@@ -33,5 +33,4 @@ public class LinkedBindingStatement extends BindingDefinition {
 	public void setImplType(String implType) {
 		this.implType = implType;
 	}
-
 }

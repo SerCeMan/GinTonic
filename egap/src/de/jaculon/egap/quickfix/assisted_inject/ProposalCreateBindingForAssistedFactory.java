@@ -81,7 +81,7 @@ public class ProposalCreateBindingForAssistedFactory implements
 
 	@Override
 	/**
-	 * Kurz Beschreibung der Aktion,taucht in der QuickfixProposal-Auswahl auf!
+	 * Brief description of the action appears in the QuickfixProposal selection!
 	 */
 	public String getDisplayString() {
 		return "Create factory binding in module '"
@@ -91,8 +91,7 @@ public class ProposalCreateBindingForAssistedFactory implements
 
 	@Override
 	/**
-	 * Ausfuehrliche Beschreibung der Aktion, taucht in einem Fenster rechts
-	 * neben der QuickfixProposal-Auswahl auf!
+	 * Detailed description of the action that appears in the box next to the selection QuickfixProposal!
 	 */
 	public String getAdditionalProposalInfo() {
 		return "Create factory binding for '"

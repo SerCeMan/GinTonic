@@ -21,7 +21,7 @@ public class ICompilationUnitSelectionUtils {
 		if (editorPart == null | !(editorPart instanceof ITextEditor)) {
 			return null;
 		}
-		final ITextEditor textEditor = (ITextEditor) editorPart;
+		ITextEditor textEditor = (ITextEditor) editorPart;
 		IEditorInput editorInput = textEditor.getEditorInput();
 
 		ITypeRoot editorInputTypeRoot = JavaUI.getEditorInputTypeRoot(editorInput);

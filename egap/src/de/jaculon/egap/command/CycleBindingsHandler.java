@@ -2,9 +2,7 @@ package de.jaculon.egap.command;
 
 import java.util.List;
 
-import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jdt.core.ICompilationUnit;
@@ -27,23 +25,15 @@ import de.jaculon.egap.utils.StringUtils;
  * 
  * @author tmajunke
  */
-public class CycleBindingsHandler extends AbstractHandler {
+public class CycleBindingsHandler extends BaseHandler {
 
 	private InjectionPointDao injectionPointDao;
 	private GuiceIndex guiceIndex;
 	
-	public void setInjectionPointDao(InjectionPointDao injectionPointDao) {
-		this.injectionPointDao = injectionPointDao;
-	}
-
-	public void setGuiceIndex(GuiceIndex guiceIndex) {
-		this.guiceIndex = guiceIndex;
-	}
-
 	private BindingNavigationCycle navigationCycle;
 
 	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException {
+	protected void handleEvent(ExecutionEvent event) {
 		if (this.guiceIndex == null) {
 			this.guiceIndex = GuiceIndex.get();
 		}
@@ -52,8 +42,6 @@ public class CycleBindingsHandler extends AbstractHandler {
 		}
 		
 		cycle();
-
-		return null;
 	}
 
 	private void cycle() {
@@ -84,12 +72,9 @@ public class CycleBindingsHandler extends AbstractHandler {
 			List<BindingDefinition> bindingDefinitions = guiceIndex.getBindingDefinitions(injectionPoint);
 
 			if (!bindingDefinitions.isEmpty()) {
-				navigationCycle = new BindingNavigationCycle(
-						currentCodeLocation,
-						bindingDefinitions);
+				navigationCycle = new BindingNavigationCycle(currentCodeLocation, bindingDefinitions);
 				navigationCycle.jumpToNext();
-			}
-			else {
+			} else {
 				EgapPlugin.logInfo("No binding definition found for injection point "
 						+ injectionPoint.toString());
 			}
