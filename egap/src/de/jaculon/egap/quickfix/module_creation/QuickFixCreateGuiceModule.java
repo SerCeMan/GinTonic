@@ -90,7 +90,7 @@ public class QuickFixCreateGuiceModule extends AbstractEgapQuickFix {
 		String guiceModuleName = targetClassName + "Module";
 
 		/*
-		 * Dann benötigen wir noch das package um das Module zu erzeugen.
+		 * Dann bentigen wir noch das package um das Module zu erzeugen.
 		 */
 		IPackageFragment packageFragment = (IPackageFragment) compilationUnit.getParent();
 		ICompilationUnit guiceModuleCompilationUnit = packageFragment.getCompilationUnit(guiceModuleName
