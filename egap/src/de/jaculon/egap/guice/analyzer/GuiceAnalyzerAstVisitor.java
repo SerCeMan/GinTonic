@@ -129,6 +129,9 @@ public final class GuiceAnalyzerAstVisitor extends ASTVisitor {
                 finishBindingStatement(methodInvocation);
             } else if (methodname.equals("install")) {
                 String installType = ExpressionUtils.getQualifiedTypeName(firstArgument);
+                if ("module".equals(installType)) {
+                    // TODO !!!
+                }
                 InstallModuleStatement installModuleStatement = new InstallModuleStatement();
                 installModuleStatement.setModuleNameFullyQualified(installType);
 

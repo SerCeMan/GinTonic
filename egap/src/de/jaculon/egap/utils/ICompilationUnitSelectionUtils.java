@@ -1,4 +1,4 @@
-package de.jaculon.egap.cu_selection;
+package de.jaculon.egap.utils;
 
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.ITypeRoot;
@@ -10,7 +10,7 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.texteditor.ITextEditor;
 
-import de.jaculon.egap.utils.EclipseUtils;
+import de.jaculon.egap.cu_selection.ICompilationUnitSelection;
 
 public class ICompilationUnitSelectionUtils {
 

@@ -21,7 +21,8 @@ public class ASTParserUtils {
 	public static CompilationUnit parseCompilationUnitAst3(
 			ICompilationUnit compilationUnit, boolean resolveBindings,
 			boolean recoverBindings) {
-		ASTParser astParser = ASTParser.newParser(AST.JLS3);
+		@SuppressWarnings("deprecation")
+        ASTParser astParser = ASTParser.newParser(AST.JLS3);
 
 		astParser.setSource(compilationUnit);
 		astParser.setResolveBindings(resolveBindings);
@@ -33,7 +34,8 @@ public class ASTParserUtils {
 	}
 
 	public static Statement parseStatementAst3(String statementAsString) {
-		ASTParser astParser = ASTParser.newParser(AST.JLS3);
+		@SuppressWarnings("deprecation")
+        ASTParser astParser = ASTParser.newParser(AST.JLS3);
 		astParser.setSource(statementAsString.toCharArray());
 		astParser.setKind(ASTParser.K_STATEMENTS);
 		astParser.setResolveBindings(true);
@@ -43,7 +45,8 @@ public class ASTParserUtils {
 	}
 
 	public static TypeDeclaration parseTypeDeclaration(String methodCode) {
-		ASTParser astParser = ASTParser.newParser(AST.JLS3);
+		@SuppressWarnings("deprecation")
+        ASTParser astParser = ASTParser.newParser(AST.JLS3);
 		astParser.setSource(methodCode.toCharArray());
 		astParser.setKind(ASTParser.K_CLASS_BODY_DECLARATIONS);
 		astParser.setResolveBindings(true);

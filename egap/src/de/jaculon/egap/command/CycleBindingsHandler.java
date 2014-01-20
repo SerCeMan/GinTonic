@@ -11,12 +11,12 @@ import org.eclipse.jface.text.ITextSelection;
 
 import de.jaculon.egap.EgapPlugin;
 import de.jaculon.egap.cu_selection.ICompilationUnitSelection;
-import de.jaculon.egap.cu_selection.ICompilationUnitSelectionUtils;
 import de.jaculon.egap.guice.GuiceIndex;
 import de.jaculon.egap.guice.injection_point.IInjectionPoint;
 import de.jaculon.egap.guice.injection_point.InjectionPointDao;
 import de.jaculon.egap.guice.statements.BindingDefinition;
 import de.jaculon.egap.source_reference.SourceCodeReference;
+import de.jaculon.egap.utils.ICompilationUnitSelectionUtils;
 import de.jaculon.egap.utils.ICompilationUnitUtils;
 import de.jaculon.egap.utils.StringUtils;
 
