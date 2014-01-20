@@ -32,7 +32,7 @@ public class ITypeBindingUtils {
      */
     private static boolean isKindOfAny(ITypeBinding typeBinding, Collection<String> fullyQualifiedTypeNames) {
         for (String typeName : fullyQualifiedTypeNames) {
-            if (getKindOf(typeBinding, typeName) != null) {
+            if (isKindOf(typeBinding, typeName)) {
                 return true;
             }
         }

@@ -22,6 +22,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
 import de.jaculon.egap.EgapPlugin;
 import de.jaculon.egap.utils.ASTParserUtils;
 import de.jaculon.egap.utils.ICompilationUnitUtils;
+import de.jaculon.egap.utils.StringUtils;
 
 public class SelectAndReveal {
 
@@ -63,6 +64,7 @@ public class SelectAndReveal {
         IJavaProject javaProject = JavaCore.create(project);
         IType type;
         try {
+            typeName = StringUtils.removeGenerics(typeName);
             type = javaProject.findType(typeName);
             ISourceRange typeRange = type.getNameRange();
             IResource resource = type.getResource();
