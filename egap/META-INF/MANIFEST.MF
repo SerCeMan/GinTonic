@@ -43,4 +43,5 @@ Export-Package: de.jaculon.egap;uses:="org.eclipse.ui,org.eclipse.ui.plugin,org.
  de.jaculon.egap.source_reference,
  de.jaculon.egap.templates,
  de.jaculon.egap.utils
-Bundle-ClassPath: .
+Bundle-ClassPath: .,
+ lib

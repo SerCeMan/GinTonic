@@ -5,6 +5,7 @@
 	<artifactId>egap</artifactId>
 	<version>1.0.208</version>
 	<name>Egap (Eclipse Guice Assistance Plugin)</name>
+	<packaging>pom</packaging>
 
 	<properties>
 		<libdir>${basedir}/lib</libdir>
@@ -20,7 +21,6 @@
 
 	<build>
 		<sourceDirectory>src</sourceDirectory>
-		<testSourceDirectory>test</testSourceDirectory>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
