@@ -15,7 +15,7 @@ import de.jaculon.egap.guice.GuiceConstants;
  *
  * @author tmajunke
  */
-public class GuiceNamedAnnotation extends GuiceAnnotation {
+public class GuiceNamedAnnotation implements IGuiceAnnotation {
 
 	private static final long serialVersionUID = -877849429883614596L;
 	private String literal;

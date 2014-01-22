@@ -74,8 +74,14 @@ public class GuiceAnalyzer {
             }
 
             if (supportedGuiceTypes.contains(superclassName)) {
-                GuiceModule guiceModule = parseGuiceModule(compilationUnit, project);
-                return guiceModule;
+                return parseGuiceModule(compilationUnit, project);
+            }
+            // TODO Maybe slow
+            IType[] allClasses = primaryType.newSupertypeHierarchy(null).getAllClasses();
+            for(IType clazz : allClasses) {
+                if(supportedGuiceTypes.contains(clazz.getElementName())) {
+                    return parseGuiceModule(compilationUnit, project);                    
+                }
             }
         } catch (Exception e) {
             EgapPlugin.logException("Error analyzing " + filename, e);

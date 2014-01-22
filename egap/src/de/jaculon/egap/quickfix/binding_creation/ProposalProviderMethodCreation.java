@@ -14,7 +14,7 @@ import org.eclipse.swt.graphics.Point;
 
 import de.jaculon.egap.guice.GuiceConstants;
 import de.jaculon.egap.guice.GuiceModule;
-import de.jaculon.egap.guice.annotations.GuiceAnnotation;
+import de.jaculon.egap.guice.annotations.IGuiceAnnotation;
 import de.jaculon.egap.guice.annotations.GuiceClassAnnotation;
 import de.jaculon.egap.icons.Icons;
 import de.jaculon.egap.refactor.Refactorator;
@@ -32,12 +32,12 @@ public class ProposalProviderMethodCreation implements IJavaCompletionProposal {
 
 	private final GuiceModule guiceModule;
 	private final ITypeBinding type;
-	private final GuiceAnnotation guiceAnnotation;
+	private final IGuiceAnnotation guiceAnnotation;
 	private final String variableName;
 
 	public ProposalProviderMethodCreation(GuiceModule guiceModule,
 			ITypeBinding typeBindingWithoutProvider,
-			GuiceAnnotation guiceAnnotation,
+			IGuiceAnnotation guiceAnnotation,
 			String variableName) {
 		Preconditions.checkNotNull(guiceModule);
 		Preconditions.checkNotNull(typeBindingWithoutProvider);

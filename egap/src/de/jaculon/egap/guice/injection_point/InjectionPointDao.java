@@ -31,7 +31,7 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 import de.jaculon.egap.guice.GuiceConstants;
-import de.jaculon.egap.guice.annotations.GuiceAnnotation;
+import de.jaculon.egap.guice.annotations.IGuiceAnnotation;
 import de.jaculon.egap.utils.ASTNodeUtils;
 import de.jaculon.egap.utils.AnnotationList;
 import de.jaculon.egap.utils.EclipseUtils;
@@ -290,7 +290,7 @@ public class InjectionPointDao {
 				@SuppressWarnings("unchecked")
 				AnnotationList markerAnnotationList = getAnnotationList(singleVariableDeclaration.modifiers());
 				Type type = singleVariableDeclaration.getType();
-				GuiceAnnotation guiceAnnotation = markerAnnotationList.getGuiceAnnotation();
+				IGuiceAnnotation guiceAnnotation = markerAnnotationList.getGuiceAnnotation();
 				return new ProviderMethod(
 						type.resolveBinding(),
 						guiceAnnotation,
@@ -306,7 +306,7 @@ public class InjectionPointDao {
 				@SuppressWarnings("unchecked")
 				AnnotationList markerAnnotationList = getAnnotationList(fieldDeclaration.modifiers());
 				Type type = fieldDeclaration.getType();
-				GuiceAnnotation guiceAnnotation = markerAnnotationList.getGuiceAnnotation();
+				IGuiceAnnotation guiceAnnotation = markerAnnotationList.getGuiceAnnotation();
 				return new ProviderMethod(
 						type.resolveBinding(),
 						guiceAnnotation,
@@ -337,7 +337,7 @@ public class InjectionPointDao {
 
 		if (annotationList.containsInjectType()) {
 			Type type = fieldDeclaration.getType();
-			GuiceAnnotation guiceAnnotation = annotationList.getGuiceAnnotation();
+			IGuiceAnnotation guiceAnnotation = annotationList.getGuiceAnnotation();
 			return new InjectionPoint(
 					type.resolveBinding(),
 					guiceAnnotation,
@@ -358,7 +358,7 @@ public class InjectionPointDao {
 			if (variableDeclaration != null) {
 				annotationList = ASTNodeUtils.getAnnotationList(variableDeclaration.modifiers());
 				Type type = variableDeclaration.getType();
-				GuiceAnnotation guiceAnnotation = annotationList.getGuiceAnnotation();
+				IGuiceAnnotation guiceAnnotation = annotationList.getGuiceAnnotation();
 				return new InjectionPoint(
 						type.resolveBinding(),
 						guiceAnnotation,
@@ -380,7 +380,7 @@ public class InjectionPointDao {
 			annotationList = ASTNodeUtils.getAnnotationList(setter.modifiers());
 			if (annotationList.containsInjectType()) {
 				Type type = fieldDeclaration.getType();
-				GuiceAnnotation guiceAnnotation = annotationList.getGuiceAnnotation();
+				IGuiceAnnotation guiceAnnotation = annotationList.getGuiceAnnotation();
 				return new InjectionPoint(
 						type.resolveBinding(),
 						guiceAnnotation,

@@ -90,17 +90,14 @@ public class SelectAndReveal {
 
                 if (methodname.equals(methodName)) {
                     method.accept(new ASTVisitor() {
-
                         @Override
                         public boolean visit(SimpleName simpleName) {
                             String identifier = simpleName.getIdentifier();
                             if (identifier.equals(paramName)) {
                                 simpleNames.add(simpleName);
                             }
-
                             return true;
                         }
-
                     });
                     return true;
                 }

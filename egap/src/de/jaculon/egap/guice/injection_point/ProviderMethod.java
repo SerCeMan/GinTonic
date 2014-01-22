@@ -2,17 +2,17 @@ package de.jaculon.egap.guice.injection_point;
 
 import org.eclipse.jdt.core.dom.ITypeBinding;
 
-import de.jaculon.egap.guice.annotations.GuiceAnnotation;
+import de.jaculon.egap.guice.annotations.IGuiceAnnotation;
 
 
 public class ProviderMethod implements IInjectionPoint{
 
 	private final ITypeBinding targetTypeBinding;
-	private final GuiceAnnotation guiceAnnotation;
+	private final IGuiceAnnotation guiceAnnotation;
 	private final String identifier;
 
 	public ProviderMethod(ITypeBinding targetTypeBinding,
-			GuiceAnnotation guiceAnnotation,
+			IGuiceAnnotation guiceAnnotation,
 			String identifier) {
 		this.targetTypeBinding = targetTypeBinding;
 		this.guiceAnnotation = guiceAnnotation;
@@ -25,7 +25,7 @@ public class ProviderMethod implements IInjectionPoint{
 	}
 
 	@Override
-	public GuiceAnnotation getGuiceAnnotation() {
+	public IGuiceAnnotation getGuiceAnnotation() {
 		return guiceAnnotation;
 	}
 

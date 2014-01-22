@@ -1,11 +1,7 @@
 package de.jaculon.egap.guice;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
@@ -24,7 +20,7 @@ import org.eclipse.jdt.core.dom.ITypeBinding;
 
 import de.jaculon.egap.EgapIDs;
 import de.jaculon.egap.EgapPlugin;
-import de.jaculon.egap.guice.annotations.GuiceAnnotation;
+import de.jaculon.egap.guice.annotations.IGuiceAnnotation;
 import de.jaculon.egap.guice.injection_point.IInjectionPoint;
 import de.jaculon.egap.guice.statements.AssistedBindingStatement;
 import de.jaculon.egap.guice.statements.BindingDefinition;
@@ -263,7 +259,7 @@ public class GuiceIndex implements Serializable {
     public List<BindingDefinition> getBindingDefinitions(IInjectionPoint injectionPoint) {
         ITypeBinding typeBinding = injectionPoint.getTargetTypeBinding();
         ITypeBinding typeBindingWithoutProvider = ITypeBindingUtils.removeSurroundingProvider(typeBinding);
-        GuiceAnnotation guiceAnnotation = injectionPoint.getGuiceAnnotation();
+        IGuiceAnnotation guiceAnnotation = injectionPoint.getGuiceAnnotation();
         List<BindingDefinition> bindingDefinitions = getBindingDefinitions(typeBindingWithoutProvider, guiceAnnotation);
 
         return bindingDefinitions;
@@ -301,7 +297,7 @@ public class GuiceIndex implements Serializable {
      *         find a binding.
      */
     public List<BindingDefinition> getBindingDefinitions(ITypeBinding typeToFind,
-            GuiceAnnotation guiceAnnotationToFind, Set<String> packageToLimit) {
+            IGuiceAnnotation guiceAnnotationToFind, Set<String> packageToLimit) {
         String typeToFindQualifiedName = typeToFind.getQualifiedName();
 
         /*
@@ -333,7 +329,7 @@ public class GuiceIndex implements Serializable {
                     continue;
                 }
 
-                GuiceAnnotation guiceAnnotation = bindingStatement.getGuiceAnnotation();
+                IGuiceAnnotation guiceAnnotation = bindingStatement.getGuiceAnnotation();
                 if (guiceAnnotationToFind != null) {
                     if (guiceAnnotation != null && guiceAnnotation.equals(guiceAnnotationToFind)) {
                         bindings.add(bindingStatement);
@@ -352,7 +348,7 @@ public class GuiceIndex implements Serializable {
         return bindings;
     }
 
-    private void checkForJustInTimeBindings(GuiceAnnotation guiceAnnotationToFind,
+    private void checkForJustInTimeBindings(IGuiceAnnotation guiceAnnotationToFind,
             ITypeBinding typeBindingOfInterfaceType, List<BindingDefinition> bindings) {
         if (bindings.isEmpty() && guiceAnnotationToFind == null) {
 
@@ -424,9 +420,9 @@ public class GuiceIndex implements Serializable {
      * Synonym for getBindingsByTypeAndAnnotationLimitToPackage(typeToFind,
      * guiceAnnotationToFind, null);
      * 
-     * @see #getBindingDefinitions(ITypeBinding, GuiceAnnotation, Set)
+     * @see #getBindingDefinitions(ITypeBinding, IGuiceAnnotation, Set)
      */
-    public List<BindingDefinition> getBindingDefinitions(ITypeBinding typeToFind, GuiceAnnotation guiceAnnotationToFind) {
+    public List<BindingDefinition> getBindingDefinitions(ITypeBinding typeToFind, IGuiceAnnotation guiceAnnotationToFind) {
         return getBindingDefinitions(typeToFind, guiceAnnotationToFind, null);
     }
 
@@ -499,5 +495,4 @@ public class GuiceIndex implements Serializable {
         }
 
     }
-
 }

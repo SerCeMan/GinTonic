@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.eclipse.jdt.core.dom.*;
 
-import de.jaculon.egap.guice.annotations.GuiceAnnotation;
+import de.jaculon.egap.guice.annotations.IGuiceAnnotation;
 import de.jaculon.egap.guice.annotations.GuiceClassAnnotation;
 import de.jaculon.egap.guice.annotations.GuiceNamedAnnotation;
 
@@ -64,7 +64,7 @@ public class ExpressionUtils {
     }
     
     
-    public static GuiceAnnotation resolveGuiceAnnotation(Expression expression) {
+    public static IGuiceAnnotation resolveGuiceAnnotation(Expression expression) {
 
         String literalValue = getNamedLiteralValue(expression);
         if (literalValue != null) {

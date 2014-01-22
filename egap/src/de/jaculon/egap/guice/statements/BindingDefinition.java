@@ -1,6 +1,6 @@
 package de.jaculon.egap.guice.statements;
 
-import de.jaculon.egap.guice.annotations.GuiceAnnotation;
+import de.jaculon.egap.guice.annotations.IGuiceAnnotation;
 import de.jaculon.egap.utils.StringUtils;
 
 /**
@@ -15,7 +15,7 @@ public class BindingDefinition extends GuiceStatement {
 
 	private String boundType;
 
-	private GuiceAnnotation guiceAnnotation;
+	private IGuiceAnnotation guiceAnnotation;
 
 	private String scopeType;
 
@@ -33,7 +33,7 @@ public class BindingDefinition extends GuiceStatement {
 		return boundType;
 	}
 
-	public void setGuiceAnnotation(GuiceAnnotation guiceAnnotation) {
+	public void setGuiceAnnotation(IGuiceAnnotation guiceAnnotation) {
 		this.guiceAnnotation = guiceAnnotation;
 	}
 
@@ -72,7 +72,7 @@ public class BindingDefinition extends GuiceStatement {
 	/**
 	 * Returns the annotation of the binding definition or null if there is no.
 	 */
-	public GuiceAnnotation getGuiceAnnotation() {
+	public IGuiceAnnotation getGuiceAnnotation() {
 		return guiceAnnotation;
 	}
 

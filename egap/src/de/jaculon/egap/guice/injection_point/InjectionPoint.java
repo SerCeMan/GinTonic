@@ -3,7 +3,7 @@ package de.jaculon.egap.guice.injection_point;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.ITypeBinding;
 
-import de.jaculon.egap.guice.annotations.GuiceAnnotation;
+import de.jaculon.egap.guice.annotations.IGuiceAnnotation;
 
 
 /**
@@ -25,11 +25,11 @@ public class InjectionPoint implements IInjectionPoint {
 	private final FieldDeclaration fieldDeclaration;
 	private final InjectionIsAttachedTo injectionIsAttachedTo;
 	private final ITypeBinding targetTypeBinding;
-	private final GuiceAnnotation guiceAnnotation;
+	private final IGuiceAnnotation guiceAnnotation;
 	private final String variableName;
 
 	public InjectionPoint(ITypeBinding targetTypeBinding,
-			GuiceAnnotation guiceAnnotation,
+			IGuiceAnnotation guiceAnnotation,
 			String variableName,
 			FieldDeclaration fieldDeclaration,
 			InjectionIsAttachedTo injectionIsAttachedTo) {
@@ -61,7 +61,7 @@ public class InjectionPoint implements IInjectionPoint {
 	}
 
 	@Override
-	public GuiceAnnotation getGuiceAnnotation() {
+	public IGuiceAnnotation getGuiceAnnotation() {
 		return guiceAnnotation;
 	}
 

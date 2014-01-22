@@ -21,8 +21,6 @@ import de.jaculon.egap.quickfix.module_installation.QuickFixInstallModule;
 import de.jaculon.egap.quickfix.provider_conversion.QuickFixProviderConversion;
 import de.jaculon.egap.utils.ListUtils;
 
-
-
 /**
  * The activator class controls the plug-in life cycle
  */
@@ -45,13 +43,6 @@ public class EgapPlugin extends AbstractUIPlugin implements IStartup {
 		return quickfixes;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext
-	 * )
-	 */
 	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
@@ -63,13 +54,6 @@ public class EgapPlugin extends AbstractUIPlugin implements IStartup {
 		quickfixes.add(new QuickFixProviderMethodCreation());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext
-	 * )
-	 */
 	@Override
 	public void stop(BundleContext context) throws Exception {
 		GuiceIndexSerializer.write();

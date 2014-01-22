@@ -15,9 +15,12 @@ import de.jaculon.egap.guice.GuiceIndex;
 import de.jaculon.egap.guice.injection_point.IInjectionPoint;
 import de.jaculon.egap.guice.injection_point.InjectionPointDao;
 import de.jaculon.egap.guice.statements.BindingDefinition;
+import de.jaculon.egap.guice.statements.InstallModuleStatement;
+import de.jaculon.egap.navigate.NavigationCycle;
 import de.jaculon.egap.source_reference.SourceCodeReference;
 import de.jaculon.egap.utils.ICompilationUnitSelectionUtils;
 import de.jaculon.egap.utils.ICompilationUnitUtils;
+import de.jaculon.egap.utils.ListUtils;
 import de.jaculon.egap.utils.StringUtils;
 
 /**
@@ -75,8 +78,8 @@ public class CycleBindingsHandler extends BaseHandler {
 				navigationCycle = new BindingNavigationCycle(currentCodeLocation, bindingDefinitions);
 				navigationCycle.jumpToNext();
 			} else {
-				EgapPlugin.logInfo("No binding definition found for injection point "
-						+ injectionPoint.toString());
+		        EgapPlugin.logInfo("No binding definition found for injection point "
+		                + injectionPoint.toString());
 			}
 		}
 

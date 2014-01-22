@@ -9,7 +9,7 @@ import org.eclipse.jdt.core.dom.IMemberValuePairBinding;
 import org.eclipse.jdt.core.dom.ITypeBinding;
 
 import de.jaculon.egap.guice.GuiceConstants;
-import de.jaculon.egap.guice.annotations.GuiceAnnotation;
+import de.jaculon.egap.guice.annotations.IGuiceAnnotation;
 import de.jaculon.egap.guice.annotations.GuiceClassAnnotation;
 import de.jaculon.egap.guice.annotations.GuiceNamedAnnotation;
 
@@ -55,7 +55,7 @@ public class AnnotationList {
 		return containsAnnotation(GuiceConstants.PROVIDES);
 	}
 
-	public GuiceAnnotation getGuiceAnnotation() {
+	public IGuiceAnnotation getGuiceAnnotation() {
 		String namedAnnotationLiteralValue = getNamedAnnotationLiteralValue();
 		if (namedAnnotationLiteralValue != null) {
 			return new GuiceNamedAnnotation(namedAnnotationLiteralValue);

@@ -3,43 +3,14 @@ package de.jaculon.egap.guice.analyzer;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.jdt.core.dom.ASTNode;
-import org.eclipse.jdt.core.dom.ASTVisitor;
-import org.eclipse.jdt.core.dom.Expression;
-import org.eclipse.jdt.core.dom.IMethodBinding;
-import org.eclipse.jdt.core.dom.ITypeBinding;
-import org.eclipse.jdt.core.dom.MethodDeclaration;
-import org.eclipse.jdt.core.dom.MethodInvocation;
-import org.eclipse.jdt.core.dom.ParameterizedType;
-import org.eclipse.jdt.core.dom.QualifiedName;
-import org.eclipse.jdt.core.dom.SimpleName;
-import org.eclipse.jdt.core.dom.Type;
-import org.eclipse.jdt.core.dom.TypeDeclaration;
-import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
+import org.eclipse.jdt.core.dom.*;
 
 import de.jaculon.egap.EgapPlugin;
 import de.jaculon.egap.guice.GuiceConstants;
-import de.jaculon.egap.guice.annotations.GuiceAnnotation;
-import de.jaculon.egap.guice.statements.BindingDefinition;
-import de.jaculon.egap.guice.statements.ConstantBindingStatement;
-import de.jaculon.egap.guice.statements.GuiceStatement;
-import de.jaculon.egap.guice.statements.InstallModuleStatement;
-import de.jaculon.egap.guice.statements.InstanceBindingStatement;
-import de.jaculon.egap.guice.statements.LinkedBindingStatement;
-import de.jaculon.egap.guice.statements.MapBinderCreateStatement;
-import de.jaculon.egap.guice.statements.ProviderBindingStatement;
-import de.jaculon.egap.guice.statements.ProviderMethod;
-import de.jaculon.egap.guice.statements.SetBinderCreateStatement;
+import de.jaculon.egap.guice.annotations.IGuiceAnnotation;
+import de.jaculon.egap.guice.statements.*;
 import de.jaculon.egap.source_reference.SourceCodeReference;
-import de.jaculon.egap.utils.ASTNodeUtils;
-import de.jaculon.egap.utils.AnnotationList;
-import de.jaculon.egap.utils.ExpressionUtils;
-import de.jaculon.egap.utils.ListUtils;
-import de.jaculon.egap.utils.MethodInvocationUtils;
-import de.jaculon.egap.utils.Preconditions;
-import de.jaculon.egap.utils.SetUtils;
-import de.jaculon.egap.utils.StringUtils;
-import de.jaculon.egap.utils.TypeUtils;
+import de.jaculon.egap.utils.*;
 
 /**
  * @author tmajunke
@@ -52,7 +23,7 @@ public final class GuiceAnalyzerAstVisitor extends ASTVisitor {
     private List<InstallModuleStatement> installModuleStatements = ListUtils.newArrayListWithCapacity(50);
 
     private BindingDefinition bindingStatement;
-    private GuiceAnnotation guiceAnnotation;
+    private IGuiceAnnotation guiceAnnotation;
     private String boundType;
     private String implType;
     private String scopeType;
@@ -72,7 +43,9 @@ public final class GuiceAnalyzerAstVisitor extends ASTVisitor {
 
     @Override
     public boolean visit(TypeDeclaration node) {
-        guiceModuleTypeBinding = node.resolveBinding();
+        if (guiceModuleTypeBinding == null) {
+            guiceModuleTypeBinding = node.resolveBinding();
+        }
         Preconditions.checkNotNull(guiceModuleTypeBinding);
         return true;
     }
@@ -129,16 +102,45 @@ public final class GuiceAnalyzerAstVisitor extends ASTVisitor {
                 finishBindingStatement(methodInvocation);
             } else if (methodname.equals("install")) {
                 String installType = ExpressionUtils.getQualifiedTypeName(firstArgument);
-                if ("module".equals(installType)) {
-                    // TODO !!!
+                if (GuiceConstants.INJECT_MODULES.contains(installType)) {
+                    // Binding factory installation
+                    InstallBindingStatement statement = new InstallBindingStatement();
+                    injectSourceCodeReference(methodInvocation, statement);
+                    MethodInvocation factoryMethod = (MethodInvocation) firstArgument;
+                    if (factoryMethod.arguments().size() > 0) {
+                        statement.setBoundType(GuiceConstants.SINGLETON_SCOPE);
+                        // .build(FactoryImpl.class)
+                        Object factory = factoryMethod.arguments().get(0);
+                        Type factoryType = getTypeOfArgument(factory);
+                        statement.setBoundType(factoryType.resolveBinding().getQualifiedName());
+                        
+                        // .implement(Type.class, Impl.class)
+                        Expression expression = factoryMethod.getExpression();
+                        while(expression instanceof MethodInvocation) {
+                            MethodInvocation implExpression = (MethodInvocation) expression;
+                            if(implExpression.arguments().size() == 2) {
+                                Object sourceArg = implExpression.arguments().get(0);
+                                Type sourceType = getTypeOfArgument(sourceArg);
+                                Object implArg = implExpression.arguments().get(1);
+                                Type implType = getTypeOfArgument(implArg);
+                                statement.addImpl(sourceType.resolveBinding().getQualifiedName(), implType.resolveBinding().getQualifiedName());
+                            }
+                            expression = implExpression.getExpression();
+                        }
+                        bindingStatement = statement;
+                        addBinding(bindingStatement);
+                        clearScope();
+                    }
+                } else {
+                    // Module installation
+                    InstallModuleStatement installModuleStatement = new InstallModuleStatement();
+                    installModuleStatement.setModuleNameFullyQualified(installType);
+
+                    injectSourceCodeReference(methodInvocation, installModuleStatement);
+
+                    addModuleInstallStatement(installModuleStatement);
+                    clearScope();
                 }
-                InstallModuleStatement installModuleStatement = new InstallModuleStatement();
-                installModuleStatement.setModuleNameFullyQualified(installType);
-
-                injectSourceCodeReference(methodInvocation, installModuleStatement);
-
-                addModuleInstallStatement(installModuleStatement);
-                clearScope();
             } else if (methodname.equals("bindConstant")) {
                 finishBindingStatement(methodInvocation);
             } else if (methodname.equals("binder")) {
@@ -257,6 +259,20 @@ public final class GuiceAnalyzerAstVisitor extends ASTVisitor {
         }
 
         return true;
+    }
+
+    public static Type getTypeOfArgument(Object argument) {
+        Type resultType = null;
+        if (argument instanceof ClassInstanceCreation) {
+            resultType = ((ClassInstanceCreation)argument).getType();
+            if(resultType instanceof ParameterizedType && 
+                    "TypeLiteral".equals(((ParameterizedType)resultType).getType().toString()))  {
+                resultType = (Type) ((ParameterizedType)resultType).typeArguments().get(0);
+            }
+        } else if (argument instanceof TypeLiteral) {
+            resultType = ((TypeLiteral) argument).getType();
+        }
+        return resultType;
     }
 
     private void injectSourceCodeReference(ASTNode astNode, GuiceStatement guiceStatement) {

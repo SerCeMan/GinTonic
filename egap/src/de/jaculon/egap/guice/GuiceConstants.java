@@ -71,11 +71,14 @@ public class GuiceConstants {
     public static final String GIN_SET_BINDER = "com.google.gwt.inject.client.multibindings.GinMultibinder";
     public static final List<String> SET_BINDERS = ListUtils.immutableListOf(SET_BINDER, GIN_SET_BINDER);
     
+    public static final List<String> INJECT_MODULES = ListUtils.immutableListOf("com.google.inject.Module",
+            "com.google.gwt.inject.client.GinModule");
     
     public static final String ANNOTATION_ASSISTED = "com.google.inject.assistedinject.Assisted";
     public static final String PROVIDES = "com.google.inject.Provides";
     public static final String BINDING_ANNOTATION = "com.google.inject.BindingAnnotation";
     public static final String ASSISTEDINJECT_FACTORY_PROVIDER = "com.google.inject.assistedinject.FactoryProvider";
     public static final String TYPE_LITERAL = "com.google.inject.TypeLiteral";
+
 
 }

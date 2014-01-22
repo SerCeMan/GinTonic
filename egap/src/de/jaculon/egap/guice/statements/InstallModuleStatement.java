@@ -1,19 +1,17 @@
 package de.jaculon.egap.guice.statements;
 
-
-
 public class InstallModuleStatement extends GuiceStatement {
 
-	private static final long serialVersionUID = 4998413229504260537L;
+    private static final long serialVersionUID = 4998413229504260537L;
 
-	private String moduleNameFullyQualified;
+    private String moduleNameFullyQualified;
 
-	public void setModuleNameFullyQualified(String moduleNameFullyQualified) {
-		this.moduleNameFullyQualified = moduleNameFullyQualified;
-	}
+    public void setModuleNameFullyQualified(String moduleNameFullyQualified) {
+        this.moduleNameFullyQualified = moduleNameFullyQualified;
+    }
 
-	public String getModuleNameFullyQualified() {
-		return moduleNameFullyQualified;
-	}
+    public String getModuleNameFullyQualified() {
+        return moduleNameFullyQualified;
+    }
 
 }
