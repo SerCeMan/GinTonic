@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project>
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>de.jaculon</groupId>
-	<artifactId>egap</artifactId>
-	<version>1.0.208</version>
-	<name>Egap (Eclipse Guice Assistance Plugin)</name>
-	<packaging>pom</packaging>
+	<groupId>ru.naumen.gintonic</groupId>
+	<artifactId>gintonic</artifactId>
+	<version>1.0.0</version>
+	<name>GinTonic</name>
+	<description>Guice/Gin eclipse plugin</description>
 
+	
 	<build>
-		<sourceDirectory>${basedir}/src</sourceDirectory>
+		<sourceDirectory>${basedir}/src/</sourceDirectory>
 		<resources>
 			<resource>
 				<directory>${basedir}/icons</directory>

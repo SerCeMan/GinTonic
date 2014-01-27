@@ -6,7 +6,7 @@
          point="org.eclipse.jdt.ui.quickFixProcessors">
 
       <quickFixProcessor
-           class="de.jaculon.egap.quickfix.EgapQuickFixProcessor"
+           class="ru.naumen.gintonic.quickfix.EgapQuickFixProcessor"
            id="egap.quickfix.EgapQuickFixProcessor"
            name="egap.quickfix.EgapQuickFixProcessor">
       </quickFixProcessor>
@@ -15,7 +15,7 @@
     <extension
          point="org.eclipse.ui.preferencePages">
       <page
-           class="de.jaculon.egap.preferences.EgapPreferencePage"
+           class="ru.naumen.gintonic.preferences.EgapPreferencePage"
            id="egap.preferences.EgapPreferencePage"
            name="Egap">
       </page>
@@ -24,7 +24,7 @@
     <extension
          point="org.eclipse.core.runtime.preferences">
       <initializer
-           class="de.jaculon.egap.preferences.PreferenceInitializer">
+           class="ru.naumen.gintonic.preferences.PreferenceInitializer">
       </initializer>
     </extension>
 
@@ -33,7 +33,7 @@
 			name="Egap Project Builder"
 			point="org.eclipse.core.resources.builders">
 		<builder hasNature="true">
-			<run class="de.jaculon.egap.project_builder.EgapProjectBuilder" />
+			<run class="ru.naumen.gintonic.project_builder.EgapProjectBuilder" />
 		</builder>
 	</extension>
 
@@ -42,7 +42,7 @@
 			name="Egap Project Nature"
 			point="org.eclipse.core.resources.natures">
 		<runtime>
-			<run class="de.jaculon.egap.nature.EgapNature" />
+			<run class="ru.naumen.gintonic.nature.EgapNature" />
 		</runtime>
 		<builder id="de.jaculon.egap.EgapProjectBuilder" />
 	</extension>
@@ -54,7 +54,7 @@
 				nameFilter="*"
 				objectClass="org.eclipse.core.resources.IProject">
 			<action
-		        class="de.jaculon.egap.nature.EgapToggleNatureAction"
+		        class="ru.naumen.gintonic.nature.EgapToggleNatureAction"
 		        enablesFor="+"
 		        icon="icons/egap_icon_big.png"
 		        id="egap.toggleNatureAction"
@@ -82,7 +82,7 @@
 	<extension
 	       point="org.eclipse.ui.handlers">
 	    <handler
-	          class="de.jaculon.egap.command.CycleBindingsHandler"
+	          class="ru.naumen.gintonic.command.CycleBindingsHandler"
 	          commandId="egap.cycleBindings">
 	    </handler>
 	</extension>
@@ -112,7 +112,7 @@
 	<extension
 	       point="org.eclipse.ui.handlers">
 	    <handler
-	          class="de.jaculon.egap.command.GoToImplHandler"
+	          class="ru.naumen.gintonic.command.GoToImplHandler"
 	          commandId="egap.goToImpl">
 	    </handler>
 	</extension>
