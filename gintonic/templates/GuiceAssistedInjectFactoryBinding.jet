@@ -1,0 +1,9 @@
+<%@ jet package="ru.naumen.gintonic.templates" imports="ru.naumen.gintonic.quickfix.assisted_inject.ProposalCreateBindingForAssistedFactory" class="GuiceAssistedInjectFactoryBinding" %>
+
+
+<% ProposalCreateBindingForAssistedFactory proposal = (ProposalCreateBindingForAssistedFactory) argument; %>
+
+bind(<%= proposal.getFactoryTypeName() %>.class).toProvider(
+				FactoryProvider.newFactory(
+						<%= proposal.getFactoryTypeName()%>.class,
+						<%= proposal.getModelTypeName()  %>.class));

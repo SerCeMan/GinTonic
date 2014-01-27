@@ -1,0 +1,4 @@
+<%@ jet package="ru.naumen.gintonic.templates" class="InstallModuleTemplate" %>
+<% String guiceModuleToInstall = (String) argument; %>
+
+install(new <%= guiceModuleToInstall %>());

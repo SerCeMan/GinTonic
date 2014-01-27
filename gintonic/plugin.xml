@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+    <extension
+         point="org.eclipse.jdt.ui.quickFixProcessors">
+
+      <quickFixProcessor
+           class="ru.naumen.gintonic.quickfix.GinTonicQuickFixProcessor"
+           id="gintonic.quickfix.GinTonicQuickFixProcessor"
+           name="gintonic.quickfix.GinTonicQuickFixProcessor">
+      </quickFixProcessor>
+    </extension>
+   
+    <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+           class="ru.naumen.gintonic.preferences.GinTonicPreferencePage"
+           id="gintonic.preferences.GinTonicPreferencePage"
+           name="Gin Tonic">
+      </page>
+    </extension>
+   
+    <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+           class="ru.naumen.gintonic.preferences.PreferenceInitializer">
+      </initializer>
+    </extension>
+
+    <extension
+			id="ru.naumen.gintonic.GinTonicProjectBuilder"
+			name="GinTonic Project Builder"
+			point="org.eclipse.core.resources.builders">
+		<builder hasNature="true">
+			<run class="ru.naumen.gintonic.project_builder.GinTonicProjectBuilder" />
+		</builder>
+	</extension>
+
+	<extension
+			id="ru.naumen.gintonic.GinTonicNature"
+			name="GinTonic Project Nature"
+			point="org.eclipse.core.resources.natures">
+		<runtime>
+			<run class="ru.naumen.gintonic.nature.GinTonicNature" />
+		</runtime>
+		<builder id="ru.naumen.gintonic.GinTonicProjectBuilder" />
+	</extension>
+	
+	<extension point="org.eclipse.ui.popupMenus">
+		<objectContribution
+				adaptable="true"
+				id="gintonic.popupMenus"
+				nameFilter="*"
+				objectClass="org.eclipse.core.resources.IProject">
+			<action
+		        class="ru.naumen.gintonic.nature.GinTonicToggleNatureAction"
+		        enablesFor="+"
+		        icon="icons/gintonic_icon_big.png"
+		        id="gintonic.toggleNatureAction"
+		        label="Add/Remove GinTonic Nature"
+		        menubarPath="additions">
+			</action>
+		</objectContribution>
+	</extension>
+
+	<extension point="org.eclipse.ui.startup"></extension>
+
+	<!-- Go to bindings -->
+	<extension
+	       point="org.eclipse.ui.commands">
+	    <command
+	          categoryId="gintonic.category"
+	          id="gintonic.cycleBindings"
+	          name="Cycle Bindings">
+	    </command>
+	    <category
+	          id="gintonic.category"
+	          name="Gin Tonic">
+	    </category>
+	</extension>
+	<extension
+	       point="org.eclipse.ui.handlers">
+	    <handler
+	          class="ru.naumen.gintonic.command.CycleBindingsHandler"
+	          commandId="gintonic.cycleBindings">
+	    </handler>
+	</extension>
+	<extension
+	       point="org.eclipse.ui.bindings">
+	    <key
+	          commandId="gintonic.cycleBindings"
+	          contextId="org.eclipse.jdt.ui.javaEditorScope"
+	          schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+	          sequence="M1+B">
+	    </key>
+	</extension>
+	
+	<!-- Go to impl -->
+	<extension
+	       point="org.eclipse.ui.commands">
+	    <command
+	          categoryId="gintonic.category"
+	          id="gintonic.goToImpl"
+	          name="Go to Impl">
+	    </command>
+	    <category
+	          id="gintonic.category"
+	          name="Gin Tonic">
+	    </category>
+	</extension>
+	<extension
+	       point="org.eclipse.ui.handlers">
+	    <handler
+	          class="ru.naumen.gintonic.command.GoToImplHandler"
+	          commandId="gintonic.goToImpl">
+	    </handler>
+	</extension>
+	<extension
+	       point="org.eclipse.ui.bindings">
+	    <key
+	          commandId="gintonic.goToImpl"
+	          contextId="org.eclipse.jdt.ui.javaEditorScope"
+	          schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+	          sequence="M1+R">
+	    </key>
+	</extension>
+	
+</plugin>

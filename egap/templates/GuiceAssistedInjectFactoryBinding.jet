@@ -1,9 +1,0 @@
-<%@ jet package="de.jaculon.egap.templates" imports="de.jaculon.egap.quickfix.assisted_inject.ProposalCreateBindingForAssistedFactory" class="GuiceAssistedInjectFactoryBinding" %>
-
-
-<% ProposalCreateBindingForAssistedFactory proposal = (ProposalCreateBindingForAssistedFactory) argument; %>
-
-bind(<%= proposal.getFactoryTypeName() %>.class).toProvider(
-				FactoryProvider.newFactory(
-						<%= proposal.getFactoryTypeName()%>.class,
-						<%= proposal.getModelTypeName()  %>.class));

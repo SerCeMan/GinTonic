@@ -1,0 +1,11 @@
+<%@ jet package="ru.naumen.gintonic.templates" class="GuiceModuleTemplate" %>
+import com.google.inject.AbstractModule;
+
+<% String moduleName = (String) argument; %>
+
+public class <%= moduleName %> extends AbstractModule {
+	@Override
+	protected void configure() {
+		
+	}
+}
