@@ -10,7 +10,7 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.texteditor.ITextEditor;
 
-import de.jaculon.egap.cu_selection.ICompilationUnitSelection;
+import de.jaculon.egap.selection.ICompilationUnitSelection;
 
 public class ICompilationUnitSelectionUtils {
 

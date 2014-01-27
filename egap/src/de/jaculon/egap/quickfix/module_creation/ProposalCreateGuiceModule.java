@@ -39,19 +39,19 @@ public class ProposalCreateGuiceModule implements IJavaCompletionProposal {
 		return Icons.egapIconCreate;
 	}
 
-	@Override
 	/**
-	 * Kurz Beschreibung der Aktion,taucht in der QuickfixProposal-Auswahl auf!
+	 * Brief description of the action appears in the QuickfixProposal selection!
 	 */
+	@Override
 	public String getDisplayString() {
 		return "Create Guice module '" + guiceModuleClassName + "'";
 	}
 
-	@Override
 	/**
-	 * Ausfuehrliche Beschreibung der Aktion, taucht in einem Fenster rechts
-	 * neben der QuickfixProposal-Auswahl auf!
+	 * Detailed description of the action, immersed in a window on the right 
+	 * Next to the QuickfixProposal selection on!
 	 */
+	@Override
 	public String getAdditionalProposalInfo() {
 		return null;
 	}

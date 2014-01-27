@@ -106,13 +106,25 @@ public final class GuiceAnalyzerAstVisitor extends ASTVisitor {
                     // Binding factory installation
                     InstallBindingStatement statement = new InstallBindingStatement();
                     injectSourceCodeReference(methodInvocation, statement);
+                    if (!(firstArgument instanceof MethodInvocation)) {
+                        // maybe some kind of: install(variable);
+                        return true;
+                    }
                     MethodInvocation factoryMethod = (MethodInvocation) firstArgument;
                     if (factoryMethod.arguments().size() > 0) {
                         statement.setBoundType(GuiceConstants.SINGLETON_SCOPE);
                         // .build(FactoryImpl.class)
                         Object factory = factoryMethod.arguments().get(0);
                         Type factoryType = getTypeOfArgument(factory);
-                        statement.setBoundType(factoryType.resolveBinding().getQualifiedName());
+                        if(factoryType == null && factory instanceof SimpleName) {
+                            IVariableBinding variable = ASTNodeUtils.getVariableBinding((SimpleName)factory);
+                            statement.setBoundType(variable.getType().getQualifiedName());
+                        } else if(factoryType != null) {
+                            statement.setBoundType(factoryType.resolveBinding().getQualifiedName());
+                        } else {
+                            // Can't define factory type. Maybe method and binding code too complicate?
+                            return true;
+                        }
                         
                         // .implement(Type.class, Impl.class)
                         Expression expression = factoryMethod.getExpression();
@@ -123,6 +135,14 @@ public final class GuiceAnalyzerAstVisitor extends ASTVisitor {
                                 Type sourceType = getTypeOfArgument(sourceArg);
                                 Object implArg = implExpression.arguments().get(1);
                                 Type implType = getTypeOfArgument(implArg);
+                                if (sourceType == null || implType == null) {
+                                    // Can't define source and impl type. Maybe method and binding code too complicate?
+                                    if(expression == implExpression.getExpression()) {
+                                        throw new RuntimeException("Unexpected infinite loop exception");
+                                    }
+                                    expression = implExpression.getExpression();
+                                    continue;
+                                }
                                 statement.addImpl(sourceType.resolveBinding().getQualifiedName(), implType.resolveBinding().getQualifiedName());
                             }
                             expression = implExpression.getExpression();

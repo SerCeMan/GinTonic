@@ -160,7 +160,7 @@ public class JavaCodeBuilder {
 		Set<String> importStatementSet = SetUtils.newHashSet();
 
 		for (ITypeBinding importBinding : importBindings) {
-			/* Wir mssen die Type Declaration verwenden! */
+			/* We need to use the type declaration! */
 			ITypeBinding importBindingTypeDecl = importBinding.getTypeDeclaration();
 			String importName = importBindingTypeDecl.getQualifiedName();
 

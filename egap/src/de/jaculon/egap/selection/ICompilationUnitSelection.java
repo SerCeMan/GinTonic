@@ -1,4 +1,4 @@
-package de.jaculon.egap.cu_selection;
+package de.jaculon.egap.selection;
 
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jface.text.ITextSelection;

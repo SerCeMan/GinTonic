@@ -92,7 +92,7 @@
 	          commandId="egap.cycleBindings"
 	          contextId="org.eclipse.jdt.ui.javaEditorScope"
 	          schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-	          sequence="M1+M2+V G">
+	          sequence="M1+B">
 	    </key>
 	</extension>
 	
@@ -122,7 +122,7 @@
 	          commandId="egap.goToImpl"
 	          contextId="org.eclipse.jdt.ui.javaEditorScope"
 	          schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-	          sequence="M1+M2+V F">
+	          sequence="M1+R">
 	    </key>
 	</extension>
 	

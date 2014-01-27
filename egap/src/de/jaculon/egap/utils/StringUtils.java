@@ -126,4 +126,7 @@ public class StringUtils {
         return str.substring(0, pos);
     }
 
+    public static boolean isNullOrEmpty(String result) {
+        return  result == null || result.isEmpty();
+    }
 }

@@ -4,18 +4,17 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.*;
 import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jface.text.ITextSelection;
 
 import de.jaculon.egap.navigate.IJumpable;
 import de.jaculon.egap.select_and_reveal.SelectAndReveal;
+import de.jaculon.egap.selection.ICompilationUnitSelection;
+import de.jaculon.egap.utils.ICompilationUnitSelectionUtils;
 import de.jaculon.egap.utils.ICompilationUnitUtils;
 import de.jaculon.egap.utils.StringUtils;
 
@@ -223,6 +222,42 @@ public class SourceCodeReference implements Serializable, IJumpable {
         IFile resolvedIFile = resolveIFile();
         ICompilationUnit compilationUnit = JavaCore.createCompilationUnitFrom(resolvedIFile);
         return compilationUnit;
+    }
+
+    public static SourceCodeReference createCurrent() {
+        
+        ICompilationUnitSelection compilationUnitSelection = ICompilationUnitSelectionUtils.getCompilationUnitSelection();
+        if (compilationUnitSelection == null) {
+            return null;
+        }
+        ICompilationUnit icompilationUnit = compilationUnitSelection.getICompilationUnit();
+        ITextSelection textSelection= compilationUnitSelection.getITextSelection();
+        
+    	SourceCodeReference codeReference = new SourceCodeReference();
+    
+    	IResource resource = icompilationUnit.getResource();
+    	IProject project = resource.getProject();
+    	codeReference.setProjectName(project.getName());
+    
+    	List<String> srcFolderPath = ICompilationUnitUtils.getSrcFolderPathComponents(icompilationUnit);
+    	codeReference.setSrcFolderPathComponents(srcFolderPath);
+    
+    	IPackageFragment parent = (IPackageFragment) icompilationUnit.getParent();
+    	String packageDotSeparated = parent.getElementName();
+    	List<String> packageAsList = StringUtils.split('.', packageDotSeparated);
+    	codeReference.setPackageNameComponents(packageAsList);
+    
+    	String typeName = ICompilationUnitUtils.getNameWithoutJavaExtension(icompilationUnit);
+    	codeReference.setPrimaryTypeName(typeName);
+    
+    	if (textSelection != null) {
+    		int offset = textSelection.getOffset();
+    		codeReference.setOffset(offset);
+    		int length = textSelection.getLength();
+    		codeReference.setLength(length);
+    	}
+    
+    	return codeReference;
     }
 
 }

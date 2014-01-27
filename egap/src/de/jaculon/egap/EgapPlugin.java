@@ -123,6 +123,4 @@ public class EgapPlugin extends AbstractUIPlugin implements IStartup {
 		boolean isDebugModeEnabled = store.getBoolean(EgapIDs.DEBUG_MODE);
 		return isDebugModeEnabled;
 	}
-
-
 }

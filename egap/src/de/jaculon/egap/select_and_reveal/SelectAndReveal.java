@@ -68,6 +68,10 @@ public class SelectAndReveal {
             type = javaProject.findType(typeName);
             ISourceRange typeRange = type.getNameRange();
             IResource resource = type.getResource();
+            if(resource == null) {
+                EgapPlugin.logInfo("Source file for " + typeName + " not found");
+                return;
+            }
             SelectAndReveal.selectAndReveal((IFile) resource, typeRange.getOffset(), 0);
         } catch (JavaModelException e) {
             throw new RuntimeException("Error trying select type: ", e);

@@ -2,17 +2,23 @@ package de.jaculon.egap.command;
 
 import static de.jaculon.egap.utils.CollectionUtils.getFirst;
 
+import java.util.List;
+
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.resources.IProject;
 
-import de.jaculon.egap.cu_selection.ICompilationUnitSelection;
 import de.jaculon.egap.guice.GuiceIndex;
 import de.jaculon.egap.guice.injection_point.IInjectionPoint;
 import de.jaculon.egap.guice.injection_point.InjectionPointDao;
 import de.jaculon.egap.guice.statements.BindingDefinition;
+import de.jaculon.egap.guice.statements.JustInTimeBindingStatement;
 import de.jaculon.egap.guice.statements.LinkedBindingStatement;
 import de.jaculon.egap.select_and_reveal.SelectAndReveal;
+import de.jaculon.egap.selection.ICompilationUnitSelection;
+import de.jaculon.egap.source_reference.SourceCodeReference;
 import de.jaculon.egap.utils.ICompilationUnitSelectionUtils;
+import de.jaculon.egap.utils.ListUtils;
+import de.jaculon.egap.widgets.Widgets;
 
 /**
  * Go To Impl handler
@@ -43,27 +49,61 @@ public class GoToImplHandler extends BaseHandler {
         }
 
         IInjectionPoint injectionPoint = injectionPointDao.findInjectionPointByTextSelection(
-                unitSelection.getICompilationUnit(), unitSelection.getITextSelection());
+                unitSelection.getICompilationUnit(),
+                unitSelection.getITextSelection());
 
         if (injectionPoint != null) {
-            BindingDefinition bindingDefinition = getFirst(guiceIndex.getBindingDefinitions(injectionPoint));
+            List<BindingDefinition> bindingDefinitions = guiceIndex.getBindingDefinitions(injectionPoint);
+            BindingDefinition bindingDefinition = null;
+            if(bindingDefinitions.size() > 1) {
+                bindingDefinition = Widgets.showUserSelect(bindingDefinitions);
+                if(bindingDefinition == null) {
+                    return;
+                }
+            } else if(!bindingDefinitions.isEmpty()) {
+                bindingDefinition = getFirst(bindingDefinitions);
+            }
+            if (bindingDefinition == null && !bindingDefinitions.isEmpty()) {
+                // May be user press Cancel or Escape
+                return;
+            }
+            String typeName = extractTypeName(injectionPoint, bindingDefinitions, bindingDefinition);
+            if (typeName == null) {
+                return;
+            }
             IProject project = unitSelection.getICompilationUnit().getResource().getProject();
-            String typeName;
-            if (bindingDefinition == null) {
-                // Implementation class generated at runtime, e.g. GWT.create()
-                typeName = injectionPoint.getTargetTypeBinding().getBinaryName();
-            } else if (bindingDefinition instanceof LinkedBindingStatement) {
-                LinkedBindingStatement binding = (LinkedBindingStatement) bindingDefinition;
-                typeName = binding.getImplType();
-            } else {
-                typeName = bindingDefinition.getBoundType();
-            }
-            
-            if (typeName == null && injectionPoint.getTargetTypeBinding() != null) {
-                // Maybe class has not bindings, no annotation, but it injected and DI know about it
-                typeName = injectionPoint.getTargetTypeBinding().getQualifiedName();
-            }
-            SelectAndReveal.selectAndRevealType(typeName, project);
+            goToImpl(project, typeName);
         }
+    }
+
+    private void goToImpl(IProject project, String typeName) {
+        SelectAndReveal.selectAndRevealType(typeName, project);
+    }
+
+    private String extractTypeName(IInjectionPoint injectionPoint, List<BindingDefinition> bindingDefinitions,
+            BindingDefinition bindingDefinition) {
+        String typeName;
+        if (bindingDefinitions.isEmpty()) {
+            // Implementation class generated at runtime, e.g. GWT.create()
+            typeName = injectionPoint.getTargetTypeBinding().getBinaryName();
+        } else if (bindingDefinition instanceof LinkedBindingStatement) {
+            LinkedBindingStatement binding = (LinkedBindingStatement) bindingDefinition;
+            typeName = binding.getImplType();
+        } else if (bindingDefinition instanceof JustInTimeBindingStatement) {
+            SourceCodeReference currentCodeLocation = SourceCodeReference.createCurrent();
+            if(currentCodeLocation == null) {
+                return null;
+            }
+            BindingNavigationCycle navigationCycle = new BindingNavigationCycle(currentCodeLocation, ListUtils.newArrayList(bindingDefinition));
+            navigationCycle.jumpToNext();
+            return null;
+        } else {
+            typeName = bindingDefinition.getBoundType();
+        }
+        if (typeName == null && injectionPoint.getTargetTypeBinding() != null) {
+            // Maybe class has not bindings, no annotation, but it injected and DI know about it
+            typeName = injectionPoint.getTargetTypeBinding().getQualifiedName();
+        }
+        return typeName;
     }
 }

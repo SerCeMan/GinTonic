@@ -60,8 +60,7 @@ public class GuiceNamedAnnotation implements IGuiceAnnotation {
 		if (literal == null) {
 			if (other.literal != null)
 				return false;
-		}
-		else if (!literal.equals(other.literal))
+		} else if (!literal.equals(other.literal))
 			return false;
 		return true;
 	}

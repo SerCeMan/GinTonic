@@ -1,27 +1,21 @@
 package de.jaculon.egap.command;
 
+import static de.jaculon.egap.utils.CollectionUtils.getFirst;
+
 import java.util.List;
 
 import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.jdt.core.ICompilationUnit;
-import org.eclipse.jdt.core.IPackageFragment;
-import org.eclipse.jface.text.ITextSelection;
 
 import de.jaculon.egap.EgapPlugin;
-import de.jaculon.egap.cu_selection.ICompilationUnitSelection;
 import de.jaculon.egap.guice.GuiceIndex;
 import de.jaculon.egap.guice.injection_point.IInjectionPoint;
 import de.jaculon.egap.guice.injection_point.InjectionPointDao;
 import de.jaculon.egap.guice.statements.BindingDefinition;
-import de.jaculon.egap.guice.statements.InstallModuleStatement;
-import de.jaculon.egap.navigate.NavigationCycle;
+import de.jaculon.egap.selection.ICompilationUnitSelection;
 import de.jaculon.egap.source_reference.SourceCodeReference;
 import de.jaculon.egap.utils.ICompilationUnitSelectionUtils;
-import de.jaculon.egap.utils.ICompilationUnitUtils;
 import de.jaculon.egap.utils.ListUtils;
-import de.jaculon.egap.utils.StringUtils;
+import de.jaculon.egap.widgets.Widgets;
 
 /**
  * Jumps from an {@link IInjectionPoint} to its binding definition(s).
@@ -49,69 +43,44 @@ public class CycleBindingsHandler extends BaseHandler {
 
 	private void cycle() {
 
-		ICompilationUnitSelection compilationUnitSelection = ICompilationUnitSelectionUtils.getCompilationUnitSelection();
-
-		if (compilationUnitSelection == null) {
-			return;
+		SourceCodeReference currentCodeLocation = SourceCodeReference.createCurrent();
+		if (currentCodeLocation == null) {
+		    return;
 		}
 
-		SourceCodeReference currentCodeLocation = createSourceCodeReference(
-				compilationUnitSelection.getICompilationUnit(),
-				compilationUnitSelection.getITextSelection());
-
-		if (navigationCycle != null) {
+		// Break standard feature
+		/*if (navigationCycle != null) {
 			boolean couldJump = navigationCycle.jumpToFollower(currentCodeLocation);
 			if (couldJump) {
 				return;
 			}
-		}
+		}*/
 
+		ICompilationUnitSelection compilationUnitSelection = ICompilationUnitSelectionUtils.getCompilationUnitSelection();
 		IInjectionPoint injectionPoint = injectionPointDao.findInjectionPointByTextSelection(
 				compilationUnitSelection.getICompilationUnit(),
 				compilationUnitSelection.getITextSelection());
 
 		if (injectionPoint != null) {
-
 			List<BindingDefinition> bindingDefinitions = guiceIndex.getBindingDefinitions(injectionPoint);
 
 			if (!bindingDefinitions.isEmpty()) {
-				navigationCycle = new BindingNavigationCycle(currentCodeLocation, bindingDefinitions);
+	            BindingDefinition bindingDefinition = null;
+                if(bindingDefinitions.size() > 1) {
+	                bindingDefinition = Widgets.showUserSelectWithSelected(bindingDefinitions, getFirst(bindingDefinitions));
+	                if(bindingDefinition == null) {
+	                    return;
+	                }
+	            } 
+	            if(bindingDefinitions.size() > 0) {
+	                bindingDefinition = getFirst(bindingDefinitions);
+	            }
+				navigationCycle = new BindingNavigationCycle(currentCodeLocation, ListUtils.newArrayList(bindingDefinition));
 				navigationCycle.jumpToNext();
 			} else {
-		        EgapPlugin.logInfo("No binding definition found for injection point "
-		                + injectionPoint.toString());
+		        EgapPlugin.logInfo("No binding definition found for injection point " + injectionPoint);
 			}
 		}
 
 	}
-	
-	private SourceCodeReference createSourceCodeReference(
-			ICompilationUnit icompilationUnit, ITextSelection textSelection) {
-		SourceCodeReference codeReference = new SourceCodeReference();
-
-		IResource resource = icompilationUnit.getResource();
-		IProject project = resource.getProject();
-		codeReference.setProjectName(project.getName());
-
-		List<String> srcFolderPath = ICompilationUnitUtils.getSrcFolderPathComponents(icompilationUnit);
-		codeReference.setSrcFolderPathComponents(srcFolderPath);
-
-		IPackageFragment parent = (IPackageFragment) icompilationUnit.getParent();
-		String packageDotSeparated = parent.getElementName();
-		List<String> packageAsList = StringUtils.split('.', packageDotSeparated);
-		codeReference.setPackageNameComponents(packageAsList);
-
-		String typeName = ICompilationUnitUtils.getNameWithoutJavaExtension(icompilationUnit);
-		codeReference.setPrimaryTypeName(typeName);
-
-		if (textSelection != null) {
-			int offset = textSelection.getOffset();
-			codeReference.setOffset(offset);
-			int length = textSelection.getLength();
-			codeReference.setLength(length);
-		}
-
-		return codeReference;
-	}
-
 }

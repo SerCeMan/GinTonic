@@ -4,36 +4,38 @@ import org.eclipse.jdt.core.dom.ITypeBinding;
 
 import de.jaculon.egap.guice.annotations.IGuiceAnnotation;
 
+public class ProviderMethod implements IInjectionPoint {
 
-public class ProviderMethod implements IInjectionPoint{
+    private final ITypeBinding targetTypeBinding;
+    private final IGuiceAnnotation guiceAnnotation;
+    private final String identifier;
 
-	private final ITypeBinding targetTypeBinding;
-	private final IGuiceAnnotation guiceAnnotation;
-	private final String identifier;
+    public ProviderMethod(ITypeBinding targetTypeBinding, IGuiceAnnotation guiceAnnotation, String identifier) {
+        this.targetTypeBinding = targetTypeBinding;
+        this.guiceAnnotation = guiceAnnotation;
+        this.identifier = identifier;
+    }
 
-	public ProviderMethod(ITypeBinding targetTypeBinding,
-			IGuiceAnnotation guiceAnnotation,
-			String identifier) {
-		this.targetTypeBinding = targetTypeBinding;
-		this.guiceAnnotation = guiceAnnotation;
-		this.identifier = identifier;
-	}
+    @Override
+    public ITypeBinding getTargetTypeBinding() {
+        return targetTypeBinding;
+    }
 
-	@Override
-	public ITypeBinding getTargetTypeBinding() {
-		return targetTypeBinding;
-	}
+    @Override
+    public IGuiceAnnotation getGuiceAnnotation() {
+        return guiceAnnotation;
+    }
 
-	@Override
-	public IGuiceAnnotation getGuiceAnnotation() {
-		return guiceAnnotation;
-	}
+    /**
+     * Returns the name of the selected identifier.
+     */
+    public String getIdentifier() {
+        return identifier;
+    }
 
-	/**
-	 * Returns the name of the selected identifier.
-	 */
-	public String getIdentifier() {
-		return identifier;
-	}
-
+    @Override
+    public String toString() {
+        return "ProviderMethod [targetTypeBinding=" + targetTypeBinding + ", guiceAnnotation=" + guiceAnnotation
+                + ", identifier=" + identifier + "]";
+    }
 }

@@ -299,36 +299,35 @@ public class GuiceIndex implements Serializable {
     public List<BindingDefinition> getBindingDefinitions(ITypeBinding typeToFind,
             IGuiceAnnotation guiceAnnotationToFind, Set<String> packageToLimit) {
         String typeToFindQualifiedName = typeToFind.getQualifiedName();
-
         /*
          * We only store the wrappers instead of primitives, so maybe we must
          * replace the primitive type by the wrapper type.
          */
         typeToFindQualifiedName = StringUtils.translatePrimitiveToWrapper(typeToFindQualifiedName);
-
+        
         List<BindingDefinition> bindings = ListUtils.newArrayList();
         for (GuiceModule guiceModule : guiceModules) {
-
+        
             if (packageToLimit != null) {
                 String packageFullyQualified = guiceModule.getPackageNameComponentsFullyQualified();
-
+        
                 if (!packageToLimit.contains(packageFullyQualified)) {
                     continue;
                 }
             }
-
+        
             List<BindingDefinition> bindingStatements = guiceModule.getBindingDefinitions();
-
+        
             if (bindingStatements == null) {
                 continue;
             }
-
+        
             for (BindingDefinition bindingStatement : bindingStatements) {
                 String bindingsBoundType = bindingStatement.getBoundType();
                 if (!bindingsBoundType.equals(typeToFindQualifiedName)) {
                     continue;
                 }
-
+        
                 IGuiceAnnotation guiceAnnotation = bindingStatement.getGuiceAnnotation();
                 if (guiceAnnotationToFind != null) {
                     if (guiceAnnotation != null && guiceAnnotation.equals(guiceAnnotationToFind)) {
@@ -340,7 +339,7 @@ public class GuiceIndex implements Serializable {
                     }
                 }
             }
-
+        
         }
 
         checkForJustInTimeBindings(guiceAnnotationToFind, typeToFind, bindings);
