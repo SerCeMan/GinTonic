@@ -7,18 +7,6 @@
 	<name>Egap (Eclipse Guice Assistance Plugin)</name>
 	<packaging>pom</packaging>
 
-	<properties>
-		<libdir>${basedir}/lib</libdir>
-	</properties>
-
-	<dependencies>
-		<dependency>
-			<groupId>com.google.guava</groupId>
-			<artifactId>guava</artifactId>
-			<version>16.0</version>
-		</dependency>
-	</dependencies>
-
 	<build>
 		<sourceDirectory>${basedir}/src</sourceDirectory>
 		<resources>
@@ -32,8 +20,8 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
+					<source>1.7</source>
+					<target>1.7</target>
 				</configuration>
 			</plugin>
 			<plugin>
