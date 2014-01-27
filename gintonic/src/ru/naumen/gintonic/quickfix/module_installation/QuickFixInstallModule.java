@@ -10,10 +10,10 @@ import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.ui.text.java.IInvocationContext;
 import org.eclipse.jdt.ui.text.java.IJavaCompletionProposal;
 
+import ru.naumen.gintonic.context.quickfix.AbstractGinTonicQuickFix;
 import ru.naumen.gintonic.guice.GuiceIndex;
 import ru.naumen.gintonic.guice.GuiceModule;
 import ru.naumen.gintonic.guice.statements.InstallModuleStatement;
-import ru.naumen.gintonic.quickfix.AbstractGinTonicQuickFix;
 import ru.naumen.gintonic.utils.ASTNodeUtils;
 import ru.naumen.gintonic.utils.StringUtils;
 

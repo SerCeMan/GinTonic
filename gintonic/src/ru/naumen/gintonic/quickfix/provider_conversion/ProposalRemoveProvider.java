@@ -18,9 +18,9 @@ import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 
+import ru.naumen.gintonic.context.refactor.Refactorator;
 import ru.naumen.gintonic.icons.Icons;
-import ru.naumen.gintonic.refactor.Refactorator;
-import ru.naumen.gintonic.select_and_reveal.SelectAndReveal;
+import ru.naumen.gintonic.project.files.SelectAndReveal;
 import ru.naumen.gintonic.utils.TypeUtils;
 
 

@@ -8,9 +8,9 @@ import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 
+import ru.naumen.gintonic.context.refactor.Refactorator;
 import ru.naumen.gintonic.guice.GuiceModule;
 import ru.naumen.gintonic.icons.Icons;
-import ru.naumen.gintonic.refactor.Refactorator;
 import ru.naumen.gintonic.templates.InstallModuleTemplate;
 import ru.naumen.gintonic.utils.ASTParserUtils;
 

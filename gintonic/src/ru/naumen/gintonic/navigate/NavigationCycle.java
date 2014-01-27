@@ -2,7 +2,7 @@ package ru.naumen.gintonic.navigate;
 
 import java.util.List;
 
-import ru.naumen.gintonic.source_reference.SourceCodeReference;
+import ru.naumen.gintonic.project.source.references.SourceCodeReference;
 
 /**
  * A {@link NavigationCycle} can be used to jump from one {@link SourceCodeReference} to

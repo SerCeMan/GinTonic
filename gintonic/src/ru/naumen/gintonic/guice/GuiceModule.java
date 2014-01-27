@@ -5,8 +5,8 @@ import java.util.List;
 
 import ru.naumen.gintonic.guice.statements.BindingDefinition;
 import ru.naumen.gintonic.guice.statements.InstallModuleStatement;
-import ru.naumen.gintonic.source_reference.IReferencable;
-import ru.naumen.gintonic.source_reference.SourceCodeReference;
+import ru.naumen.gintonic.project.source.references.IReferencable;
+import ru.naumen.gintonic.project.source.references.SourceCodeReference;
 
 /**
  * A guice module.

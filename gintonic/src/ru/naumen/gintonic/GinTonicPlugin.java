@@ -10,14 +10,14 @@ import org.eclipse.ui.IStartup;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
+import ru.naumen.gintonic.context.quickfix.GinTonicQuickFix;
 import ru.naumen.gintonic.guice.GuiceIndex;
 import ru.naumen.gintonic.guice.GuiceIndexSerializer;
-import ru.naumen.gintonic.quickfix.GinTonicQuickFix;
-import ru.naumen.gintonic.quickfix.assisted_inject.QuickFixAssistedInject;
-import ru.naumen.gintonic.quickfix.binding_creation.QuickFixBindingCreation;
-import ru.naumen.gintonic.quickfix.binding_creation.QuickFixProviderMethodCreation;
-import ru.naumen.gintonic.quickfix.module_creation.QuickFixCreateGuiceModule;
+import ru.naumen.gintonic.quickfix.assisted.QuickFixAssistedInject;
+import ru.naumen.gintonic.quickfix.bindings.QuickFixBindingCreation;
+import ru.naumen.gintonic.quickfix.bindings.QuickFixProviderMethodCreation;
 import ru.naumen.gintonic.quickfix.module_installation.QuickFixInstallModule;
+import ru.naumen.gintonic.quickfix.modules.QuickFixCreateGuiceModule;
 import ru.naumen.gintonic.quickfix.provider_conversion.QuickFixProviderConversion;
 import ru.naumen.gintonic.utils.ListUtils;
 

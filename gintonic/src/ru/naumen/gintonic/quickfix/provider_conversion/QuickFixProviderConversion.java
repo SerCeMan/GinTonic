@@ -10,9 +10,9 @@ import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.ui.text.java.IInvocationContext;
 import org.eclipse.jdt.ui.text.java.IJavaCompletionProposal;
 
-import ru.naumen.gintonic.guice.injection_point.InjectionPoint;
-import ru.naumen.gintonic.guice.injection_point.InjectionPointDao;
-import ru.naumen.gintonic.quickfix.AbstractGinTonicQuickFix;
+import ru.naumen.gintonic.context.quickfix.AbstractGinTonicQuickFix;
+import ru.naumen.gintonic.guice.injection.InjectionPoint;
+import ru.naumen.gintonic.guice.injection.InjectionPointDao;
 import ru.naumen.gintonic.utils.ITypeBindingUtils;
 
 

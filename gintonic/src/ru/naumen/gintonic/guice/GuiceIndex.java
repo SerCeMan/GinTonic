@@ -21,13 +21,13 @@ import org.eclipse.jdt.core.dom.ITypeBinding;
 import ru.naumen.gintonic.GinTonicIDs;
 import ru.naumen.gintonic.GinTonicPlugin;
 import ru.naumen.gintonic.guice.annotations.IGuiceAnnotation;
-import ru.naumen.gintonic.guice.injection_point.IInjectionPoint;
+import ru.naumen.gintonic.guice.injection.IInjectionPoint;
 import ru.naumen.gintonic.guice.statements.AssistedBindingStatement;
 import ru.naumen.gintonic.guice.statements.BindingDefinition;
 import ru.naumen.gintonic.guice.statements.InstallModuleStatement;
 import ru.naumen.gintonic.guice.statements.JustInTimeBindingStatement;
-import ru.naumen.gintonic.project_builder.GinTonicProjectBuilder;
-import ru.naumen.gintonic.source_reference.SourceCodeReference;
+import ru.naumen.gintonic.project.builder.GinTonicProjectBuilder;
+import ru.naumen.gintonic.project.source.references.SourceCodeReference;
 import ru.naumen.gintonic.utils.*;
 
 /**

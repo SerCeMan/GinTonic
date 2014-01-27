@@ -18,7 +18,7 @@ import ru.naumen.gintonic.guice.GuiceModule;
 import ru.naumen.gintonic.guice.statements.BindingDefinition;
 import ru.naumen.gintonic.guice.statements.GuiceStatement;
 import ru.naumen.gintonic.guice.statements.InstallModuleStatement;
-import ru.naumen.gintonic.source_reference.SourceCodeReference;
+import ru.naumen.gintonic.project.source.references.SourceCodeReference;
 import ru.naumen.gintonic.utils.ASTParserUtils;
 import ru.naumen.gintonic.utils.ICompilationUnitUtils;
 import ru.naumen.gintonic.utils.SetUtils;

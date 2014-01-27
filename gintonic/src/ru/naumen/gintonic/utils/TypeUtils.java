@@ -14,7 +14,7 @@ import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.WildcardType;
 
 import ru.naumen.gintonic.guice.GuiceConstants;
-import ru.naumen.gintonic.source_builder.JavaCodeBuilder;
+import ru.naumen.gintonic.project.source.builder.JavaCodeBuilder;
 
 public class TypeUtils {
 

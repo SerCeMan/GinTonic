@@ -6,7 +6,7 @@
          point="org.eclipse.jdt.ui.quickFixProcessors">
 
       <quickFixProcessor
-           class="ru.naumen.gintonic.quickfix.GinTonicQuickFixProcessor"
+           class="ru.naumen.gintonic.context.quickfix.GinTonicQuickFixProcessor"
            id="gintonic.quickfix.GinTonicQuickFixProcessor"
            name="gintonic.quickfix.GinTonicQuickFixProcessor">
       </quickFixProcessor>
@@ -33,7 +33,7 @@
 			name="GinTonic Project Builder"
 			point="org.eclipse.core.resources.builders">
 		<builder hasNature="true">
-			<run class="ru.naumen.gintonic.project_builder.GinTonicProjectBuilder" />
+			<run class="ru.naumen.gintonic.project.builder.GinTonicProjectBuilder" />
 		</builder>
 	</extension>
 
@@ -42,7 +42,7 @@
 			name="GinTonic Project Nature"
 			point="org.eclipse.core.resources.natures">
 		<runtime>
-			<run class="ru.naumen.gintonic.nature.GinTonicNature" />
+			<run class="ru.naumen.gintonic.project.nature.GinTonicNature" />
 		</runtime>
 		<builder id="ru.naumen.gintonic.GinTonicProjectBuilder" />
 	</extension>
@@ -54,7 +54,7 @@
 				nameFilter="*"
 				objectClass="org.eclipse.core.resources.IProject">
 			<action
-		        class="ru.naumen.gintonic.nature.GinTonicToggleNatureAction"
+		        class="ru.naumen.gintonic.project.nature.GinTonicToggleNatureAction"
 		        enablesFor="+"
 		        icon="icons/gintonic_icon_big.png"
 		        id="gintonic.toggleNatureAction"

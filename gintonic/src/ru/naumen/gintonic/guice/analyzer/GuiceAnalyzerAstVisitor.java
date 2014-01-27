@@ -9,7 +9,7 @@ import ru.naumen.gintonic.GinTonicPlugin;
 import ru.naumen.gintonic.guice.GuiceConstants;
 import ru.naumen.gintonic.guice.annotations.IGuiceAnnotation;
 import ru.naumen.gintonic.guice.statements.*;
-import ru.naumen.gintonic.source_reference.SourceCodeReference;
+import ru.naumen.gintonic.project.source.references.SourceCodeReference;
 import ru.naumen.gintonic.utils.*;
 
 /**

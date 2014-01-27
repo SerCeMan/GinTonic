@@ -8,11 +8,11 @@ import org.eclipse.core.commands.ExecutionEvent;
 
 import ru.naumen.gintonic.GinTonicPlugin;
 import ru.naumen.gintonic.guice.GuiceIndex;
-import ru.naumen.gintonic.guice.injection_point.IInjectionPoint;
-import ru.naumen.gintonic.guice.injection_point.InjectionPointDao;
+import ru.naumen.gintonic.guice.injection.IInjectionPoint;
+import ru.naumen.gintonic.guice.injection.InjectionPointDao;
 import ru.naumen.gintonic.guice.statements.BindingDefinition;
-import ru.naumen.gintonic.selection.ICompilationUnitSelection;
-import ru.naumen.gintonic.source_reference.SourceCodeReference;
+import ru.naumen.gintonic.navigate.selection.ICompilationUnitSelection;
+import ru.naumen.gintonic.project.source.references.SourceCodeReference;
 import ru.naumen.gintonic.utils.ICompilationUnitSelectionUtils;
 import ru.naumen.gintonic.utils.ListUtils;
 import ru.naumen.gintonic.widgets.Widgets;
