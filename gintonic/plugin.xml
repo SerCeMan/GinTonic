@@ -15,7 +15,7 @@
     <extension
          point="org.eclipse.ui.preferencePages">
       <page
-           class="ru.naumen.gintonic.preferences.GinTonicPreferencePage"
+           class="ru.naumen.gintonic.plugin.preferences.GinTonicPreferencePage"
            id="gintonic.preferences.GinTonicPreferencePage"
            name="Gin Tonic">
       </page>
@@ -24,7 +24,7 @@
     <extension
          point="org.eclipse.core.runtime.preferences">
       <initializer
-           class="ru.naumen.gintonic.preferences.PreferenceInitializer">
+           class="ru.naumen.gintonic.plugin.preferences.PreferenceInitializer">
       </initializer>
     </extension>
 

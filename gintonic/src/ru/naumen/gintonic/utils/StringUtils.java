@@ -36,6 +36,7 @@ public class StringUtils {
     }
 
     public static String qualifiedNameToSimpleName(String targetTypeNameFullyQualified) {
+        targetTypeNameFullyQualified = removeGenerics(targetTypeNameFullyQualified);
         String[] parts = targetTypeNameFullyQualified.split("\\.");
         String simpleName = parts[parts.length - 1];
         return simpleName;

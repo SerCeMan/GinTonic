@@ -10,7 +10,7 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.texteditor.ITextEditor;
 
-import ru.naumen.gintonic.navigate.selection.ICompilationUnitSelection;
+import ru.naumen.gintonic.project.navigate.selection.ICompilationUnitSelection;
 
 public class ICompilationUnitSelectionUtils {
 

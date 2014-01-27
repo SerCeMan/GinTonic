@@ -3,7 +3,7 @@ package ru.naumen.gintonic.command;
 import java.util.List;
 
 import ru.naumen.gintonic.guice.statements.BindingDefinition;
-import ru.naumen.gintonic.navigate.NavigationCycle;
+import ru.naumen.gintonic.project.navigate.NavigationCycle;
 import ru.naumen.gintonic.project.source.references.SourceCodeReference;
 import ru.naumen.gintonic.utils.ListUtils;
 

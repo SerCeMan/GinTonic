@@ -1,6 +1,6 @@
 package ru.naumen.gintonic.templates;
 
-import ru.naumen.gintonic.quickfix.assisted.ProposalCreateBindingForAssistedFactory;
+import ru.naumen.gintonic.context.quickfix.assisted.ProposalCreateBindingForAssistedFactory;
 
 public class GuiceAssistedInjectFactoryBinding
 {

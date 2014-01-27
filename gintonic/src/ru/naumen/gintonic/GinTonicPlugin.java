@@ -11,14 +11,16 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
 import ru.naumen.gintonic.context.quickfix.GinTonicQuickFix;
+import ru.naumen.gintonic.context.quickfix.assisted.QuickFixAssistedInject;
+import ru.naumen.gintonic.context.quickfix.bindings.QuickFixBindingCreation;
+import ru.naumen.gintonic.context.quickfix.bindings.QuickFixProviderMethodCreation;
+import ru.naumen.gintonic.context.quickfix.modules.QuickFixCreateGuiceModule;
+import ru.naumen.gintonic.context.quickfix.modules.QuickFixInstallModule;
+import ru.naumen.gintonic.context.quickfix.moving.QuickFixGoToBinging;
+import ru.naumen.gintonic.context.quickfix.moving.QuickFixGoToImpl;
+import ru.naumen.gintonic.context.quickfix.providers.QuickFixProviderConversion;
 import ru.naumen.gintonic.guice.GuiceIndex;
 import ru.naumen.gintonic.guice.GuiceIndexSerializer;
-import ru.naumen.gintonic.quickfix.assisted.QuickFixAssistedInject;
-import ru.naumen.gintonic.quickfix.bindings.QuickFixBindingCreation;
-import ru.naumen.gintonic.quickfix.bindings.QuickFixProviderMethodCreation;
-import ru.naumen.gintonic.quickfix.module_installation.QuickFixInstallModule;
-import ru.naumen.gintonic.quickfix.modules.QuickFixCreateGuiceModule;
-import ru.naumen.gintonic.quickfix.provider_conversion.QuickFixProviderConversion;
 import ru.naumen.gintonic.utils.ListUtils;
 
 /**
@@ -52,6 +54,8 @@ public class GinTonicPlugin extends AbstractUIPlugin implements IStartup {
 		quickfixes.add(new QuickFixProviderConversion());
 		quickfixes.add(new QuickFixBindingCreation());
 		quickfixes.add(new QuickFixProviderMethodCreation());
+		quickfixes.add(new QuickFixGoToBinging());
+		quickfixes.add(new QuickFixGoToImpl());
 	}
 
 	@Override

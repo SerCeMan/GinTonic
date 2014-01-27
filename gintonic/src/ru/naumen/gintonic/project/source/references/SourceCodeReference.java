@@ -11,9 +11,9 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jface.text.ITextSelection;
 
-import ru.naumen.gintonic.navigate.IJumpable;
-import ru.naumen.gintonic.navigate.selection.ICompilationUnitSelection;
 import ru.naumen.gintonic.project.files.SelectAndReveal;
+import ru.naumen.gintonic.project.navigate.IJumpable;
+import ru.naumen.gintonic.project.navigate.selection.ICompilationUnitSelection;
 import ru.naumen.gintonic.utils.ICompilationUnitSelectionUtils;
 import ru.naumen.gintonic.utils.ICompilationUnitUtils;
 import ru.naumen.gintonic.utils.StringUtils;

@@ -11,7 +11,7 @@ import org.eclipse.core.commands.ExecutionException;
  * @since Jan 16, 2014
  */
 public abstract class BaseHandler extends AbstractHandler {
-
+    
     @Override
     public Object execute(ExecutionEvent event) throws ExecutionException {
         handleEvent(event);
