@@ -3,6 +3,7 @@ package ru.naumen.gintonic;
 public class GinTonicIDs {
 
 	public static final String PLUGIN = "ru.naumen.gintonic";
+	public static final String GINTONIC_PLUGIN_NAME = "gintonic.plugin";
 	/**
 	 * Nicht ndern! //Не меняйте!
 	 */

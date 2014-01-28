@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <description name="GinTonic" url="https://raw.github.com/SerCeMan/GinTonic/master/gintonic.updatesite/site.xml">
+   <description name="GinTonic" url="https://raw.github.com/SerCeMan/GinTonic/master/gintonic.updatesite">
       GinTonic is an Eclipse plugin for Gin/Guice DI frameworks.
    </description>
-   <feature url="https://github.com/SerCeMan/GinTonic/releases/download/1.0.0/gintonic_1.0.0.jar" id="ru.naumen.gintonic" version="1.0.0">
-      <category name="gintonic1"/>
+   <feature url="features/gintonic.feature_1.0.0.jar" id="gintonic.feature" version="1.0.0">
+      <category name="gintonic"/>
    </feature>
-   <category-def name="gintonic1" label="GinTonic"/>
+   <category-def name="gintonic" label="GinTonic">
+      <description>
+         GinTonic is an Eclipse plugin for Gin/Guice DI frameworks.
+      </description>
+   </category-def>
 </site>

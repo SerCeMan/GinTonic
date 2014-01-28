@@ -1,13 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project>
 	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>ru.naumen.gintonic</groupId>
+		<artifactId>gintonic.parent</artifactId>
+		<version>1.0.0</version>
+	</parent>
 	<groupId>ru.naumen.gintonic</groupId>
-	<artifactId>gintonic</artifactId>
-	<version>1.0.0</version>
+	<artifactId>gintonic.plugin</artifactId>
+	<packaging>eclipse-plugin</packaging>
 	<name>GinTonic</name>
-	<description>Guice/Gin eclipse plugin</description>
+	<description>GinTonic is an Eclipse plugin for Gin/Guice DI frameworks.</description>
 
-	
 	<build>
 		<sourceDirectory>${basedir}/src/</sourceDirectory>
 		<resources>
@@ -16,26 +20,5 @@
 			</resource>
 		</resources>
 		<outputDirectory>${basedir}/bin</outputDirectory>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<configuration>
-					<source>1.7</source>
-					<target>1.7</target>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-eclipse-plugin</artifactId>
-				<version>2.9</version>
-				<configuration>
-					<pde>true</pde>
-					<additionalProjectnatures>
-						<projectnatures>org.eclipse.emf.codegen.jet.IJETNature</projectnatures>
-					</additionalProjectnatures>
-				</configuration>
-			</plugin>
-		</plugins>
 	</build>
 </project> 
