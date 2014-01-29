@@ -14,7 +14,7 @@ Project is a fork of http://www.jaculon.de/egap
 * Create a linked binding in a nearby Guice module
 * Create the binding definition for a factory interface
 * Conver an injection point to a Provider and vice versa
-* Instal Guice/Gin module in a parent module
+* Install Guice/Gin module in a parent module
 
 
 ## Installation
@@ -43,4 +43,4 @@ Project is a fork of http://www.jaculon.de/egap
  
 ### Refactorings
  
-QuickFix on the code element can help you do all refactorings.
+QuickFix (Ctrl+1) on the code element can help you do all refactorings.
