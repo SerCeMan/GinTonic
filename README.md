@@ -7,7 +7,7 @@ Project is a fork of http://www.jaculon.de/egap
  
 ## Features
 
-* Go to binding (jump to injection point)
+* Go to binding (jump to bind point)
 * Resolve implementation (jump to implementation of injected type)
 * Create a provider method for an injection point
 * Create the factory interface for an @Assisted annotated constructor
