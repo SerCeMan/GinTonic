@@ -2,19 +2,19 @@
 <feature
       id="gintonic.feature"
       label="GinTonic"
-      version="1.0.0">
+      version="1.0.1">
 
    <description url="https://github.com/SerCeMan/GinTonic">
       Guice/Gin eclipse plugin
    </description>
 
    <copyright>
-Copyright [2011] [Tim Majunke]
+      Copyright [2011] [Tim Majunke]
 Copyright [2014] [Sergey Tselovalnikov]
    </copyright>
 
    <license url="http://www.apache.org/licenses/LICENSE-2.0">
-Copyright [2011] [Tim Majunke]
+      Copyright [2011] [Tim Majunke]
 Copyright [2014] [Sergey Tselovalnikov]
     
 Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
@@ -34,7 +34,7 @@ limitations under the License.
          id="gintonic.plugin"
          download-size="0"
          install-size="0"
-         version="1.0.0"
+         version="0.0.0"
          unpack="false"/>
 
 </feature>
