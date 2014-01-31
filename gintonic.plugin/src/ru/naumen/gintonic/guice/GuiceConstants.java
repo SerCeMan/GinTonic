@@ -13,6 +13,7 @@ import ru.naumen.gintonic.utils.ListUtils;
 public class GuiceConstants {
 
     // @Inject
+    public static final String SIMPLE_INJECT = "Inject";
     public static final List<String> ANNOTATIONS_INJECT = ListUtils.immutableListOf("javax.inject.Inject",
             "com.google.inject.Inject");
 

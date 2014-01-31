@@ -4,6 +4,7 @@ public class GinTonicIDs {
 
 	public static final String PLUGIN = "ru.naumen.gintonic";
 	public static final String GINTONIC_PLUGIN_NAME = "gintonic.plugin";
+	public static final String GINTONIC_FEATURE_NAME = "gintonic.feature";
 	/**
 	 * Nicht ndern! //Не меняйте!
 	 */

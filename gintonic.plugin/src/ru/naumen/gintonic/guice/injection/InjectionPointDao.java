@@ -1,26 +1,12 @@
 package ru.naumen.gintonic.guice.injection;
 
+import static ru.naumen.gintonic.guice.GuiceConstants.SIMPLE_INJECT;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.jdt.core.ICompilationUnit;
-import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.IType;
-import org.eclipse.jdt.core.ITypeHierarchy;
-import org.eclipse.jdt.core.ITypeRoot;
-import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.core.dom.ASTNode;
-import org.eclipse.jdt.core.dom.ASTVisitor;
-import org.eclipse.jdt.core.dom.Annotation;
-import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.jdt.core.dom.FieldDeclaration;
-import org.eclipse.jdt.core.dom.MethodDeclaration;
-import org.eclipse.jdt.core.dom.Name;
-import org.eclipse.jdt.core.dom.NodeFinder;
-import org.eclipse.jdt.core.dom.SimpleName;
-import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
-import org.eclipse.jdt.core.dom.Type;
-import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
+import org.eclipse.jdt.core.*;
+import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jdt.ui.SharedASTProvider;
 import org.eclipse.jface.text.ITextSelection;
@@ -249,12 +235,58 @@ public class InjectionPointDao {
 			return injectionPoint;
 		}
 
-		ProviderMethod providerMethod = getProviderMethod(name);
-
-		return providerMethod;
+		injectionPoint = getProviderMethod(name);
+		if (injectionPoint != null) {
+		    return injectionPoint;
+		}
+		
+		injectionPoint = getMethodInjection(name, compilationUnit);
+		return injectionPoint;
 	}
 
-	public InjectionPoint getGuiceFieldDeclarationIfFieldDeclaration(
+	private IInjectionPoint getMethodInjection(Name name, CompilationUnit compilationUnit) {
+	    String variableName = name.getFullyQualifiedName();
+	    ASTNode methodNode = name.getParent().getParent();
+	    if(methodNode.getNodeType() == ASTNode.METHOD_DECLARATION) {
+	        MethodDeclaration method = (MethodDeclaration) methodNode;
+	        
+	        boolean injectedMethod = false;
+	        for(Object modifier : method.modifiers()) {
+	            if (modifier instanceof MarkerAnnotation) {
+	                if(SIMPLE_INJECT.equals(((MarkerAnnotation) modifier).getTypeName().getFullyQualifiedName())) {
+	                    injectedMethod = true;
+	                    break;
+	                }
+	            }
+	        }
+	        if(!injectedMethod) {
+	            return null;
+	        }
+            SingleVariableDeclaration variableDeclaration = MethodDeclarationUtils.getVariableDeclarationsByName(
+                    method,
+                    variableName);
+            if (variableDeclaration != null) {
+                return injectionPointFromVariable(variableName, variableDeclaration);
+            }
+	    }
+        return null;
+    }
+
+    private InjectionPoint injectionPointFromVariable(String variableName,
+            SingleVariableDeclaration variableDeclaration) {
+        @SuppressWarnings("unchecked")
+        AnnotationList annotationList = ASTNodeUtils.getAnnotationList(variableDeclaration.modifiers());
+        Type type = variableDeclaration.getType();
+        IGuiceAnnotation guiceAnnotation = annotationList.getGuiceAnnotation();
+        return new InjectionPoint(
+                type.resolveBinding(),
+                guiceAnnotation,
+                variableName,
+                null,
+                InjectionIsAttachedTo.CONSTRUCTOR);
+    }
+
+    public InjectionPoint getGuiceFieldDeclarationIfFieldDeclaration(
 			ASTNode astNode, CompilationUnit astRoot) {
 		if (!(astNode instanceof Name)) {
 			return null;
@@ -271,10 +303,12 @@ public class InjectionPointDao {
 
 			return guiceFieldDeclaration;
 		}
-		return null;
+        return null;
 	}
+	
+	
 
-	private ProviderMethod getProviderMethod(Name name) {
+	private IInjectionPoint getProviderMethod(Name name) {
 		ASTNode parentNode = name.getParent();
 		if (parentNode instanceof SingleVariableDeclaration) {
 			SingleVariableDeclaration singleVariableDeclaration = (SingleVariableDeclaration) parentNode;
@@ -290,21 +324,6 @@ public class InjectionPointDao {
 						guiceAnnotation,
 						name.getFullyQualifiedName());
 			}
-			return null;
-
-		}
-		ASTNode parentParent = parentNode.getParent();
-		if(parentParent instanceof FieldDeclaration) {
-			FieldDeclaration fieldDeclaration = (FieldDeclaration) parentParent;
-			
-				@SuppressWarnings("unchecked")
-				AnnotationList markerAnnotationList = getAnnotationList(fieldDeclaration.modifiers());
-				Type type = fieldDeclaration.getType();
-				IGuiceAnnotation guiceAnnotation = markerAnnotationList.getGuiceAnnotation();
-				return new ProviderMethod(
-						type.resolveBinding(),
-						guiceAnnotation,
-						name.getFullyQualifiedName());
 		}
 		return null;
 	}
@@ -350,15 +369,7 @@ public class InjectionPointDao {
 					constructor,
 					fieldName);
 			if (variableDeclaration != null) {
-				annotationList = ASTNodeUtils.getAnnotationList(variableDeclaration.modifiers());
-				Type type = variableDeclaration.getType();
-				IGuiceAnnotation guiceAnnotation = annotationList.getGuiceAnnotation();
-				return new InjectionPoint(
-						type.resolveBinding(),
-						guiceAnnotation,
-						fieldName,
-						fieldDeclaration,
-						InjectionIsAttachedTo.CONSTRUCTOR);
+			    return injectionPointFromVariable(fieldName, variableDeclaration);
 			}
 		}
 

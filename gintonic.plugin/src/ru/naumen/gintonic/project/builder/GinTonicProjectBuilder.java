@@ -31,7 +31,6 @@ import ru.naumen.gintonic.utils.IProjectUtils;
 
 /**
  * The {@link GinTonicProjectBuilder} creates and updates the the {@link GuiceIndex}
- * .
  * 
  * @author tmajunke
  */

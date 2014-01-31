@@ -6,6 +6,7 @@ import java.io.InputStream;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
+import org.osgi.framework.Bundle;
 
 import ru.naumen.gintonic.GinTonicIDs;
 import ru.naumen.gintonic.GinTonicPlugin;
@@ -26,7 +27,11 @@ public class Icons {
     private static Image safeOpenImage(String path) {
         InputStream stream = null;
         try  {
-            stream = Platform.getBundle(GinTonicIDs.GINTONIC_PLUGIN_NAME).getEntry(path).openStream();
+            Bundle bundle = Platform.getBundle(GinTonicIDs.GINTONIC_PLUGIN_NAME); // plugin
+            if(bundle == null) { // feature
+                bundle = Platform.getBundle(GinTonicIDs.GINTONIC_FEATURE_NAME);
+            }
+            stream = bundle.getEntry(path).openStream();
             return new Image(Display.getDefault(), stream);
         } catch (Exception e) {
             GinTonicPlugin.logException("Can't get icon " + path, e);
